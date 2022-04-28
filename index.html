@@ -34,6 +34,10 @@
         <div id="keycard"></div>
     </div>
     <div style="display: inline-block;">
+        <h3>Subtype</h3>
+        <div id="subtype"></div>
+    </div>
+    <div style="display: inline-block;">
         <h3>Archetype</h3>
         <div id="archetype"></div>
     </div>
@@ -668,9 +672,12 @@
                     $('#keycard').html(html);
                 }
 
-                // archetype
+                // subtype / archetype / keyword
                 {
                     let archetype_counts = {
+                        elemental: 0,
+                        elemental_cards: [],
+
                         mana_acceleration: 0,
                         mana_acceleration_cards: [],
                         creature: 0,
@@ -710,6 +717,16 @@
                         type_temp = type_temp.toLowerCase();
                         text_temp = text_temp.toLowerCase();
 
+                        // subtype
+                        let creature_type = false;
+                        if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
+                            creature_type = true;
+                        }
+                        if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
+                            archetype_counts.elemental += count;
+                            archetype_counts.elemental_cards.push(d[0]);
+                        }
+
                         // decktype
                         if (text_temp.includes('add {')
                             || (text_temp.includes('add') && text_temp.includes('mana'))
@@ -745,6 +762,16 @@
                         }
                     });
                     let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    if (archetype_counts.elemental / counts_sum >= 0.40) {
+                        html += '<td>Elemental</td>';
+                    }
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#subtype').html(html);
+
+                    html = '';
                     html += '<table>';
                     html += '<tr>';
                     let output = false;
