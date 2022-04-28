@@ -18,6 +18,10 @@
     <br>
     <br>
 
+    <div id="symbol" style="display: inline-block;"></div>
+    <br>
+    <br>
+
     <div id="cmc" style="display: inline-block;"></div>
     <br>
     <br>
@@ -116,6 +120,65 @@
                             d[1].imageUrl = url.href;
                         }
                     }
+                });
+
+                // symbol
+                let symbols = {
+                    C: 0,
+                    W: 0,
+                    U: 0,
+                    B: 0,
+                    R: 0,
+                    G: 0,
+                    P: 0,
+                    S: 0,
+                };
+                data.forEach((d, i) => {
+                    let count = counts[i];
+
+                    let keys = Object.keys(symbols);
+                    if (!d[0].types.includes('Land')) {
+                        keys.forEach(key => symbols[key] += (d[0].manaCost.split(key).length - 1) * count);
+                    }
+                    if (d.length > 1) {
+                        if (d[0].layout !== 'transform') {
+                            if (!d[1].types.includes('Land')) {
+                                keys.forEach(key => symbols[key] += (d[1].manaCost.split(key).length - 1) * count);
+                            }
+                        }
+                    }
+                });
+                if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
+                    symbols.C = 1;
+                }
+                $('#symbol').html('<canvas></canvas>');
+                var symbol_canvas = $('#symbol canvas')[0];
+                symbol_canvas.width = 80;
+                symbol_canvas.height = 80;
+
+                new Chart(symbol_canvas, {
+                    type: 'pie',
+                    data: {
+                        labels: ['C', 'W', 'U', 'B', 'R', 'G'],
+                        datasets: [
+                            {
+                                data: [symbols.C, symbols.W, symbols.U, symbols.B, symbols.R, symbols.G],
+                                backgroundColor: ['#E0E0E0', '#FFFDDB', '#C8E0F7', '#D0C7C0', '#E5B08F', '#B7D9B5'],
+                                borderColor: ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000'],
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Mana Symbol'
+                            },
+                            legend: false,
+                            tooltip: false,
+                        },
+                    },
                 });
 
                 // cmc
