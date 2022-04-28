@@ -38,12 +38,12 @@
         <div id="subtype"></div>
     </div>
     <div style="display: inline-block;">
-        <h3>Archetype</h3>
-        <div id="archetype"></div>
-    </div>
-    <div style="display: inline-block;">
         <h3>Keyword</h3>
         <div id="keyword"></div>
+    </div>
+    <div style="display: inline-block;">
+        <h3>Archetype</h3>
+        <div id="archetype"></div>
     </div>
     <br>
 
@@ -672,11 +672,16 @@
                     $('#keycard').html(html);
                 }
 
-                // subtype / archetype / keyword
+                // subtype / keyword / archetype
                 {
                     let archetype_counts = {
                         elemental: 0,
                         elemental_cards: [],
+
+                        explore: 0,
+                        explore_cards: [],
+                        flying: 0,
+                        flying_cards: [],
 
                         mana_acceleration: 0,
                         mana_acceleration_cards: [],
@@ -686,9 +691,6 @@
                         reanimate_cards: [],
                         wrath: 0,
                         wrath_cards: [],
-
-                        explore: 0,
-                        explore_cards: [],
                     };
                     data.forEach((d, i) => {
                         if (d.length === 0) {
@@ -727,6 +729,16 @@
                             archetype_counts.elemental_cards.push(d[0]);
                         }
 
+                        // keyword
+                        if (text_temp.includes('explores')) {
+                            archetype_counts.explore += count;
+                            archetype_counts.explore_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('flying')) {
+                            archetype_counts.flying += count;
+                            archetype_counts.flying_cards.push(d[0]);
+                        }
+
                         // decktype
                         if (text_temp.includes('add {')
                             || (text_temp.includes('add') && text_temp.includes('mana'))
@@ -754,14 +766,11 @@
                             archetype_counts.wrath += count;
                             archetype_counts.wrath_cards.push(d[0]);
                         }
-
-                        // keyword
-                        if (text_temp.includes('explores')) {
-                            archetype_counts.explore += count;
-                            archetype_counts.explore_cards.push(d[0]);
-                        }
                     });
-                    let html = '';
+                    let html;
+
+                    // subtype
+                    html = '';
                     html += '<table>';
                     html += '<tr>';
                     if (archetype_counts.elemental / counts_sum >= 0.40) {
@@ -771,6 +780,21 @@
                     html += '</table>';
                     $('#subtype').html(html);
 
+                    // keyword
+                    html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    if (archetype_counts.explore / counts_sum >= 0.16) {
+                        html += '<td>Explore</td>';
+                    }
+                    if (archetype_counts.flying / counts_sum >= 0.40) {
+                        html += '<td>Flyer</td>';
+                    }
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#keyword').html(html);
+
+                    // archetype
                     html = '';
                     html += '<table>';
                     html += '<tr>';
@@ -797,16 +821,6 @@
                     html += '</tr>';
                     html += '</table>';
                     $('#archetype').html(html);
-
-                    html = '';
-                    html += '<table>';
-                    html += '<tr>';
-                    if (archetype_counts.explore / counts_sum >= 0.16) {
-                        html += '<td>Explore</td>';
-                    }
-                    html += '</tr>';
-                    html += '</table>';
-                    $('#keyword').html(html);
 
                     console.log(archetype_counts);
                 }
