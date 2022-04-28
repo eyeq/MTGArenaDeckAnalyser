@@ -21,7 +21,7 @@
     <h2>Output</h2>
     <div style="display: inline-block;">
         <h3>Format</h3>
-        <div id="format" ></div>
+        <div id="format"></div>
     </div>
     <br>
 
@@ -54,7 +54,7 @@
         <div id="cmc"></div>
     </div>
     <br>
-    
+
     <h3>Image</h3>
     <div>
         <input type="radio" id="s" name="size" value="s">
@@ -638,6 +638,19 @@
                             if (i === 0) {
                                 keycards.push(d[i].name);
                             }
+                        } else {
+                            switch (d[0].name) {
+                                case 'Ghalta, Primal Hunger':
+                                    if (count === 4) {
+                                        keycards.push('Ghalta');
+                                    }
+                                    break;
+                                case 'Flood of Tears':
+                                    if (count === 4) {
+                                        keycards.push('Flood of Tears');
+                                    }
+                                    break;
+                            }
                         }
                     });
                     let html = '';
@@ -656,6 +669,7 @@
                     let archetype_counts = {
                         creature: 0,
                         wrath: 0,
+                        mana_acceleration: 0,
                     };
                     data.forEach((d, i) => {
                         if (d.length === 0) {
@@ -695,11 +709,21 @@
                             || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
                             archetype_counts.wrath += count;
                         }
+                        if (text_temp.includes('add {')
+                            || (text_temp.includes('add') && text_temp.includes('mana'))
+                            || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
+                            || (text_temp.includes('play') || text_temp.includes('additional land'))) {
+                            archetype_counts.mana_acceleration += count;
+                        }
                     });
                     let html = '';
                     html += '<table>';
                     html += '<tr>';
                     let output = false;
+                    if (archetype_counts.mana_acceleration / counts_sum >= 0.28) {
+                        output = true;
+                        html += '<td>Ramp</td>';
+                    }
                     if (archetype_counts.creature / counts_sum >= 0.40) {
                         output = true;
                         html += '<td>Beatdown</td>';
