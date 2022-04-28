@@ -653,11 +653,20 @@
                                         keycards.push('Phoenix');
                                     }
                                     break;
+                                case 'Cavalcade of Calamity':
+                                    if (count === 4) {
+                                        keycards.push('Cavalcade');
+                                    }
+                                    break;
                                 case 'Crackling Drake':
                                     if (count === 4) {
                                         keycards.push('Drake');
                                     }
                                     break;
+                                case 'Experimental Frenzy':
+                                    if (count === 4) {
+                                        keycards.push('Frenzy');
+                                    }
                                 case 'Feather, the Redeemed':
                                     if (count === 4) {
                                         keycards.push('Feather');
@@ -665,12 +674,22 @@
                                     break;
                                 case 'Flood of Tears':
                                     if (count === 4) {
-                                        keycards.push('Flood of Tears');
+                                        keycards.push('Tears');
                                     }
                                     break;
                                 case 'Ghalta, Primal Hunger':
                                     if (count === 4) {
                                         keycards.push('Ghalta');
+                                    }
+                                    break;
+                                case 'Goldspan Dragon':
+                                    if (count === 4) {
+                                        keycards.push('Dragon');
+                                    }
+                                    break;
+                                case 'Hero of Precinct One':
+                                    if (count === 4) {
+                                        keycards.push('Hero');
                                     }
                                     break;
                             }
@@ -706,6 +725,8 @@
                         mana_acceleration_cards: [],
                         creature: 0,
                         creature_cards: [],
+                        direct_damage: 0,
+                        direct_damage_cards: [],
                         reanimate: 0,
                         reanimate_cards: [],
                         wrath: 0,
@@ -781,6 +802,11 @@
                             archetype_counts.creature += count;
                             archetype_counts.creature_cards.push(d[0]);
                         }
+                        if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
+                            || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
+                            archetype_counts.direct_damage += count;
+                            archetype_counts.direct_damage_cards.push(d[0]);
+                        }
                         if (text_temp.includes('graveyard to the battlefield')
                             || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))) {
                             archetype_counts.reanimate += count;
@@ -852,6 +878,12 @@
                         html += '<td>Beatdown</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.direct_damage / counts_sum >= 0.33) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Burn</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.reanimate / counts_sum >= 0.10) {
                         output = true;
                         html += '<tr>';
@@ -879,14 +911,13 @@
                 {
                     let html = '';
                     data.forEach((d, i) => {
+                        if (i !== 0 && empty_row.includes(i)) {
+                            html += '<hr style="height: 2px; background: #000000;">';
+                        }
                         if (d.length === 0) {
                             return;
                         }
                         let count = counts[i];
-
-                        if (i !== 0 && empty_row.includes(i)) {
-                            html += '<hr style="height: 2px; background: #000000;">';
-                        }
 
                         html += '<div style="display: inline-block; position: relative;">';
                         html += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
