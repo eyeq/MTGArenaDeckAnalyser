@@ -506,6 +506,12 @@
                         brawl: ['Brawl', 'Historicbrawl', 'Commander'],
                         brawl_p: ['Paupercommander'],
                     };
+                    let standard = {
+                        m18: true,
+                        m19: true,
+                        m20: true,
+                        m21: true,
+                    };
                     data.forEach((d, i) => {
                         let legalities = d[0].legalities.map(d => d.format);
                         formats.paper = formats.paper.filter(d => legalities.includes(d));
@@ -513,11 +519,25 @@
                         formats.arena = formats.arena.filter(d => legalities.includes(d));
                         formats.brawl = formats.brawl.filter(d => legalities.includes(d));
                         formats.brawl_p = formats.brawl_p.filter(d => legalities.includes(d));
+
+                        if (!['KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM', 'M19'].some(set => d[0].printings.includes(set))) {
+                            standard.m18 = false;
+                        }
+                        if (!['XLN', 'RIX', 'DOM', 'M19', 'GRN', 'RNA', 'WAR', 'M20'].some(set => d[0].printings.includes(set))) {
+                            standard.m19 = false;
+                        }
+                        if (!['GRN', 'RNA', 'WAR', 'M20', 'ELD', 'THB', 'IKO', 'M21'].some(set => d[0].printings.includes(set))) {
+                            standard.m20 = false;
+                        }
+                        if (!['ELD', 'THB', 'IKO', 'M21', 'ZNR', 'KHM', 'STX', 'AFR'].some(set => d[0].printings.includes(set))) {
+                            standard.m21 = false;
+                        }
                     });
                     let html = '';
                     html += '<table>';
                     html += '<tr>';
                     html += '<th rowspan="20">Format</th>';
+                    html += '</tr>';
                     if (commander) {
                         let format_names = {
                             Brawl: 'Standard-Brawl',
@@ -528,19 +548,26 @@
 
                         if (formats.brawl_p.length > 0) {
                             formats.brawl_p.forEach(d => {
-                                html += '</tr><tr><td>' + format_names[d] + '</td>';
+                                html += '<tr>';
+                                html += '<td>' + format_names[d] + '</td>';
+                                html += '</tr>';
                             });
                         } else {
                             formats.brawl.forEach(d => {
-                                html += '</tr><tr><td>' + format_names[d] + '</td>';
+                                html += '<tr>';
+                                html += '<td>' + format_names[d] + '</td>';
+                                html += '</tr>';
                             });
                         }
                     } else {
                         if (formats.paper_p.length > 0) {
+                            html += '<tr>';
                             formats.paper_p.forEach(d => {
                                 html += '<td>' + d + '</td>';
                             });
+                            html += '</tr>';
                         } else {
+                            html += '<tr>';
                             formats.paper.forEach(d => {
                                 html += '<td>' + d + '</td>';
                             });
@@ -549,9 +576,29 @@
                             formats.arena.forEach(d => {
                                 html += '<td>' + d + '</td>';
                             });
+                            html += '</tr>';
                         }
                     }
-                    html += '</tr>';
+                    if (standard.m18) {
+                        html += '<tr>';
+                        html += '<td colspan="20">(M18 Standard)</td>';
+                        html += '</tr>';
+                    }
+                    if (standard.m19) {
+                        html += '<tr>';
+                        html += '<td colspan="20">(M19 Standard)</td>';
+                        html += '</tr>';
+                    }
+                    if (standard.m20) {
+                        html += '<tr>';
+                        html += '<td colspan="20">(M20 Standard)</td>';
+                        html += '</tr>';
+                    }
+                    if (standard.m21) {
+                        html += '<tr>';
+                        html += '<td colspan="20">(M21 Standard)</td>';
+                        html += '</tr>';
+                    }
                     html += '</table>';
                     $('#format').html(html);
                 }
