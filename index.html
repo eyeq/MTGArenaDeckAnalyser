@@ -112,11 +112,13 @@
 
             let counts_sum = counts.reduce((p, v) => p + v, 0);
             Promise.all(promises).then((data) => {
-                data = data.filter(d => d.length !== 0);
                 console.log(data);
 
                 // fix api.magicthegathering.io
                 data.forEach((d, i) => {
+                    if (d.length === 0) {
+                        return;
+                    }
                     d.forEach(d => {
                         d.color = d.color || [];
                         d.colorIdentity = d.colorIdentity || [];
@@ -151,6 +153,9 @@
                     };
                     let keys = Object.keys(symbols);
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         keys.forEach(key => {
@@ -277,6 +282,9 @@
                         }
                     };
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         if (sideboard === -1 || count <= sideboard) {
@@ -387,6 +395,9 @@
 
                     let keys = Object.keys(types);
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         keys.forEach(key => {
@@ -477,6 +488,9 @@
                     };
                     let keys = Object.keys(raritys);
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         raritys[d[0].rarity] += count;
@@ -513,6 +527,9 @@
                         m21: true,
                     };
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let legalities = d[0].legalities.map(d => d.format);
                         formats.paper = formats.paper.filter(d => legalities.includes(d));
                         formats.paper_p = formats.paper_p.filter(d => legalities.includes(d));
@@ -610,6 +627,9 @@
                         wrath: 0,
                     };
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         let type_temp = '';
@@ -671,6 +691,9 @@
                 {
                     let html = '';
                     data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
                         let count = counts[i];
 
                         if (i !== 0 && empty_row.includes(i)) {
