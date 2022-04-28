@@ -692,6 +692,26 @@
                                         keycards.push('Hero');
                                     }
                                     break;
+                                case 'March of the Multitudes':
+                                    if (count === 4) {
+                                        keycards.push('March');
+                                    }
+                                    break;
+                                case 'Nissa, Who Shakes the World':
+                                    if (count === 4) {
+                                        keycards.push('Nissa');
+                                    }
+                                    break;
+                                case 'Sephara, Sky\'s Blade':
+                                    if (count === 4) {
+                                        keycards.push('Sephara');
+                                    }
+                                    break;
+                                case 'Scapeshift':
+                                    if (count === 4) {
+                                        keycards.push('Scapeshift');
+                                    }
+                                    break;
                             }
                         }
                     });
@@ -727,6 +747,8 @@
                         mana_acceleration_cards: [],
                         instant: 0,
                         instant_cards: [],
+                        token: 0,
+                        token_cards: [],
                         creature: 0,
                         creature_cards: [],
                         direct_damage: 0,
@@ -809,6 +831,10 @@
                             archetype_counts.instant += count;
                             archetype_counts.instant_cards.push(d[0]);
                         }
+                        if (text_temp.includes('creature token')) {
+                            archetype_counts.token += count;
+                            archetype_counts.token_cards.push(d[0]);
+                        }
                         if (type_temp.includes('creature') || text_temp.includes('creature token')
                             || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                             archetype_counts.creature += count;
@@ -839,7 +865,7 @@
                     // subtype
                     html = '';
                     html += '<table>';
-                    if (archetype_counts.elemental / counts_sum >= 0.33) {
+                    if (archetype_counts.elemental / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
                         html += '</tr>';
@@ -860,7 +886,7 @@
                         html += '<td>Explore</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.flying / counts_sum >= 0.33) {
+                    if (archetype_counts.flying / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Flyer</td>';
                         html += '</tr>';
@@ -883,7 +909,7 @@
                         html += '<td>Spells</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mana_acceleration / counts_sum >= 0.28) {
+                    if (archetype_counts.mana_acceleration / counts_sum >= 0.21) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Ramp</td>';
@@ -893,6 +919,12 @@
                         output = true;
                         html += '<tr>';
                         html += '<td>Flash</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.token / counts_sum >= 0.23) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Token</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.creature / counts_sum >= 0.33) {
