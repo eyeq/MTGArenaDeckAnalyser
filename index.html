@@ -683,7 +683,8 @@
 
                         type_temp = type_temp.toLowerCase();
                         text_temp = text_temp.toLowerCase();
-                        if (type_temp.includes('creature') || text_temp.includes('creature token')) {
+                        if (type_temp.includes('creature') || text_temp.includes('creature token')
+                            || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                             archetype_counts.creature += count;
                         }
                         if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
