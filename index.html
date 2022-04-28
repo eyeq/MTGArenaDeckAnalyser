@@ -18,6 +18,10 @@
     <br>
     <br>
 
+    <div id="format" style="display: inline-block;"></div>
+    <br>
+    <br>
+
     <div id="symbol" style="display: inline-block;"></div>
     <div id="type" style="display: inline-block;"></div>
     <br>
@@ -527,6 +531,32 @@
                         });
 
                     resizeImage();
+                }
+
+                // format
+                {
+                    let formats = {
+                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage', 'Pauper'],
+                        arena: ['Alchemy', 'Historic'],
+                    };
+                    data.forEach((d, i) => {
+                        let legalities = d[0].legalities.map(d => d.format);
+                        formats.paper = formats.paper.filter(d => legalities.includes(d));
+                        formats.arena = formats.arena.filter(d => legalities.includes(d));
+                    });
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th>Format</th>';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += formats.paper.map(d => '<td>' + d + '</td>').join('');
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += formats.arena.map(d => '<td>' + d + '</td>').join('');
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#format').html(html);
                 }
             });
         }
