@@ -23,6 +23,10 @@
     <br>
     <br>
 
+    <div id="rarity" style="display: inline-block;"></div>
+    <br>
+    <br>
+
     <div id="cmc" style="display: inline-block;"></div>
     <br>
     <br>
@@ -451,6 +455,36 @@
                     });
                     html += '</table>';
                     $('#type').html(html);
+                }
+
+                // rarity
+                {
+                    let raritys = {
+                        Mythic: 0,
+                        Rare: 0,
+                        Uncommon: 0,
+                        Common: 0,
+                    };
+                    let keys = Object.keys(raritys);
+                    data.forEach((d, i) => {
+                        let count = counts[i];
+
+                        raritys[d[0].rarity] += count;
+                    });
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th></th>';
+                    html += '<th>Rarity</th>';
+                    html += '</tr>';
+                    keys.forEach(key => {
+                        html += '<tr>';
+                        html += '<td style="text-align: right;">' + raritys[key] + '</td>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</table>';
+                    $('#rarity').html(html);
                 }
 
                 // image
