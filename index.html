@@ -6,6 +6,8 @@
     <title>MTG Arena Deck Analyser</title>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    
+    <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
 <body>
@@ -84,6 +86,22 @@
             Promise.all(promises).then((data) => {
                 console.log(data);
 
+                // fix api.magicthegathering.io
+                data.forEach((d, i) => {
+                    if (d.length > 1) {
+                        if (d[0].imageUrl === d[1].imageUrl) {
+                            let url = new URL(d[1].imageUrl);
+                            let searchParams = url.searchParams;
+
+                            let id = searchParams.get('multiverseid');
+                            searchParams.set('multiverseid', Number(id) + 1);
+                            url.search = searchParams.toString();
+
+                            d[1].imageUrl = url.href;
+                        }
+                    }
+                });
+
                 // image
                 let board = '';
                 data.forEach((d, i) => {
@@ -96,12 +114,31 @@
                     board += '<div style="display: inline-block; position: relative;">';
                     board += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
 
+                    board += '<div class="front">';
                     board += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</p>';
                     board += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                    board += '</div>';
+                    if (d.length > 1) {
+                        board += '<div class="back" style="display: none;">';
+                        board += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
+                        board += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                        board += '</div>';
+
+                        board += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
+                    }
                     board += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
                     board += '</div>';
                 });
-                $('#board').html(board);
+                $('#board')
+                    .html(board)
+                    .on('click', '.flip', e => {
+                        let target = $(e.target);
+                        let back = target.prev();
+                        let front = back.prev();
+
+                        back.toggle();
+                        front.toggle();
+                    });
 
                 resizeImage();
             });
