@@ -6,7 +6,8 @@
     <title>MTG Arena Deck Analyser</title>
 
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
-    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+
     <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 </head>
 
@@ -14,6 +15,10 @@
     <div>
         <textarea id="input" rows="20" cols="45" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
     </div>
+    <br>
+    <br>
+
+    <div id="cmc" style="display: inline-block;"></div>
     <br>
     <br>
 
@@ -27,7 +32,7 @@
         <input type="radio" id="l" name="size" value="l">
         <label for="l">Large</label>
     </div>
-    <div id="board" style="width: 640px; resize: horizontal; overflow: auto;"></div>
+    <div id="board" style="width: 640px; resize: horizontal; overflow: hidden;"></div>
     <br>
     <br>
 
@@ -66,10 +71,14 @@
             let counts = [];
             let promises = [];
 
+            let sideboard = -1;
             let empty_row = [];
             text.split('\n').forEach(d => {
                 if (d === '') {
                     empty_row.push(counts.length);
+                }
+                if (d === 'Sideboard') {
+                    sideboard = counts.length;
                 }
 
                 let s = d.trim().split(' ');
@@ -84,10 +93,17 @@
             });
 
             Promise.all(promises).then((data) => {
+                data = data.filter(d => d.length !== 0);
                 console.log(data);
 
                 // fix api.magicthegathering.io
                 data.forEach((d, i) => {
+                    d.forEach(d => {
+                        d.color = d.color || [];
+                        d.colorIdentity = d.colorIdentity || [];
+                        d.manaCost = d.manaCost || '';
+                    });
+
                     if (d.length > 1) {
                         if (d[0].imageUrl === d[1].imageUrl) {
                             let url = new URL(d[1].imageUrl);
@@ -100,6 +116,176 @@
                             d[1].imageUrl = url.href;
                         }
                     }
+                });
+
+                // cmc
+                let colors = {};
+                ['Colorless', 'White', 'Blue', 'Black', 'Red', 'Green', 'Multicolored'].forEach(d => {
+                    colors[d] = {
+                        cmc_l: 0,
+                        cmc_0: 0,
+                        cmc_1: 0,
+                        cmc_2: 0,
+                        cmc_3: 0,
+                        cmc_4: 0,
+                        cmc_5: 0,
+                        cmc_6: 0,
+                        cmc_7: 0,
+                        cmc_x: 0,
+                    };
+                });
+                let getColorKey = (colorIdentity) => {
+                    switch (colorIdentity.length) {
+                        case 0:
+                            return 'Colorless';
+                        case 1:
+                            switch (colorIdentity[0]) {
+                                case 'W':
+                                    return 'White';
+                                case 'U':
+                                    return 'Blue';
+                                case 'B':
+                                    return 'Black';
+                                case 'R':
+                                    return 'Red';
+                                case 'G':
+                                    return 'Green';
+                            }
+                            break;
+                        default:
+                            return 'Multicolored';
+                    }
+                };
+                let addColorsCount = (d, count) => {
+                    let color_key = getColorKey(d.colorIdentity);
+
+                    if (d.types.includes('Land')) {
+                        colors[color_key].cmc_l += count;
+                    } else if (d.manaCost.includes('{X}')) {
+                        colors[color_key].cmc_x += count;
+                    } else {
+                        switch (d.cmc) {
+                            case 0:
+                                colors[color_key].cmc_0 += count;
+                                break;
+                            case 1:
+                                colors[color_key].cmc_1 += count;
+                                break;
+                            case 2:
+                                colors[color_key].cmc_2 += count;
+                                break;
+                            case 3:
+                                colors[color_key].cmc_3 += count;
+                                break;
+                            case 4:
+                                colors[color_key].cmc_4 += count;
+                                break;
+                            case 5:
+                                colors[color_key].cmc_5 += count;
+                                break;
+                            case 6:
+                                colors[color_key].cmc_6 += count;
+                                break;
+                            default:
+                                colors[color_key].cmc_7 += count;
+                                break;
+                        }
+                    }
+                };
+                data.forEach((d, i) => {
+                    let count = counts[i];
+
+                    if (sideboard === -1 || count <= sideboard) {
+                        addColorsCount(d[0], count);
+                        if (d.length > 1) {
+                            if (d[0].layout !== 'transform') {
+                                addColorsCount(d[1], count);
+                            }
+                        }
+                    }
+                });
+                $('#cmc').html('<canvas></canvas>');
+                let cmc_canvas = $('#cmc canvas')[0];
+                cmc_canvas.width = 640;
+                cmc_canvas.height = 240;
+
+                let getCmcArray = (d) => [d.cmc_l, d.cmc_0, d.cmc_1, d.cmc_2, d.cmc_3, d.cmc_4, d.cmc_5, d.cmc_6, d.cmc_7, d.cmc_x];
+                new Chart(cmc_canvas, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Land', '0', '1', '2', '3', '4', '5', '6', '7+', 'X'],
+                        datasets: [
+                            {
+                                label: 'Colorless',
+                                data: getCmcArray(colors['Colorless']),
+                                backgroundColor: '#E0E0E0',
+                            },
+                            {
+                                label: 'White',
+                                data: getCmcArray(colors['White']),
+                                backgroundColor: '#FFFDDB',
+                            },
+                            {
+                                label: 'Blue',
+                                data: getCmcArray(colors['Blue']),
+                                backgroundColor: '#C8E0F7',
+                            },
+                            {
+                                label: 'Black',
+                                data: getCmcArray(colors['Black']),
+                                backgroundColor: '#D0C7C0',
+                            },
+                            {
+                                label: 'Red',
+                                data: getCmcArray(colors['Red']),
+                                backgroundColor: '#E5B08F',
+                            },
+                            {
+                                label: 'Green',
+                                data: getCmcArray(colors['Green']),
+                                backgroundColor: '#B7D9B5',
+                            },
+                            {
+                                label: 'Multicolored',
+                                data: getCmcArray(colors['Multicolored']),
+                                backgroundColor: '#E5D97C',
+                            },
+                        ],
+                    },
+                    options: {
+                        responsive: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'CMC',
+                            },
+                            legend: {
+                                position: 'right',
+                            },
+                            tooltip: {
+                                bodyAlign: 'right',
+                                footerAlign: 'right',
+                                callbacks: {
+                                    footer: (tooltipItem) => {
+                                        let sum = tooltipItem.reduce((p, v) => p + v.parsed.y, 0);
+                                        return 'Sum: ' + sum;
+                                    },
+                                },
+                            },
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index',
+                        },
+                        scales: {
+                            x: {
+                                stacked: true,
+                            },
+                            y: {
+                                stacked: true,
+                            },
+                        },
+                    },
                 });
 
                 // image
@@ -150,12 +336,7 @@
                 request.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + set + '&number=' + number);
                 request.onload = () => {
                     let data = JSON.parse(request.response);
-
-                    if (data.cards.length !== 0) {
-                        resolve(data.cards);
-                    } else {
-                        reject();
-                    }
+                    resolve(data.cards);
                 };
                 request.onerror = () => {
                     reject();
