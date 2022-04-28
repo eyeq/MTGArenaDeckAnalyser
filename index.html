@@ -12,31 +12,50 @@
 </head>
 
 <body>
+    <h1>MTG Arena Deck Analyser</h1>
+    <h2>Input</h2>
     <div>
         <textarea id="input" rows="20" cols="45" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
     </div>
-    <br>
+
+    <h2>Output</h2>
+    <div style="display: inline-block;">
+        <h3>Format</h3>
+        <div id="format" ></div>
+    </div>
     <br>
 
-    <div id="format" style="display: inline-block;"></div>
-    <br>
-    <br>
-
-    <div id="symbol" style="display: inline-block;"></div>
-    <div id="keycard" style="display: inline-block;"></div>
-    <div id="archetype" style="display: inline-block;"></div>
-    <br>
-    <br>
-
-    <div id="rarity" style="display: inline-block;"></div>
-    <div id="type" style="display: inline-block;"></div>
-    <br>
-    <br>
-
-    <div id="cmc" style="display: inline-block;"></div>
-    <br>
+    <div style="display: inline-block;">
+        <h3>Mana Symbol</h3>
+        <div id="symbol"></div>
+    </div>
+    <div style="display: inline-block;">
+        <h3>Keycard</h3>
+        <div id="keycard"></div>
+    </div>
+    <div style="display: inline-block;">
+        <h3>Archetype</h3>
+        <div id="archetype"></div>
+    </div>
     <br>
 
+    <div style="display: inline-block;">
+        <h3>Rarity</h3>
+        <div id="rarity"></div>
+    </div>
+    <div style="display: inline-block;">
+        <h3>Card Type</h3>
+        <div id="type"></div>
+    </div>
+    <br>
+
+    <div style="display: inline-block;">
+        <h3>CMC</h3>
+        <div id="cmc"></div>
+    </div>
+    <br>
+    
+    <h3>Image</h3>
     <div>
         <input type="radio" id="s" name="size" value="s">
         <label for="s">Small</label>
@@ -196,10 +215,6 @@
                         options: {
                             responsive: false,
                             plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Mana Symbol'
-                                },
                                 legend: false,
                                 tooltip: false,
                             },
@@ -348,10 +363,6 @@
                         options: {
                             responsive: false,
                             plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'CMC',
-                                },
                                 legend: {
                                     position: 'right',
                                 },
@@ -429,7 +440,7 @@
                     html += '<th>Front</th>';
                     html += '<th>Back</th>';
                     html += '<th>Sum</th>';
-                    html += '<th>Card Type</th>';
+                    html += '<th>Type</th>';
                     html += '</tr>';
                     keys.forEach(key => {
                         html += '<tr>';
@@ -498,10 +509,6 @@
                     });
                     let html = '';
                     html += '<table>';
-                    html += '<tr>';
-                    html += '<th></th>';
-                    html += '<th>Rarity</th>';
-                    html += '</tr>';
                     keys.forEach(key => {
                         html += '<tr>';
                         html += '<td style="text-align: right;">' + raritys[key] + '</td>';
@@ -553,9 +560,6 @@
                     });
                     let html = '';
                     html += '<table>';
-                    html += '<tr>';
-                    html += '<th rowspan="20">Format</th>';
-                    html += '</tr>';
                     if (commander) {
                         let format_names = {
                             Brawl: 'Standard-Brawl',
@@ -639,7 +643,6 @@
                     let html = '';
                     html += '<table>';
                     html += '<tr>';
-                    html += '<th>Keycard</th>';
                     keycards.forEach(d => {
                         html += '<td>' + d + '</td>';
                     });
@@ -695,7 +698,6 @@
                     let html = '';
                     html += '<table>';
                     html += '<tr>';
-                    html += '<th>Archetype</th>';
                     let output = false;
                     if (archetype_counts.creature / counts_sum >= 0.40) {
                         output = true;
