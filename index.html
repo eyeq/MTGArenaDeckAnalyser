@@ -23,11 +23,12 @@
     <br>
 
     <div id="symbol" style="display: inline-block;"></div>
-    <div id="type" style="display: inline-block;"></div>
+    <div id="archetype" style="display: inline-block;"></div>
     <br>
     <br>
 
     <div id="rarity" style="display: inline-block;"></div>
+    <div id="type" style="display: inline-block;"></div>
     <br>
     <br>
 
@@ -109,6 +110,7 @@
                 }
             });
 
+            let counts_sum = counts.reduce((p, v) => p + v, 0);
             Promise.all(promises).then((data) => {
                 data = data.filter(d => d.length !== 0);
                 console.log(data);
@@ -552,6 +554,70 @@
                     html += '</tr>';
                     html += '</table>';
                     $('#format').html(html);
+                }
+
+                // archetype
+                {
+                    let archetype_counts = {
+                        creature: 0,
+                        wrath: 0,
+                    };
+                    data.forEach((d, i) => {
+                        let count = counts[i];
+
+                        let type_temp = '';
+                        let text_temp = '';
+                        if (!d[0].types.includes('Land')) {
+                            type_temp += d[0].type;
+                            text_temp += d[0].text;
+                        }
+                        if (d.length > 1) {
+                            if (!d[1].types.includes('Land')) {
+                                type_temp += ' ' + d[1].type;
+                                text_temp += ' ' + d[1].text;
+                            }
+                        }
+
+                        text_temp = text_temp.split(d[0].name).join('.');
+                        if (d.length > 1) {
+                            text_temp = text_temp.split(d[1].name).join('.');
+                        }
+
+                        type_temp = type_temp.toLowerCase();
+                        text_temp = text_temp.toLowerCase();
+                        if (type_temp.includes('creature') || text_temp.includes('creature token')) {
+                            archetype_counts.creature += count;
+                        }
+                        if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
+                            || text_temp.includes('exile all') || text_temp.includes('exile each')
+                            || text_temp.includes('return all')
+                            || text_temp.includes('sacrifices the rest')
+                            || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
+                            || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
+                            archetype_counts.wrath += count;
+                        }
+                    });
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th>Archetype</th>';
+                    let output = false;
+                    if (archetype_counts.creature / counts_sum >= 0.40) {
+                        output = true;
+                        html += '<td>Beatdown</td>';
+                    }
+                    if (archetype_counts.wrath / counts_sum >= 0.05) {
+                        output = true;
+                        html += '<td>Control</td>';
+                    }
+                    if (!output) {
+                        html += '<td>???</td>';
+                    }
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#archetype').html(html);
+
+                    console.log(archetype_counts);
                 }
 
                 // image
