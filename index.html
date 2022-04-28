@@ -711,6 +711,8 @@
                     let archetype_counts = {
                         elemental: 0,
                         elemental_cards: [],
+                        vampire: 0,
+                        vampire_cards: [],
 
                         explore: 0,
                         explore_cards: [],
@@ -769,6 +771,10 @@
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
                             archetype_counts.elemental_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
+                            archetype_counts.vampire += count;
+                            archetype_counts.vampire_cards.push(d[0]);
                         }
 
                         // keyword
@@ -836,6 +842,11 @@
                     if (archetype_counts.elemental / counts_sum >= 0.33) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.vampire / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Vampire</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
