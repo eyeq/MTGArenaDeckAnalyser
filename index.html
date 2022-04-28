@@ -648,6 +648,16 @@
                             }
                         } else {
                             switch (d[0].name) {
+                                case 'Arclight Phoenix':
+                                    if (count === 4) {
+                                        keycards.push('Phoenix');
+                                    }
+                                    break;
+                                case 'Crackling Drake':
+                                    if (count === 4) {
+                                        keycards.push('Drake');
+                                    }
+                                    break;
                                 case 'Feather, the Redeemed':
                                     if (count === 4) {
                                         keycards.push('Feather');
@@ -668,11 +678,11 @@
                     });
                     let html = '';
                     html += '<table>';
-                    html += '<tr>';
                     keycards.forEach(d => {
+                        html += '<tr>';
                         html += '<td>' + d + '</td>';
+                        html += '</tr>';
                     });
-                    html += '</tr>';
                     html += '</table>';
                     $('#keycard').html(html);
                 }
@@ -690,6 +700,8 @@
                         heroic: 0,
                         heroci_cards: [],
 
+                        spells: 0,
+                        spells_cards: [],
                         mana_acceleration: 0,
                         mana_acceleration_cards: [],
                         creature: 0,
@@ -753,6 +765,10 @@
                         }
 
                         // decktype
+                        if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
+                            archetype_counts.spells += count;
+                            archetype_counts.spells_cards.push(d[0]);
+                        }
                         if (text_temp.includes('add {')
                             || (text_temp.includes('add') && text_temp.includes('mana'))
                             || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
@@ -785,56 +801,74 @@
                     // subtype
                     html = '';
                     html += '<table>';
-                    html += '<tr>';
                     if (archetype_counts.elemental / counts_sum >= 0.33) {
+                        html += '<tr>';
                         html += '<td>Elemental</td>';
+                        html += '</tr>';
                     }
-                    html += '</tr>';
                     html += '</table>';
                     $('#subtype').html(html);
 
                     // keyword
                     html = '';
                     html += '<table>';
-                    html += '<tr>';
                     if (archetype_counts.explore / counts_sum >= 0.16) {
+                        html += '<tr>';
                         html += '<td>Explore</td>';
+                        html += '</tr>';
                     }
                     if (archetype_counts.flying / counts_sum >= 0.33) {
+                        html += '<tr>';
                         html += '<td>Flyer</td>';
+                        html += '</tr>';
                     }
                     if (archetype_counts.heroic / counts_sum >= 0.10) {
+                        html += '<tr>';
                         html += '<td>Heroic</td>';
+                        html += '</tr>';
                     }
-                    html += '</tr>';
                     html += '</table>';
                     $('#keyword').html(html);
 
                     // archetype
                     html = '';
                     html += '<table>';
-                    html += '<tr>';
                     let output = false;
+                    if (archetype_counts.spells / counts_sum >= 0.33) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Spells</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.mana_acceleration / counts_sum >= 0.28) {
                         output = true;
+                        html += '<tr>';
                         html += '<td>Ramp</td>';
+                        html += '</tr>';
                     }
                     if (archetype_counts.creature / counts_sum >= 0.33) {
                         output = true;
+                        html += '<tr>';
                         html += '<td>Beatdown</td>';
+                        html += '</tr>';
                     }
                     if (archetype_counts.reanimate / counts_sum >= 0.10) {
                         output = true;
+                        html += '<tr>';
                         html += '<td>Reanimate</td>';
+                        html += '</tr>';
                     }
                     if (archetype_counts.wrath / counts_sum >= 0.05) {
                         output = true;
+                        html += '<tr>';
                         html += '<td>Control</td>';
+                        html += '</tr>';
                     }
                     if (!output) {
+                        html += '<tr>';
                         html += '<td>???</td>';
+                        html += '</tr>';
                     }
-                    html += '</tr>';
                     html += '</table>';
                     $('#archetype').html(html);
 
