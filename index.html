@@ -15,6 +15,16 @@
     <br>
     <br>
 
+    <div>
+        <input type="radio" id="s" name="size" value="s">
+        <label for="s">Small</label>
+
+        <input type="radio" id="m" name="size" value="m" checked>
+        <label for="m">Medium</label>
+
+        <input type="radio" id="l" name="size" value="l">
+        <label for="l">Large</label>
+    </div>
     <div id="board" style="width: 640px; resize: horizontal; overflow: auto;"></div>
     <br>
     <br>
@@ -25,6 +35,28 @@
     </footer>
 
     <script>
+        $('input[name="size"]').on('change', resizeImage);
+
+        function resizeImage() {
+            let img = $('#board img');
+
+            let val = $('input:radio[name="size"]:checked').val();
+            switch (val) {
+                case 's':
+                    img.prop('width', '106');
+                    img.prop('height', '148');
+                    break;
+                case 'm':
+                    img.prop('width', '159');
+                    img.prop('height', '222');
+                    break;
+                case 'l':
+                    img.prop('width', '212');
+                    img.prop('height', '296');
+                    break;
+            }
+        }
+
         function read() {
             let text = $('#input').val().trim();
             text = text.replace(/\r\n|\r/g, '\n');
@@ -62,11 +94,16 @@
                     }
 
                     board += '<div style="display: inline-block; position: relative;">';
+                    board += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
+
+                    board += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</p>';
                     board += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
                     board += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
                     board += '</div>';
                 });
                 $('#board').html(board);
+
+                resizeImage();
             });
         }
 
