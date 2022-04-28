@@ -731,6 +731,8 @@
                     let archetype_counts = {
                         elemental: 0,
                         elemental_cards: [],
+                        knight: 0,
+                        knight_cards: [],
                         vampire: 0,
                         vampire_cards: [],
 
@@ -793,6 +795,10 @@
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
                             archetype_counts.elemental_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('knight') || text_temp.includes('knight')) {
+                            archetype_counts.knight += count;
+                            archetype_counts.knight_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
                             archetype_counts.vampire += count;
@@ -868,6 +874,11 @@
                     if (archetype_counts.elemental / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.knight / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Knight</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.vampire / counts_sum >= 0.26) {
