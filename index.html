@@ -648,14 +648,19 @@
                             }
                         } else {
                             switch (d[0].name) {
-                                case 'Ghalta, Primal Hunger':
+                                case 'Feather, the Redeemed':
                                     if (count === 4) {
-                                        keycards.push('Ghalta');
+                                        keycards.push('Feather');
                                     }
                                     break;
                                 case 'Flood of Tears':
                                     if (count === 4) {
                                         keycards.push('Flood of Tears');
+                                    }
+                                    break;
+                                case 'Ghalta, Primal Hunger':
+                                    if (count === 4) {
+                                        keycards.push('Ghalta');
                                     }
                                     break;
                             }
@@ -682,6 +687,8 @@
                         explore_cards: [],
                         flying: 0,
                         flying_cards: [],
+                        heroic: 0,
+                        heroci_cards: [],
 
                         mana_acceleration: 0,
                         mana_acceleration_cards: [],
@@ -738,6 +745,12 @@
                             archetype_counts.flying += count;
                             archetype_counts.flying_cards.push(d[0]);
                         }
+                        if (text_temp.includes('heroic')
+                            || (text_temp.includes('whenever you cast') &&  text_temp.includes('that targets'))
+                            || text_temp.includes('becomes the target of a spell you control')) {
+                            archetype_counts.heroic += count;
+                            archetype_counts.heroci_cards.push(d[0]);
+                        }
 
                         // decktype
                         if (text_temp.includes('add {')
@@ -773,7 +786,7 @@
                     html = '';
                     html += '<table>';
                     html += '<tr>';
-                    if (archetype_counts.elemental / counts_sum >= 0.40) {
+                    if (archetype_counts.elemental / counts_sum >= 0.33) {
                         html += '<td>Elemental</td>';
                     }
                     html += '</tr>';
@@ -787,8 +800,11 @@
                     if (archetype_counts.explore / counts_sum >= 0.16) {
                         html += '<td>Explore</td>';
                     }
-                    if (archetype_counts.flying / counts_sum >= 0.40) {
+                    if (archetype_counts.flying / counts_sum >= 0.33) {
                         html += '<td>Flyer</td>';
+                    }
+                    if (archetype_counts.heroic / counts_sum >= 0.10) {
+                        html += '<td>Heroic</td>';
                     }
                     html += '</tr>';
                     html += '</table>';
@@ -803,7 +819,7 @@
                         output = true;
                         html += '<td>Ramp</td>';
                     }
-                    if (archetype_counts.creature / counts_sum >= 0.40) {
+                    if (archetype_counts.creature / counts_sum >= 0.33) {
                         output = true;
                         html += '<td>Beatdown</td>';
                     }
