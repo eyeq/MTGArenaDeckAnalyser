@@ -4,9 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <title>MTG Arena Deck Analyser</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
 </head>
 
 <body>
+    <div>
+        <textarea id="input" rows="20" cols="45" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
+    </div>
+    <br>
+    <br>
+
+    <div id="board" style="width: 640px; resize: horizontal; overflow: auto;"></div>
+    <br>
+    <br>
+
+    <footer style="padding: 16px; background: #f9f9fb;">
+        <p>Using "Magic: The Gathering API(api.magicthegathering.io)".</p>
+        <p>Thanks for <a href="https://magicthegathering.io/">MTG Developers</a> and <a href="https://mtgjson.com/">MTGJSON</a>.</p>
+    </footer>
+
+    <script>
+        function read() {
+            let text = $('#input').val().trim();
+            text = text.replace(/\r\n|\r/g, '\n');
+
+            let counts = [];
+            let promises = [];
+
+            let empty_row = [];
+            text.split('\n').forEach(d => {
+                if (d === '') {
+                    empty_row.push(counts.length);
+                }
+
+                let s = d.trim().split(' ');
+                if (s.length >= 3) {
+                    let count = Number(s[0]);
+                    let set = s[s.length - 2].replace(/[()]/g, '');
+                    let number = s[s.length - 1];
+
+                    counts.push(count);
+                    promises.push(send(set, number));
+                }
+            });
+
+            Promise.all(promises).then((data) => {
+                console.log(data);
+
+                // image
+                let board = '';
+                data.forEach((d, i) => {
+                    let count = counts[i];
+
+                    if (i !== 0 && empty_row.includes(i)) {
+                        board += '<hr style="height: 2px; background: #000000;">';
+                    }
+
+                    board += '<div style="display: inline-block; position: relative;">';
+                    board += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                    board += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
+                    board += '</div>';
+                });
+                $('#board').html(board);
+            });
+        }
+
+        function send(set, number) {
+            return new Promise((resolve, reject) => {
+                let request = new XMLHttpRequest();
+                request.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + set + '&number=' + number);
+                request.onload = () => {
+                    let data = JSON.parse(request.response);
+
+                    if (data.cards.length !== 0) {
+                        resolve(data.cards);
+                    } else {
+                        reject();
+                    }
+                };
+                request.onerror = () => {
+                    reject();
+                }
+                request.send();
+            });
+        }
+    </script>
 </body>
 
 </html>
