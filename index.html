@@ -498,15 +498,19 @@
                 // format
                 {
                     let formats = {
-                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage', 'Pauper'],
+                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage'],
+                        paper_p: ['Pauper'],
                         arena: ['Alchemy', 'Historic'],
-                        brawl: ['Brawl', 'Historicbrawl', 'Commander', 'Paupercommander'],
+                        brawl: ['Brawl', 'Historicbrawl', 'Commander'],
+                        brawl_p: ['Paupercommander'],
                     };
                     data.forEach((d, i) => {
                         let legalities = d[0].legalities.map(d => d.format);
                         formats.paper = formats.paper.filter(d => legalities.includes(d));
+                        formats.paper_p = formats.paper_p.filter(d => legalities.includes(d));
                         formats.arena = formats.arena.filter(d => legalities.includes(d));
                         formats.brawl = formats.brawl.filter(d => legalities.includes(d));
+                        formats.brawl_p = formats.brawl_p.filter(d => legalities.includes(d));
                     });
                     let html = '';
                     html += '<table>';
@@ -519,18 +523,31 @@
                             Commander: 'Commander',
                             Paupercommander: 'Pauper-Commander',
                         };
-                        formats.brawl.forEach(d => {
-                            html += '</tr><tr><td>' + format_names[d] + '</td>';
-                        });
+
+                        if (formats.brawl_p.length > 0) {
+                            formats.brawl_p.forEach(d => {
+                                html += '</tr><tr><td>' + format_names[d] + '</td>';
+                            });
+                        } else {
+                            formats.brawl.forEach(d => {
+                                html += '</tr><tr><td>' + format_names[d] + '</td>';
+                            });
+                        }
                     } else {
-                        formats.paper.forEach(d => {
-                            html += '<td>' + d + '</td>';
-                        });
-                        html += '</tr>';
-                        html += '<tr>';
-                        formats.arena.forEach(d => {
-                            html += '<td>' + d + '</td>';
-                        });
+                        if (formats.paper_p.length > 0) {
+                            formats.paper_p.forEach(d => {
+                                html += '<td>' + d + '</td>';
+                            });
+                        } else {
+                            formats.paper.forEach(d => {
+                                html += '<td>' + d + '</td>';
+                            });
+                            html += '</tr>';
+                            html += '<tr>';
+                            formats.arena.forEach(d => {
+                                html += '<td>' + d + '</td>';
+                            });
+                        }
                     }
                     html += '</tr>';
                     html += '</table>';
