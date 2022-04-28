@@ -23,6 +23,7 @@
     <br>
 
     <div id="symbol" style="display: inline-block;"></div>
+    <div id="keycard" style="display: inline-block;"></div>
     <div id="archetype" style="display: inline-block;"></div>
     <br>
     <br>
@@ -618,6 +619,33 @@
                     }
                     html += '</table>';
                     $('#format').html(html);
+                }
+
+                // keycard
+                {
+                    var keycards = [];
+                    data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
+                        let count = counts[i];
+
+                        if (commander) {
+                            if (i === 0) {
+                                keycards.push(d[i].name);
+                            }
+                        }
+                    });
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th>Keycard</th>';
+                    keycards.forEach(d => {
+                        html += '<td>' + d + '</td>';
+                    });
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#keycard').html(html);
                 }
 
                 // archetype
