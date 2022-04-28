@@ -742,6 +742,8 @@
                         flying_cards: [],
                         heroic: 0,
                         heroci_cards: [],
+                        mentor: 0,
+                        mentor_cards: [],
 
                         spells: 0,
                         spells_cards: [],
@@ -819,6 +821,10 @@
                             || text_temp.includes('becomes the target of a spell you control')) {
                             archetype_counts.heroic += count;
                             archetype_counts.heroci_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('mentor')) {
+                            archetype_counts.mentor += count;
+                            archetype_counts.mentor_cards.push(d[0]);
                         }
 
                         // decktype
@@ -905,6 +911,11 @@
                     if (archetype_counts.heroic / counts_sum >= 0.10) {
                         html += '<tr>';
                         html += '<td>Heroic</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.mentor / counts_sum >= 0.23) {
+                        html += '<tr>';
+                        html += '<td>Mentor</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
