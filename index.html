@@ -723,6 +723,8 @@
                         spells_cards: [],
                         mana_acceleration: 0,
                         mana_acceleration_cards: [],
+                        instant: 0,
+                        instant_cards: [],
                         creature: 0,
                         creature_cards: [],
                         direct_damage: 0,
@@ -797,6 +799,10 @@
                             archetype_counts.mana_acceleration += count;
                             archetype_counts.mana_acceleration_cards.push(d[0]);
                         }
+                        if (type_temp.includes('instant') || text_temp.includes('flash')) {
+                            archetype_counts.instant += count;
+                            archetype_counts.instant_cards.push(d[0]);
+                        }
                         if (type_temp.includes('creature') || text_temp.includes('creature token')
                             || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                             archetype_counts.creature += count;
@@ -870,6 +876,12 @@
                         output = true;
                         html += '<tr>';
                         html += '<td>Ramp</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.instant / counts_sum >= 0.33) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Flash</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.creature / counts_sum >= 0.33) {
