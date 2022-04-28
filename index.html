@@ -19,6 +19,7 @@
     <br>
 
     <div id="symbol" style="display: inline-block;"></div>
+    <div id="type" style="display: inline-block;"></div>
     <br>
     <br>
 
@@ -123,273 +124,376 @@
                 });
 
                 // symbol
-                let symbols = {
-                    C: 0,
-                    W: 0,
-                    U: 0,
-                    B: 0,
-                    R: 0,
-                    G: 0,
-                    P: 0,
-                    S: 0,
-                };
-                data.forEach((d, i) => {
-                    let count = counts[i];
-
+                {
+                    let symbols = {
+                        C: 0,
+                        W: 0,
+                        U: 0,
+                        B: 0,
+                        R: 0,
+                        G: 0,
+                        P: 0,
+                        S: 0,
+                    };
                     let keys = Object.keys(symbols);
-                    if (!d[0].types.includes('Land')) {
-                        keys.forEach(key => symbols[key] += (d[0].manaCost.split(key).length - 1) * count);
-                    }
-                    if (d.length > 1) {
-                        if (d[0].layout !== 'transform') {
-                            if (!d[1].types.includes('Land')) {
-                                keys.forEach(key => symbols[key] += (d[1].manaCost.split(key).length - 1) * count);
-                            }
-                        }
-                    }
-                });
-                if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
-                    symbols.C = 1;
-                }
-                $('#symbol').html('<canvas></canvas>');
-                var symbol_canvas = $('#symbol canvas')[0];
-                symbol_canvas.width = 80;
-                symbol_canvas.height = 80;
+                    data.forEach((d, i) => {
+                        let count = counts[i];
 
-                new Chart(symbol_canvas, {
-                    type: 'pie',
-                    data: {
-                        labels: ['C', 'W', 'U', 'B', 'R', 'G'],
-                        datasets: [
-                            {
-                                data: [symbols.C, symbols.W, symbols.U, symbols.B, symbols.R, symbols.G],
-                                backgroundColor: ['#E0E0E0', '#FFFDDB', '#C8E0F7', '#D0C7C0', '#E5B08F', '#B7D9B5'],
-                                borderColor: ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000'],
-                            },
-                        ],
-                    },
-                    options: {
-                        responsive: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'Mana Symbol'
-                            },
-                            legend: false,
-                            tooltip: false,
+                        keys.forEach(key => {
+                            if (!d[0].types.includes('Land')) {
+                                symbols[key] += (d[0].manaCost.split(key).length - 1) * count;
+                            }
+
+                            if (d.length > 1) {
+                                if (d[0].layout !== 'transform') {
+                                    if (!d[1].types.includes('Land')) {
+                                        symbols[key] += (d[1].manaCost.split(key).length - 1) * count;
+                                    }
+                                }
+                            }
+                        });
+                    });
+                    if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
+                        symbols.C = 1;
+                    }
+                    $('#symbol').html('<canvas></canvas>');
+                    let canvas = $('#symbol canvas')[0];
+                    canvas.width = 80;
+                    canvas.height = 80;
+
+                    new Chart(canvas, {
+                        type: 'pie',
+                        data: {
+                            labels: ['C', 'W', 'U', 'B', 'R', 'G'],
+                            datasets: [
+                                {
+                                    data: [symbols.C, symbols.W, symbols.U, symbols.B, symbols.R, symbols.G],
+                                    backgroundColor: ['#E0E0E0', '#FFFDDB', '#C8E0F7', '#D0C7C0', '#E5B08F', '#B7D9B5'],
+                                    borderColor: ['#000000', '#000000', '#000000', '#000000', '#000000', '#000000'],
+                                },
+                            ],
                         },
-                    },
-                });
+                        options: {
+                            responsive: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Mana Symbol'
+                                },
+                                legend: false,
+                                tooltip: false,
+                            },
+                        },
+                    });
+                }
 
                 // cmc
-                let colors = {};
-                ['Colorless', 'White', 'Blue', 'Black', 'Red', 'Green', 'Multicolored'].forEach(d => {
-                    colors[d] = {
-                        cmc_l: 0,
-                        cmc_0: 0,
-                        cmc_1: 0,
-                        cmc_2: 0,
-                        cmc_3: 0,
-                        cmc_4: 0,
-                        cmc_5: 0,
-                        cmc_6: 0,
-                        cmc_7: 0,
-                        cmc_x: 0,
-                    };
-                });
-                let getColorKey = (colorIdentity) => {
-                    switch (colorIdentity.length) {
-                        case 0:
-                            return 'Colorless';
-                        case 1:
-                            switch (colorIdentity[0]) {
-                                case 'W':
-                                    return 'White';
-                                case 'U':
-                                    return 'Blue';
-                                case 'B':
-                                    return 'Black';
-                                case 'R':
-                                    return 'Red';
-                                case 'G':
-                                    return 'Green';
-                            }
-                            break;
-                        default:
-                            return 'Multicolored';
-                    }
-                };
-                let addColorsCount = (d, count) => {
-                    let color_key = getColorKey(d.colorIdentity);
-
-                    if (d.types.includes('Land')) {
-                        colors[color_key].cmc_l += count;
-                    } else if (d.manaCost.includes('{X}')) {
-                        colors[color_key].cmc_x += count;
-                    } else {
-                        switch (d.cmc) {
+                {
+                    let colors = {};
+                    ['Colorless', 'White', 'Blue', 'Black', 'Red', 'Green', 'Multicolored'].forEach(d => {
+                        colors[d] = {
+                            cmc_l: 0,
+                            cmc_0: 0,
+                            cmc_1: 0,
+                            cmc_2: 0,
+                            cmc_3: 0,
+                            cmc_4: 0,
+                            cmc_5: 0,
+                            cmc_6: 0,
+                            cmc_7: 0,
+                            cmc_x: 0,
+                        };
+                    });
+                    let getColorKey = (colorIdentity) => {
+                        switch (colorIdentity.length) {
                             case 0:
-                                colors[color_key].cmc_0 += count;
-                                break;
+                                return 'Colorless';
                             case 1:
-                                colors[color_key].cmc_1 += count;
-                                break;
-                            case 2:
-                                colors[color_key].cmc_2 += count;
-                                break;
-                            case 3:
-                                colors[color_key].cmc_3 += count;
-                                break;
-                            case 4:
-                                colors[color_key].cmc_4 += count;
-                                break;
-                            case 5:
-                                colors[color_key].cmc_5 += count;
-                                break;
-                            case 6:
-                                colors[color_key].cmc_6 += count;
+                                switch (colorIdentity[0]) {
+                                    case 'W':
+                                        return 'White';
+                                    case 'U':
+                                        return 'Blue';
+                                    case 'B':
+                                        return 'Black';
+                                    case 'R':
+                                        return 'Red';
+                                    case 'G':
+                                        return 'Green';
+                                }
                                 break;
                             default:
-                                colors[color_key].cmc_7 += count;
-                                break;
+                                return 'Multicolored';
                         }
-                    }
-                };
-                data.forEach((d, i) => {
-                    let count = counts[i];
+                    };
+                    let addColorsCount = (d, count) => {
+                        let color_key = getColorKey(d.colorIdentity);
 
-                    if (sideboard === -1 || count <= sideboard) {
-                        addColorsCount(d[0], count);
-                        if (d.length > 1) {
-                            if (d[0].layout !== 'transform') {
-                                addColorsCount(d[1], count);
+                        if (d.types.includes('Land')) {
+                            colors[color_key].cmc_l += count;
+                        } else if (d.manaCost.includes('{X}')) {
+                            colors[color_key].cmc_x += count;
+                        } else {
+                            switch (d.cmc) {
+                                case 0:
+                                    colors[color_key].cmc_0 += count;
+                                    break;
+                                case 1:
+                                    colors[color_key].cmc_1 += count;
+                                    break;
+                                case 2:
+                                    colors[color_key].cmc_2 += count;
+                                    break;
+                                case 3:
+                                    colors[color_key].cmc_3 += count;
+                                    break;
+                                case 4:
+                                    colors[color_key].cmc_4 += count;
+                                    break;
+                                case 5:
+                                    colors[color_key].cmc_5 += count;
+                                    break;
+                                case 6:
+                                    colors[color_key].cmc_6 += count;
+                                    break;
+                                default:
+                                    colors[color_key].cmc_7 += count;
+                                    break;
                             }
                         }
-                    }
-                });
-                $('#cmc').html('<canvas></canvas>');
-                let cmc_canvas = $('#cmc canvas')[0];
-                cmc_canvas.width = 640;
-                cmc_canvas.height = 240;
+                    };
+                    data.forEach((d, i) => {
+                        let count = counts[i];
 
-                let getCmcArray = (d) => [d.cmc_l, d.cmc_0, d.cmc_1, d.cmc_2, d.cmc_3, d.cmc_4, d.cmc_5, d.cmc_6, d.cmc_7, d.cmc_x];
-                new Chart(cmc_canvas, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Land', '0', '1', '2', '3', '4', '5', '6', '7+', 'X'],
-                        datasets: [
-                            {
-                                label: 'Colorless',
-                                data: getCmcArray(colors['Colorless']),
-                                backgroundColor: '#E0E0E0',
-                            },
-                            {
-                                label: 'White',
-                                data: getCmcArray(colors['White']),
-                                backgroundColor: '#FFFDDB',
-                            },
-                            {
-                                label: 'Blue',
-                                data: getCmcArray(colors['Blue']),
-                                backgroundColor: '#C8E0F7',
-                            },
-                            {
-                                label: 'Black',
-                                data: getCmcArray(colors['Black']),
-                                backgroundColor: '#D0C7C0',
-                            },
-                            {
-                                label: 'Red',
-                                data: getCmcArray(colors['Red']),
-                                backgroundColor: '#E5B08F',
-                            },
-                            {
-                                label: 'Green',
-                                data: getCmcArray(colors['Green']),
-                                backgroundColor: '#B7D9B5',
-                            },
-                            {
-                                label: 'Multicolored',
-                                data: getCmcArray(colors['Multicolored']),
-                                backgroundColor: '#E5D97C',
-                            },
-                        ],
-                    },
-                    options: {
-                        responsive: false,
-                        plugins: {
-                            title: {
-                                display: true,
-                                text: 'CMC',
-                            },
-                            legend: {
-                                position: 'right',
-                            },
-                            tooltip: {
-                                bodyAlign: 'right',
-                                footerAlign: 'right',
-                                callbacks: {
-                                    footer: (tooltipItem) => {
-                                        let sum = tooltipItem.reduce((p, v) => p + v.parsed.y, 0);
-                                        return 'Sum: ' + sum;
+                        if (sideboard === -1 || count <= sideboard) {
+                            addColorsCount(d[0], count);
+                            if (d.length > 1) {
+                                if (d[0].layout !== 'transform') {
+                                    addColorsCount(d[1], count);
+                                }
+                            }
+                        }
+                    });
+                    $('#cmc').html('<canvas></canvas>');
+                    let canvas = $('#cmc canvas')[0];
+                    canvas.width = 640;
+                    canvas.height = 240;
+
+                    let getCmcArray = (d) => [d.cmc_l, d.cmc_0, d.cmc_1, d.cmc_2, d.cmc_3, d.cmc_4, d.cmc_5, d.cmc_6, d.cmc_7, d.cmc_x];
+                    new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Land', '0', '1', '2', '3', '4', '5', '6', '7+', 'X'],
+                            datasets: [
+                                {
+                                    label: 'Colorless',
+                                    data: getCmcArray(colors['Colorless']),
+                                    backgroundColor: '#E0E0E0',
+                                },
+                                {
+                                    label: 'White',
+                                    data: getCmcArray(colors['White']),
+                                    backgroundColor: '#FFFDDB',
+                                },
+                                {
+                                    label: 'Blue',
+                                    data: getCmcArray(colors['Blue']),
+                                    backgroundColor: '#C8E0F7',
+                                },
+                                {
+                                    label: 'Black',
+                                    data: getCmcArray(colors['Black']),
+                                    backgroundColor: '#D0C7C0',
+                                },
+                                {
+                                    label: 'Red',
+                                    data: getCmcArray(colors['Red']),
+                                    backgroundColor: '#E5B08F',
+                                },
+                                {
+                                    label: 'Green',
+                                    data: getCmcArray(colors['Green']),
+                                    backgroundColor: '#B7D9B5',
+                                },
+                                {
+                                    label: 'Multicolored',
+                                    data: getCmcArray(colors['Multicolored']),
+                                    backgroundColor: '#E5D97C',
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: false,
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'CMC',
+                                },
+                                legend: {
+                                    position: 'right',
+                                },
+                                tooltip: {
+                                    bodyAlign: 'right',
+                                    footerAlign: 'right',
+                                    callbacks: {
+                                        footer: (tooltipItem) => {
+                                            let sum = tooltipItem.reduce((p, v) => p + v.parsed.y, 0);
+                                            return 'Sum: ' + sum;
+                                        },
                                     },
                                 },
                             },
-                        },
-                        interaction: {
-                            intersect: false,
-                            mode: 'index',
-                        },
-                        scales: {
-                            x: {
-                                stacked: true,
+                            interaction: {
+                                intersect: false,
+                                mode: 'index',
                             },
-                            y: {
-                                stacked: true,
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                },
+                                y: {
+                                    stacked: true,
+                                },
                             },
                         },
-                    },
-                });
+                    });
+                }
+
+                // type
+                {
+                    let types = {};
+                    ['Land', 'Planeswalker', 'Creature', 'Artifact', 'Enchantment', 'Instant', 'Sorcery'].forEach(d => {
+                        types[d] = {
+                            front: 0,
+                            back: 0,
+                        };
+                    });
+                    let multitype_front = 0;
+                    let multitype_back = 0;
+
+                    let keys = Object.keys(types);
+                    data.forEach((d, i) => {
+                        let count = counts[i];
+
+                        keys.forEach(key => {
+                            if (d[0].types.includes(key)) {
+                                types[key].front += count;
+                            }
+
+                            if (d.length > 1) {
+                                if (d[1].types.includes(key)) {
+                                    if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
+                                        types[key].back += count;
+                                    }
+                                }
+                            }
+                        });
+                        if (d[0].types.length > 1) {
+                            multitype_front += count;
+                        }
+                        if (d.length > 1) {
+                            if (d[1].types.length > 1) {
+                                multitype_back += count;
+                            }
+                        }
+                    });
+                    let html = '';
+                    html += '<table style="border-collapse: collapse">';
+                    html += '<tr>';
+                    html += '<th>Front</th>';
+                    html += '<th>Back</th>';
+                    html += '<th>Sum</th>';
+                    html += '<th>Card Type</th>';
+                    html += '</tr>';
+                    keys.forEach(key => {
+                        html += '<tr>';
+                        html += '<td style="text-align: right;">' + types[key].front + '</td>';
+                        html += '<td style="text-align: right;">' + types[key].back + '</td>';
+                        html += '<td style="text-align: right;">' + (types[key].front + types[key].back) + '</td>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+
+                        switch (key) {
+                            case 'Land':
+                                html += '<tr style="border-bottom: 1px solid #808080;">';
+                                html += '</tr>';
+                                break;
+                            case 'Enchantment':
+                                let frontP = types['Planeswalker'].front + types['Creature'].front + types['Artifact'].front + types['Enchantment'].front;
+                                let backP = types['Planeswalker'].back + types['Creature'].back + types['Artifact'].back + types['Enchantment'].back;
+                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
+                                html += '</tr>';
+
+                                html += '<tr>';
+                                html += '<td style="text-align: right;">' + frontP + '</td>';
+                                html += '<td style="text-align: right;">' + backP + '</td>';
+                                html += '<td style="text-align: right;">' + (frontP + backP) + '</td>';
+                                html += '<td>(Non-land Permanent)</td>';
+                                html += '</tr>';
+
+                                html += '<tr style="border-bottom: 1px solid #808080;">';
+                                html += '</tr>';
+                                break;
+                            case 'Sorcery':
+                                let frontN = types['Instant'].front + types['Sorcery'].front;
+                                let backN = types['Instant'].back + types['Sorcery'].back;
+                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
+                                html += '</tr>';
+
+                                html += '<tr>';
+                                html += '<td style="text-align: right;">' + frontN + '</td>';
+                                html += '<td style="text-align: right;">' + backN + '</td>';
+                                html += '<td style="text-align: right;">' + (frontN + backN) + '</td>';
+                                html += '<td>(Non-permanent)</td>';
+                                html += '</tr>';
+                                break;
+                        }
+                    });
+                    html += '</table>';
+                    $('#type').html(html);
+                }
 
                 // image
-                let board = '';
-                data.forEach((d, i) => {
-                    let count = counts[i];
+                {
+                    let html = '';
+                    data.forEach((d, i) => {
+                        let count = counts[i];
 
-                    if (i !== 0 && empty_row.includes(i)) {
-                        board += '<hr style="height: 2px; background: #000000;">';
-                    }
+                        if (i !== 0 && empty_row.includes(i)) {
+                            html += '<hr style="height: 2px; background: #000000;">';
+                        }
 
-                    board += '<div style="display: inline-block; position: relative;">';
-                    board += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
+                        html += '<div style="display: inline-block; position: relative;">';
+                        html += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
 
-                    board += '<div class="front">';
-                    board += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</p>';
-                    board += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
-                    board += '</div>';
-                    if (d.length > 1) {
-                        board += '<div class="back" style="display: none;">';
-                        board += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
-                        board += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
-                        board += '</div>';
+                        html += '<div class="front">';
+                        html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</p>';
+                        html += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                        html += '</div>';
+                        if (d.length > 1) {
+                            html += '<div class="back" style="display: none;">';
+                            html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
+                            html += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                            html += '</div>';
 
-                        board += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
-                    }
-                    board += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
-                    board += '</div>';
-                });
-                $('#board')
-                    .html(board)
-                    .on('click', '.flip', e => {
-                        let target = $(e.target);
-                        let back = target.prev();
-                        let front = back.prev();
-
-                        back.toggle();
-                        front.toggle();
+                            html += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
+                        }
+                        html += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
+                        html += '</div>';
                     });
+                    $('#board')
+                        .html(html)
+                        .on('click', '.flip', e => {
+                            let target = $(e.target);
+                            let back = target.prev();
+                            let front = back.prev();
 
-                resizeImage();
+                            back.toggle();
+                            front.toggle();
+                        });
+
+                    resizeImage();
+                }
             });
         }
 
