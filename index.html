@@ -84,11 +84,15 @@
             let counts = [];
             let promises = [];
 
+            let commander = false;
             let sideboard = -1;
             let empty_row = [];
             text.split('\n').forEach(d => {
                 if (d === '') {
                     empty_row.push(counts.length);
+                }
+                if (d === 'Commander') {
+                    commander = true;
                 }
                 if (d === 'Sideboard') {
                     sideboard = counts.length;
@@ -491,6 +495,48 @@
                     $('#rarity').html(html);
                 }
 
+                // format
+                {
+                    let formats = {
+                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage', 'Pauper'],
+                        arena: ['Alchemy', 'Historic'],
+                        brawl: ['Brawl', 'Historicbrawl', 'Commander', 'Paupercommander'],
+                    };
+                    data.forEach((d, i) => {
+                        let legalities = d[0].legalities.map(d => d.format);
+                        formats.paper = formats.paper.filter(d => legalities.includes(d));
+                        formats.arena = formats.arena.filter(d => legalities.includes(d));
+                        formats.brawl = formats.brawl.filter(d => legalities.includes(d));
+                    });
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th rowspan="20">Format</th>';
+                    if (commander) {
+                        let format_names = {
+                            Brawl: 'Standard-Brawl',
+                            Historicbrawl: 'Historic-Brawl',
+                            Commander: 'Commander',
+                            Paupercommander: 'Pauper-Commander',
+                        };
+                        formats.brawl.forEach(d => {
+                            html += '</tr><tr><td>' + format_names[d] + '</td>';
+                        });
+                    } else {
+                        formats.paper.forEach(d => {
+                            html += '<td>' + d + '</td>';
+                        });
+                        html += '</tr>';
+                        html += '<tr>';
+                        formats.arena.forEach(d => {
+                            html += '<td>' + d + '</td>';
+                        });
+                    }
+                    html += '</tr>';
+                    html += '</table>';
+                    $('#format').html(html);
+                }
+
                 // image
                 {
                     let html = '';
@@ -531,32 +577,6 @@
                         });
 
                     resizeImage();
-                }
-
-                // format
-                {
-                    let formats = {
-                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage', 'Pauper'],
-                        arena: ['Alchemy', 'Historic'],
-                    };
-                    data.forEach((d, i) => {
-                        let legalities = d[0].legalities.map(d => d.format);
-                        formats.paper = formats.paper.filter(d => legalities.includes(d));
-                        formats.arena = formats.arena.filter(d => legalities.includes(d));
-                    });
-                    let html = '';
-                    html += '<table>';
-                    html += '<tr>';
-                    html += '<th>Format</th>';
-                    html += '</tr>';
-                    html += '<tr>';
-                    html += formats.paper.map(d => '<td>' + d + '</td>').join('');
-                    html += '</tr>';
-                    html += '<tr>';
-                    html += formats.arena.map(d => '<td>' + d + '</td>').join('');
-                    html += '</tr>';
-                    html += '</table>';
-                    $('#format').html(html);
                 }
             });
         }
