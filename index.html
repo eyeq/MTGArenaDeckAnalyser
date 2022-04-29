@@ -681,7 +681,9 @@
                     let keymap = {
                         'Arclight Phoenix': 'Phoenix',
                         'Bolas\'s Citadel': 'Citadel',
+                        'Casualties of War': 'Casualties',
                         'Cavalcade of Calamity': 'Cavalcade',
+                        'Command the Dreadhorde': 'Dreadhorde',
                         'Crackling Drake': 'Drake',
                         'Doom Foretold': 'Doom',
                         'Experimental Frenzy': 'Frenzy',
@@ -693,27 +695,32 @@
                         'Ghalta, Primal Hunger': 'Ghalta',
                         'Goldspan Dragon': 'Dragon',
                         'Golos, Tireless Pilgrim': 'Golos',
+                        'Happily Ever After': 'Happily Ever After',
                         'Hero of Precinct One': 'Hero',
-                        'March of the Multitudes': 'March',
                         'Irencrag Pyromancer': 'Irencrag',
+                        'Lich\'s Mastery': 'Lich',
+                        'March of the Multitudes': 'March',
                         'Nicol Bolas, Dragon-God': 'Bolas',
+                        'Nine Lives': 'Nine Lives',
                         'Nissa, Who Shakes the World': 'Nissa',
                         'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
                         'Wilderness Reclamation': 'Reclamation',
                     };
+                    let keycount = {};
 
                     let keycards = [];
                     data.forEach((d, i) => {
                         if (d.length === 0) {
                             return;
                         }
-                        let count = counts[i];
+                        let count = counts[i] + (keycount[d[0].name] || 0);
+                        keycount[d[0].name] = count;
 
                         if (commander) {
                             if (i === 0) {
-                                keycards.push(d[i].name);
+                                keycards.push(d[0].name);
                             }
                         } else {
                             if (count === 4) {
@@ -750,6 +757,9 @@
                         wolf_cards: [],
                         zombie: 0,
                         zombie_cards: [],
+
+                        adventure: 0,
+                        adventure_cards: [],
 
                         food: 0,
                         food_cards: [],
@@ -845,6 +855,11 @@
                         if (creature_type || type_temp.includes('zombie') || text_temp.includes('zombie')) {
                             archetype_counts.zombie += count;
                             archetype_counts.zombie_cards.push(d[0]);
+                        }
+
+                        if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
+                            archetype_counts.adventure += count;
+                            archetype_counts.adventure_cards.push(d[0]);
                         }
 
                         // subtype artifact
@@ -968,6 +983,12 @@
                     if (archetype_counts.zombie / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Zombie</td>';
+                        html += '</tr>';
+                    }
+
+                    if (archetype_counts.adventure / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Adventure</td>';
                         html += '</tr>';
                     }
 
