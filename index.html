@@ -686,6 +686,7 @@
                         'Doom Foretold': 'Doom',
                         'Experimental Frenzy': 'Frenzy',
                         'Feather, the Redeemed': 'Feather',
+                        'Feasting Troll King': 'Troll King',
                         'Field of the Dead': 'Field',
                         'Fires of Invention': 'Fires',
                         'Flood of Tears': 'Tears',
@@ -747,6 +748,8 @@
                         vampire_cards: [],
                         wolf: 0,
                         wolf_cards: [],
+                        zombie: 0,
+                        zombie_cards: [],
 
                         food: 0,
                         food_cards: [],
@@ -838,6 +841,10 @@
                         if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
                             archetype_counts.wolf += count;
                             archetype_counts.wolf_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('zombie') || text_temp.includes('zombie')) {
+                            archetype_counts.zombie += count;
+                            archetype_counts.zombie_cards.push(d[0]);
                         }
 
                         // subtype artifact
@@ -932,7 +939,7 @@
                     // subtype
                     html = '';
                     html += '<table>';
-                    if (archetype_counts.gate / counts_sum >= 0.17) {
+                    if (archetype_counts.gate / counts_sum >= 0.16) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
                         html += '</tr>';
@@ -956,6 +963,11 @@
                     if (archetype_counts.wolf / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Wolf</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.zombie / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Zombie</td>';
                         html += '</tr>';
                     }
 
@@ -1007,19 +1019,19 @@
                     html = '';
                     html += '<table>';
                     let output = false;
-                    if (archetype_counts.artifact / counts_sum >= 0.33) {
+                    if (archetype_counts.artifact / counts_sum >= 0.32) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= 0.25) {
+                    if (archetype_counts.planeswalker / counts_sum >= 0.24) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.spells / counts_sum >= 0.33) {
+                    if (archetype_counts.spells / counts_sum >= 0.32) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Spells</td>';
@@ -1031,7 +1043,7 @@
                         html += '<td>Ramp</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.instant / counts_sum >= 0.33) {
+                    if (archetype_counts.instant / counts_sum >= 0.32) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Flash</td>';
@@ -1043,13 +1055,13 @@
                         html += '<td>Token</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.creature / counts_sum >= 0.33) {
+                    if (archetype_counts.creature / counts_sum >= 0.32) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Beatdown</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.direct_damage / counts_sum >= 0.33) {
+                    if (archetype_counts.direct_damage / counts_sum >= 0.32) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Burn</td>';
