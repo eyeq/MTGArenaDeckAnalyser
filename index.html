@@ -153,7 +153,7 @@
                         d.manaCost = d.manaCost || '';
                     });
 
-                    if (d.length > 1) {
+                    if (d.length > 1 && d[0].layout === 'modal_dfc') {
                         if (d[0].imageUrl === d[1].imageUrl) {
                             let url = new URL(d[1].imageUrl);
                             let searchParams = url.searchParams;
@@ -847,9 +847,9 @@
                             archetype_counts.spells_cards.push(d[0]);
                         }
                         if (text_temp.includes('add {')
-                            || (text_temp.includes('add') && text_temp.includes('mana'))
+                            || (text_temp.includes('add ') && text_temp.includes('mana'))
                             || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
-                            || (text_temp.includes('play') || text_temp.includes('additional land'))) {
+                            || (text_temp.includes('play') && text_temp.includes('additional land'))) {
                             archetype_counts.mana_acceleration += count;
                             archetype_counts.mana_acceleration_cards.push(d[0]);
                         }
@@ -1023,12 +1023,14 @@
                         html += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
                         html += '</div>';
                         if (d.length > 1) {
-                            html += '<div class="back" style="display: none;">';
-                            html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
-                            html += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
-                            html += '</div>';
+                            if (d[0].imageUrl !== d[1].imageUrl) {
+                                html += '<div class="back" style="display: none;">';
+                                html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
+                                html += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
+                                html += '</div>';
 
-                            html += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
+                                html += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
+                            }
                         }
                         html += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
                         html += '</div>';
