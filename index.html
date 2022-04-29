@@ -635,7 +635,25 @@
 
                 // keycard
                 {
-                    var keycards = [];
+                    let keymap = {
+                        'Arclight Phoenix': 'Phoenix',
+                        'Cavalcade of Calamity': 'Cavalcade',
+                        'Crackling Drake': 'Drake',
+                        'Experimental Frenzy': 'Frenzy',
+                        'Feather, the Redeemed': 'Feather',
+                        'Flood of Tears': 'Tears',
+                        'Ghalta, Primal Hunger': 'Ghalta',
+                        'Goldspan Dragon': 'Dragon',
+                        'Golos, Tireless Pilgrim': 'Golos',
+                        'Hero of Precinct One': 'Hero',
+                        'March of the Multitudes': 'March',
+                        'Nicol Bolas, Dragon-God': 'Bolas',
+                        'Nissa, Who Shakes the World': 'Nissa',
+                        'Sephara, Sky\'s Blade': 'Sephara',
+                        'Scapeshift': 'Scapeshift',
+                    };
+
+                    let keycards = [];
                     data.forEach((d, i) => {
                         if (d.length === 0) {
                             return;
@@ -647,76 +665,10 @@
                                 keycards.push(d[i].name);
                             }
                         } else {
-                            switch (d[0].name) {
-                                case 'Arclight Phoenix':
-                                    if (count === 4) {
-                                        keycards.push('Phoenix');
-                                    }
-                                    break;
-                                case 'Cavalcade of Calamity':
-                                    if (count === 4) {
-                                        keycards.push('Cavalcade');
-                                    }
-                                    break;
-                                case 'Crackling Drake':
-                                    if (count === 4) {
-                                        keycards.push('Drake');
-                                    }
-                                    break;
-                                case 'Experimental Frenzy':
-                                    if (count === 4) {
-                                        keycards.push('Frenzy');
-                                    }
-                                case 'Feather, the Redeemed':
-                                    if (count === 4) {
-                                        keycards.push('Feather');
-                                    }
-                                    break;
-                                case 'Flood of Tears':
-                                    if (count === 4) {
-                                        keycards.push('Tears');
-                                    }
-                                    break;
-                                case 'Ghalta, Primal Hunger':
-                                    if (count === 4) {
-                                        keycards.push('Ghalta');
-                                    }
-                                    break;
-                                case 'Goldspan Dragon':
-                                    if (count === 4) {
-                                        keycards.push('Dragon');
-                                    }
-                                    break;
-                                case 'Golos, Tireless Pilgrim':
-                                    if (count === 4) {
-                                        keycards.push('Golos');
-                                    }
-                                    break;
-                                case 'Hero of Precinct One':
-                                    if (count === 4) {
-                                        keycards.push('Hero');
-                                    }
-                                    break;
-                                case 'March of the Multitudes':
-                                    if (count === 4) {
-                                        keycards.push('March');
-                                    }
-                                    break;
-                                case 'Nissa, Who Shakes the World':
-                                    if (count === 4) {
-                                        keycards.push('Nissa');
-                                    }
-                                    break;
-                                case 'Sephara, Sky\'s Blade':
-                                    if (count === 4) {
-                                        keycards.push('Sephara');
-                                    }
-                                    break;
-                                case 'Scapeshift':
-                                    if (count === 4) {
-                                        keycards.push('Scapeshift');
-                                    }
-                                    break;
+                            if (count === 4) {
+                                if (d[0].name in keymap) {
+                                    keycards.push(keymap[d[0].name]);
+                                }
                             }
                         }
                     });
@@ -753,6 +705,8 @@
                         mentor: 0,
                         mentor_cards: [],
 
+                        planeswalker: 0,
+                        planeswalker_cards: [],
                         spells: 0,
                         spells_cards: [],
                         mana_acceleration: 0,
@@ -842,6 +796,10 @@
                         }
 
                         // decktype
+                        if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
+                            archetype_counts.planeswalker += count;
+                            archetype_counts.planeswalker_cards.push(d[0]);
+                        }
                         if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
                             archetype_counts.spells += count;
                             archetype_counts.spells_cards.push(d[0]);
@@ -944,6 +902,12 @@
                     html = '';
                     html += '<table>';
                     let output = false;
+                    if (archetype_counts.planeswalker / counts_sum >= 0.26) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Superfriends</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.spells / counts_sum >= 0.33) {
                         output = true;
                         html += '<tr>';
