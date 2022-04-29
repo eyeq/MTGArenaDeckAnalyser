@@ -683,21 +683,24 @@
                         'Bolas\'s Citadel': 'Citadel',
                         'Cavalcade of Calamity': 'Cavalcade',
                         'Crackling Drake': 'Drake',
+                        'Doom Foretold': 'Doom',
                         'Experimental Frenzy': 'Frenzy',
                         'Feather, the Redeemed': 'Feather',
                         'Field of the Dead': 'Field',
+                        'Fires of Invention': 'Fires',
                         'Flood of Tears': 'Tears',
                         'Ghalta, Primal Hunger': 'Ghalta',
                         'Goldspan Dragon': 'Dragon',
                         'Golos, Tireless Pilgrim': 'Golos',
                         'Hero of Precinct One': 'Hero',
                         'March of the Multitudes': 'March',
+                        'Irencrag Pyromancer': 'Irencrag',
                         'Nicol Bolas, Dragon-God': 'Bolas',
                         'Nissa, Who Shakes the World': 'Nissa',
                         'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
-                        'Wilderness Reclamation': 'Reclamation', 
+                        'Wilderness Reclamation': 'Reclamation',
                     };
 
                     let keycards = [];
@@ -742,6 +745,8 @@
                         knight_cards: [],
                         vampire: 0,
                         vampire_cards: [],
+                        wolf: 0,
+                        wolf_cards: [],
 
                         food: 0,
                         food_cards: [],
@@ -830,6 +835,10 @@
                             archetype_counts.vampire += count;
                             archetype_counts.vampire_cards.push(d[0]);
                         }
+                        if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
+                            archetype_counts.wolf += count;
+                            archetype_counts.wolf_cards.push(d[0]);
+                        }
 
                         // subtype artifact
                         if (creature_type || type_temp.includes('food') || text_temp.includes('food')) {
@@ -847,7 +856,7 @@
                             archetype_counts.flying_cards.push(d[0]);
                         }
                         if (text_temp.includes('heroic')
-                            || (text_temp.includes('whenever you cast') &&  text_temp.includes('that targets'))
+                            || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                             || text_temp.includes('becomes the target of a spell you control')) {
                             archetype_counts.heroic += count;
                             archetype_counts.heroci_cards.push(d[0]);
@@ -944,8 +953,13 @@
                         html += '<td>Vampire</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.wolf / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Wolf</td>';
+                        html += '</tr>';
+                    }
 
-                    if (archetype_counts.food / counts_sum >= 0.26) {
+                    if (archetype_counts.food / counts_sum >= 0.16) {
                         html += '<tr>';
                         html += '<td>Food</td>';
                         html += '</tr>';
@@ -999,7 +1013,7 @@
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= 0.26) {
+                    if (archetype_counts.planeswalker / counts_sum >= 0.25) {
                         output = true;
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
