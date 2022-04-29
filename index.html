@@ -195,6 +195,7 @@
             let empty_row = [];
             let link = location.pathname + '?input=';
             text.split('\n').forEach(d => {
+                d = d.trim();
                 if (d === '') {
                     empty_row.push(counts.length);
                 }
@@ -205,7 +206,7 @@
                     sideboard = counts.length;
                 }
 
-                let s = d.trim().split(' ');
+                let s = d.split(' ');
                 if (s.length >= 3) {
                     let count = Number(s[0]);
                     let set = s[s.length - 2].replace(/[()]/g, '');
@@ -766,6 +767,7 @@
                         'Command the Dreadhorde': 'Dreadhorde',
                         'Crackling Drake': 'Drake',
                         'Doom Foretold': 'Doom',
+                        'Embercleave': 'Embercleave',
                         'Experimental Frenzy': 'Frenzy',
                         'Feather, the Redeemed': 'Feather',
                         'Feasting Troll King': 'Troll King',
@@ -786,6 +788,7 @@
                         'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
+                        'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
                         'Wilderness Reclamation': 'Reclamation',
                     };
                     let keycount = {};
@@ -830,6 +833,8 @@
 
                         elemental: 0,
                         elemental_cards: [],
+                        human: 0,
+                        human_cards: [],
                         knight: 0,
                         knight_cards: [],
                         vampire: 0,
@@ -920,6 +925,10 @@
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
                             archetype_counts.elemental_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('human') || text_temp.includes('human')) {
+                            archetype_counts.human += count;
+                            archetype_counts.human_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('knight') || text_temp.includes('knight')) {
                             archetype_counts.knight += count;
@@ -1046,6 +1055,11 @@
                         html += '<td>Elemental</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.human / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Human</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.knight / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Knight</td>';
@@ -1067,7 +1081,7 @@
                         html += '</tr>';
                     }
 
-                    if (archetype_counts.adventure / counts_sum >= 0.26) {
+                    if (archetype_counts.adventure / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Adventure</td>';
                         html += '</tr>';
