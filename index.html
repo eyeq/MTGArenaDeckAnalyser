@@ -651,6 +651,7 @@
                         'March of the Multitudes': 'March',
                         'Nicol Bolas, Dragon-God': 'Bolas',
                         'Nissa, Who Shakes the World': 'Nissa',
+                        'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
                         'Wilderness Reclamation': 'Reclamation', 
@@ -712,6 +713,8 @@
                         mentor_cards: [],
                         sacrifice: 0,
                         sacrifice_cards: [],
+                        second_draw: 0,
+                        second_draw_cards: [],
 
                         artifact: 0,
                         artifact_cards: [],
@@ -813,6 +816,10 @@
                         if (text_temp.includes('sacrifice')) {
                             archetype_counts.sacrifice += count;
                             archetype_counts.sacrifice_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('whenever you draw your second card each turn')) {
+                            archetype_counts.second_draw += count;
+                            archetype_counts.second_draw_cards.push(d[0]);
                         }
 
                         // decktype
@@ -929,6 +936,11 @@
                     if (archetype_counts.sacrifice / counts_sum >= 0.24) {
                         html += '<tr>';
                         html += '<td>Sacrifice</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.second_draw / counts_sum >= 0.09) {
+                        html += '<tr>';
+                        html += '<td>Second Draw</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
