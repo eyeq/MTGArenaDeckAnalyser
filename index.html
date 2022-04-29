@@ -15,25 +15,25 @@
     <header>
         <h1>MTG Arena Deck Analyser</h1>
     </header>
-    <h2>Input</h2>
-    <div>
+
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <h2>Input</h2>
         <textarea id="input" rows="20" cols="45" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
     </div>
-
-    <h2>Output</h2>
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Share this deck</h3>
         <div id="link"></div>
     </div>
     <br>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <h2>Output</h2>
         <h3>Format</h3>
         <div id="format"></div>
     </div>
     <br>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Color</h3>
         <table>
             <tr>
@@ -46,7 +46,7 @@
             </tr>
         </table>
     </div>
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Archetype</h3>
         <table>
             <tr>
@@ -73,21 +73,21 @@
     </div>
     <br>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Rarity</h3>
         <div id="rarity"></div>
     </div>
-    <div style="display: inline-block;">
-        <h3>Card Type</h3>
-        <div id="type"></div>
-    </div>
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Main Set</h3>
         <div id="set"></div>
     </div>
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <h3>Card Type</h3>
+        <div id="type"></div>
+    </div>
     <br>
 
-    <div style="display: inline-block;">
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Mana Curve</h3>
         <table>
             <tr>
@@ -103,7 +103,7 @@
     <br>
 
     <h3>Image</h3>
-    <div>
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <input type="radio" id="t" name="size" value="t">
         <label for="t">Tiny</label>
 
@@ -119,7 +119,11 @@
         <input type="radio" id="h" name="size" value="h">
         <label for="h">Huge</label>
     </div>
-    <div id="board" style="width: 640px; resize: horizontal; overflow: hidden;"></div>
+    <br>
+
+    <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <div id="board" style="width: 640px; resize: horizontal; overflow: hidden;"></div>
+    </div>
     <br>
     <br>
 
@@ -134,17 +138,19 @@
             let searchParams = url.searchParams;
             
             let input = searchParams.get('input');
-            let val = '';
-            input.split('_').forEach((d, i) => {
-                val += d;
-                if (i % 3 === 2) {
-                    val += '\n';
-                } else {
-                    val += ' ';
-                }
-            });
-            let text = $('#input').val(val);
-            read();
+            if (input) {
+                let val = '';
+                input.split('_').forEach((d, i) => {
+                    val += d;
+                    if (i % 3 === 2) {
+                        val += '\n';
+                    } else {
+                        val += ' ';
+                    }
+                });
+                let text = $('#input').val(val);
+                read();
+            }
 
             $('input[name="size"]').on('change', resizeImage);
         })();
