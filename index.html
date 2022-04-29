@@ -22,6 +22,12 @@
 
     <h2>Output</h2>
     <div style="display: inline-block;">
+        <h3>Share this deck</h3>
+        <div id="link"></div>
+    </div>
+    <br>
+
+    <div style="display: inline-block;">
         <h3>Format</h3>
         <div id="format"></div>
     </div>
@@ -123,7 +129,25 @@
     </footer>
 
     <script>
-        $('input[name="size"]').on('change', resizeImage);
+        (() => {
+            let url = new URL(location.href);
+            let searchParams = url.searchParams;
+            
+            let input = searchParams.get('input');
+            let val = '';
+            input.split('_').forEach((d, i) => {
+                val += d;
+                if (i % 3 === 2) {
+                    val += '\n';
+                } else {
+                    val += ' ';
+                }
+            });
+            let text = $('#input').val(val);
+            read();
+
+            $('input[name="size"]').on('change', resizeImage);
+        })();
 
         function resizeImage() {
             let img = $('#board img');
@@ -163,6 +187,7 @@
             let commander = false;
             let sideboard = -1;
             let empty_row = [];
+            let link = location.pathname + '?input=';
             text.split('\n').forEach(d => {
                 if (d === '') {
                     empty_row.push(counts.length);
@@ -182,8 +207,13 @@
 
                     counts.push(count);
                     promises.push(send(set, number));
+
+                    link += count + '_' + set + '_' + number + '_';
+                } else {
+                    link += d + '___';
                 }
             });
+            $('#link').html('<a href="' + link + '">Copy link address</a>');
 
             let counts_sum = counts.reduce((p, v) => p + v, 0);
             Promise.all(promises).then((data) => {
