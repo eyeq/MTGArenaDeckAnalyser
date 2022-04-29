@@ -12,7 +12,9 @@
 </head>
 
 <body>
-    <h1>MTG Arena Deck Analyser</h1>
+    <header>
+        <h1>MTG Arena Deck Analyser</h1>
+    </header>
     <h2>Input</h2>
     <div>
         <textarea id="input" rows="20" cols="45" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
@@ -26,24 +28,42 @@
     <br>
 
     <div style="display: inline-block;">
-        <h3>Mana Symbol</h3>
-        <div id="symbol"></div>
-    </div>
-    <div style="display: inline-block;">
-        <h3>Keycard</h3>
-        <div id="keycard"></div>
-    </div>
-    <div style="display: inline-block;">
-        <h3>Subtype</h3>
-        <div id="subtype"></div>
-    </div>
-    <div style="display: inline-block;">
-        <h3>Keyword</h3>
-        <div id="keyword"></div>
+        <h3>Color</h3>
+        <table>
+            <tr>
+                <th>Mana Symbol</th>
+            </tr>
+            <tr>
+                <td>
+                    <div id="symbol"></div>
+                </td>
+            </tr>
+        </table>
     </div>
     <div style="display: inline-block;">
         <h3>Archetype</h3>
-        <div id="archetype"></div>
+        <table>
+            <tr>
+                <th>Keycard</th>
+                <th>Subtype</th>
+                <th>Keyword</th>
+                <th>Type</th>
+            </tr>
+            <tr>
+                <td>
+                    <div id="keycard"></div>
+                </td>
+                <td>
+                    <div id="subtype"></div>
+                </td>
+                <td>
+                    <div id="keyword"></div>
+                </td>
+                <td>
+                    <div id="archetype"></div>
+                </td>
+            </tr>
+        </table>
     </div>
     <br>
 
@@ -58,21 +78,36 @@
     <br>
 
     <div style="display: inline-block;">
-        <h3>CMC</h3>
-        <div id="cmc"></div>
+        <h3>Mana Curve</h3>
+        <table>
+            <tr>
+                <th>CMC</th>
+            </tr>
+            <tr>
+                <td>
+                    <div id="cmc"></div>
+                </td>
+            </tr>
+        </table>
     </div>
     <br>
 
     <h3>Image</h3>
     <div>
-        <input type="radio" id="s" name="size" value="s">
+        <input type="radio" id="t" name="size" value="t">
+        <label for="t">Tiny</label>
+
+        <input type="radio" id="s" name="size" value="s" checked>
         <label for="s">Small</label>
 
-        <input type="radio" id="m" name="size" value="m" checked>
+        <input type="radio" id="m" name="size" value="m">
         <label for="m">Medium</label>
 
         <input type="radio" id="l" name="size" value="l">
         <label for="l">Large</label>
+
+        <input type="radio" id="h" name="size" value="h">
+        <label for="h">Huge</label>
     </div>
     <div id="board" style="width: 640px; resize: horizontal; overflow: hidden;"></div>
     <br>
@@ -91,17 +126,25 @@
 
             let val = $('input:radio[name="size"]:checked').val();
             switch (val) {
-                case 's':
+                case 't':
                     img.prop('width', '106');
                     img.prop('height', '148');
                     break;
-                case 'm':
+                case 's':
                     img.prop('width', '159');
                     img.prop('height', '222');
                     break;
-                case 'l':
+                case 'm':
                     img.prop('width', '212');
                     img.prop('height', '296');
+                    break;
+                case 'l':
+                    img.prop('width', '265');
+                    img.prop('height', '370');
+                    break;
+                case 'h':
+                    img.prop('width', '530');
+                    img.prop('height', '740');
                     break;
             }
         }
