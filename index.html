@@ -75,6 +75,10 @@
         <h3>Card Type</h3>
         <div id="type"></div>
     </div>
+    <div style="display: inline-block;">
+        <h3>Main Set</h3>
+        <div id="set"></div>
+    </div>
     <br>
 
     <div style="display: inline-block;">
@@ -485,6 +489,7 @@
                             }
                         }
                     });
+
                     let html = '';
                     html += '<table style="border-collapse: collapse">';
                     html += '<tr>';
@@ -558,8 +563,13 @@
 
                         raritys[d[0].rarity] += count;
                     });
+
                     let html = '';
                     html += '<table>';
+                    html += '<tr>';
+                    html += '<th></th>';
+                    html += '<th>Rarity</th>';
+                    html += '</tr>';
                     keys.forEach(key => {
                         html += '<tr>';
                         html += '<td style="text-align: right;">' + raritys[key] + '</td>';
@@ -568,6 +578,39 @@
                     });
                     html += '</table>';
                     $('#rarity').html(html);
+                }
+
+                // set
+                {
+                    let sets = {};
+                    data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
+                        let count = counts[i];
+
+                        d[0].printings.forEach(d => sets[d] = (sets[d] || 0) + count);
+                    });
+                    let keys = Object.keys(sets);
+                    keys.sort((a, b) => sets[b] - sets[a]);
+                    if (keys.length > 8) {
+                        keys.length = 8;
+                    }
+
+                    let html = '';
+                    html += '<table>';
+                    html += '<tr>';
+                    html += '<th></th>';
+                    html += '<th>Set</th>';
+                    html += '</tr>';
+                    keys.forEach(key => {
+                        html += '<tr>';
+                        html += '<td style="text-align: right;">' + sets[key] + '</td>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</table>';
+                    $('#set').html(html);
                 }
 
                 // format
@@ -609,6 +652,7 @@
                             standard.m21 = false;
                         }
                     });
+
                     let html = '';
                     html += '<table>';
                     if (commander) {
@@ -730,6 +774,7 @@
                             }
                         }
                     });
+
                     let html = '';
                     html += '<table>';
                     keycards.forEach(d => {
