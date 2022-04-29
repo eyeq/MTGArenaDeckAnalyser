@@ -687,6 +687,11 @@
                                         keycards.push('Dragon');
                                     }
                                     break;
+                                case 'Golos, Tireless Pilgrim':
+                                    if (count === 4) {
+                                        keycards.push('Golos');
+                                    }
+                                    break;
                                 case 'Hero of Precinct One':
                                     if (count === 4) {
                                         keycards.push('Hero');
@@ -735,6 +740,9 @@
                         knight_cards: [],
                         vampire: 0,
                         vampire_cards: [],
+
+                        gate: 0,
+                        gate_cards: [],
 
                         explore: 0,
                         explore_cards: [],
@@ -789,7 +797,13 @@
                         type_temp = type_temp.toLowerCase();
                         text_temp = text_temp.toLowerCase();
 
-                        // subtype
+                        // subtype land
+                        if (type_temp.includes('gate') || text_temp.includes('gate')) {
+                            archetype_counts.gate += count;
+                            archetype_counts.gate_cards.push(d[0]);
+                        }
+
+                        // subtype creature
                         let creature_type = false;
                         if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
                             creature_type = true;
@@ -877,6 +891,11 @@
                     // subtype
                     html = '';
                     html += '<table>';
+                    if (archetype_counts.gate / counts_sum >= 0.20) {
+                        html += '<tr>';
+                        html += '<td>Gate</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.elemental / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
