@@ -637,10 +637,12 @@
                 {
                     let keymap = {
                         'Arclight Phoenix': 'Phoenix',
+                        'Bolas\'s Citadel': 'Citadel',
                         'Cavalcade of Calamity': 'Cavalcade',
                         'Crackling Drake': 'Drake',
                         'Experimental Frenzy': 'Frenzy',
                         'Feather, the Redeemed': 'Feather',
+                        'Field of the Dead': 'Field',
                         'Flood of Tears': 'Tears',
                         'Ghalta, Primal Hunger': 'Ghalta',
                         'Goldspan Dragon': 'Dragon',
@@ -651,6 +653,7 @@
                         'Nissa, Who Shakes the World': 'Nissa',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
+                        'Wilderness Reclamation': 'Reclamation', 
                     };
 
                     let keycards = [];
@@ -707,6 +710,8 @@
                         sacrifice: 0,
                         sacrifice_cards: [],
 
+                        artifact: 0,
+                        artifact_cards: [],
                         planeswalker: 0,
                         planeswalker_cards: [],
                         spells: 0,
@@ -802,6 +807,10 @@
                         }
 
                         // decktype
+                        if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
+                            archetype_counts.artifact += count;
+                            archetype_counts.artifact_cards.push(d[0]);
+                        }
                         if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                             archetype_counts.planeswalker += count;
                             archetype_counts.planeswalker_cards.push(d[0]);
@@ -855,7 +864,7 @@
                     // subtype
                     html = '';
                     html += '<table>';
-                    if (archetype_counts.gate / counts_sum >= 0.20) {
+                    if (archetype_counts.gate / counts_sum >= 0.17) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
                         html += '</tr>';
@@ -913,6 +922,12 @@
                     html = '';
                     html += '<table>';
                     let output = false;
+                    if (archetype_counts.artifact / counts_sum >= 0.33) {
+                        output = true;
+                        html += '<tr>';
+                        html += '<td>Artifact</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.planeswalker / counts_sum >= 0.26) {
                         output = true;
                         html += '<tr>';
