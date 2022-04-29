@@ -704,6 +704,8 @@
                         heroci_cards: [],
                         mentor: 0,
                         mentor_cards: [],
+                        sacrifice: 0,
+                        sacrifice_cards: [],
 
                         planeswalker: 0,
                         planeswalker_cards: [],
@@ -793,6 +795,10 @@
                         if (text_temp.includes('mentor')) {
                             archetype_counts.mentor += count;
                             archetype_counts.mentor_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('sacrifice')) {
+                            archetype_counts.sacrifice += count;
+                            archetype_counts.sacrifice_cards.push(d[0]);
                         }
 
                         // decktype
@@ -893,6 +899,11 @@
                     if (archetype_counts.mentor / counts_sum >= 0.23) {
                         html += '<tr>';
                         html += '<td>Mentor</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.sacrifice / counts_sum >= 0.24) {
+                        html += '<tr>';
+                        html += '<td>Sacrifice</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
