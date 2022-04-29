@@ -689,6 +689,9 @@
                 // subtype / keyword / archetype
                 {
                     let archetype_counts = {
+                        gate: 0,
+                        gate_cards: [],
+
                         elemental: 0,
                         elemental_cards: [],
                         knight: 0,
@@ -696,8 +699,8 @@
                         vampire: 0,
                         vampire_cards: [],
 
-                        gate: 0,
-                        gate_cards: [],
+                        food: 0,
+                        food_cards: [],
 
                         explore: 0,
                         explore_cards: [],
@@ -780,6 +783,12 @@
                         if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
                             archetype_counts.vampire += count;
                             archetype_counts.vampire_cards.push(d[0]);
+                        }
+
+                        // subtype artifact
+                        if (creature_type || type_temp.includes('food') || text_temp.includes('food')) {
+                            archetype_counts.food += count;
+                            archetype_counts.food_cards.push(d[0]);
                         }
 
                         // keyword
@@ -869,6 +878,7 @@
                         html += '<td>Gate</td>';
                         html += '</tr>';
                     }
+
                     if (archetype_counts.elemental / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
@@ -882,6 +892,12 @@
                     if (archetype_counts.vampire / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Vampire</td>';
+                        html += '</tr>';
+                    }
+
+                    if (archetype_counts.food / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Food</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
