@@ -73,10 +73,10 @@
             <br>
             <table>
                 <tr>
-                    <th>Keycard</th>
-                    <th>Subtype</th>
-                    <th>Keyword</th>
-                    <th>Type</th>
+                    <th style="width: 90px;">Keycard</th>
+                    <th style="width: 90px;">Subtype</th>
+                    <th style="width: 90px;">Keyword</th>
+                    <th style="width: 90px;">Type</th>
                 </tr>
                 <tr>
                     <td>
@@ -715,6 +715,11 @@
                         }
                     });
 
+                    let permanent_spell = types_main['Planeswalker'].front + types_main['Creature'].front + types_main['Artifact'].front + types_main['Enchantment'].front
+                        + types_main['Planeswalker'].back + types_main['Creature'].back + types_main['Artifact'].back + types_main['Enchantment'].back;
+                    let nonpermanent_spell = types_main['Instant'].front + types_main['Sorcery'].front
+                        + types_main['Instant'].back + types_main['Sorcery'].back;
+
                     let html = '';
                     html += '<table style="border-collapse: collapse">';
                     keys.forEach(key => {
@@ -725,38 +730,29 @@
 
                         switch (key) {
                             case 'Land':
-                                html += '<tr style="border-bottom: 1px solid #808080;">';
-                                html += '</tr>';
-                                break;
                             case 'Enchantment':
-                                let frontP = types_main['Planeswalker'].front + types_main['Creature'].front + types_main['Artifact'].front + types_main['Enchantment'].front;
-                                let backP = types_main['Planeswalker'].back + types_main['Creature'].back + types_main['Artifact'].back + types_main['Enchantment'].back;
-                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
-                                html += '</tr>';
-
-                                html += '<tr>';
-                                html += '<td style="text-align: right;">' + (frontP + backP) + '</td>';
-                                html += '<td>(Non-land Permanent)</td>';
-                                html += '</tr>';
-
-                                html += '<tr style="border-bottom: 1px solid #808080;">';
-                                html += '</tr>';
-                                break;
-                            case 'Sorcery':
-                                let frontN = types_main['Instant'].front + types_main['Sorcery'].front;
-                                let backN = types_main['Instant'].back + types_main['Sorcery'].back;
-                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
-                                html += '</tr>';
-
-                                html += '<tr>';
-                                html += '<td style="text-align: right;">' + (frontN + backN) + '</td>';
-                                html += '<td>(Non-permanent)</td>';
+                                html += '<tr style="border-bottom: ridge;">';
                                 html += '</tr>';
                                 break;
                         }
                     });
+                    html += '<tr style="border-bottom: double;">';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>Permanent Sepll</td>'
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>Non-permanent Sepll</td>'
+                    html += '</tr>';
                     html += '</table>';
                     $('#type_main').html(html);
+
+                    permanent_spell = types_side['Planeswalker'].front + types_side['Creature'].front + types_side['Artifact'].front + types_side['Enchantment'].front
+                        + types_side['Planeswalker'].back + types_side['Creature'].back + types_side['Artifact'].back + types_side['Enchantment'].back;
+                    nonpermanent_spell = types_side['Instant'].front + types_side['Sorcery'].front
+                        + types_side['Instant'].back + types_side['Sorcery'].back;
 
                     html = '';
                     html += '<table style="border-collapse: collapse">';
@@ -768,36 +764,22 @@
 
                         switch (key) {
                             case 'Land':
-                                html += '<tr style="border-bottom: 1px solid #808080;">';
-                                html += '</tr>';
-                                break;
                             case 'Enchantment':
-                                let frontP = types_side['Planeswalker'].front + types_side['Creature'].front + types_side['Artifact'].front + types_side['Enchantment'].front;
-                                let backP = types_side['Planeswalker'].back + types_side['Creature'].back + types_side['Artifact'].back + types_side['Enchantment'].back;
-                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
-                                html += '</tr>';
-
-                                html += '<tr>';
-                                html += '<td style="text-align: right;">' + (frontP + backP) + '</td>';
-                                html += '<td>(Non-land Permanent)</td>';
-                                html += '</tr>';
-
-                                html += '<tr style="border-bottom: 1px solid #808080;">';
-                                html += '</tr>';
-                                break;
-                            case 'Sorcery':
-                                let frontN = types_side['Instant'].front + types_side['Sorcery'].front;
-                                let backN = types_side['Instant'].back + types_side['Sorcery'].back;
-                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
-                                html += '</tr>';
-
-                                html += '<tr>';
-                                html += '<td style="text-align: right;">' + (frontN + backN) + '</td>';
-                                html += '<td>(Non-permanent)</td>';
+                                html += '<tr style="border-bottom: ridge;">';
                                 html += '</tr>';
                                 break;
                         }
                     });
+                    html += '<tr style="border-bottom: double;">';
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>Permanent Sepll</td>'
+                    html += '</tr>';
+                    html += '<tr>';
+                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>Non-permanent Sepll</td>'
+                    html += '</tr>';
                     html += '</table>';
                     $('#type_side').html(html);
                 }
