@@ -877,6 +877,8 @@
                         token_cards: [],
                         creature: 0,
                         creature_cards: [],
+                        weenie: 0,
+                        weenie_cards: [],
                         direct_damage: 0,
                         direct_damage_cards: [],
                         reanimate: 0,
@@ -1018,6 +1020,10 @@
                             || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                             archetype_counts.creature += count;
                             archetype_counts.creature_cards.push(d[0]);
+                            if (d[0].cmc < 3) {
+                                archetype_counts.weenie += count;
+                                archetype_counts.weenie_cards.push(d[0]);
+                            }
                         }
                         if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
                             || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
@@ -1134,70 +1140,88 @@
                     // archetype
                     html = '';
                     html += '<table>';
-                    let output = false;
+                    let archetypes = [];
                     if (archetype_counts.artifact / counts_sum >= 0.32) {
-                        output = true;
+                        archetypes.push('artifact');
                         html += '<tr>';
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.planeswalker / counts_sum >= 0.24) {
-                        output = true;
+                        archetypes.push('planeswalker');
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.spells / counts_sum >= 0.32) {
-                        output = true;
+                        archetypes.push('spells');
                         html += '<tr>';
                         html += '<td>Spells</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.mana_acceleration / counts_sum >= 0.21) {
-                        output = true;
+                        archetypes.push('mana_acceleration');
                         html += '<tr>';
                         html += '<td>Ramp</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.instant / counts_sum >= 0.32) {
-                        output = true;
+                        archetypes.push('instant');
                         html += '<tr>';
                         html += '<td>Flash</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.token / counts_sum >= 0.23) {
-                        output = true;
+                        archetypes.push('token');
                         html += '<tr>';
                         html += '<td>Token</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.creature / counts_sum >= 0.32) {
-                        output = true;
+                        archetypes.push('creature');
                         html += '<tr>';
                         html += '<td>Beatdown</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.direct_damage / counts_sum >= 0.32) {
-                        output = true;
+                        archetypes.push('direct_damage');
                         html += '<tr>';
                         html += '<td>Burn</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.reanimate / counts_sum >= 0.10) {
-                        output = true;
+                        archetypes.push('reanimate');
                         html += '<tr>';
                         html += '<td>Reanimate</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.wrath / counts_sum >= 0.05) {
-                        output = true;
+                        archetypes.push('wrath');
                         html += '<tr>';
                         html += '<td>Control</td>';
                         html += '</tr>';
                     }
-                    if (!output) {
+                    if (archetypes.length === 0) {
                         html += '<tr>';
                         html += '<td>???</td>';
+                        html += '</tr>';
+                    }
+
+                    if (archetypes.includes('creature') && archetypes.includes('wrath')) {
+                        html += '<tr>';
+                        html += '<td>(Midrange)<td>';
+                        html += '</tr>';
+                    } else if (archetypes.includes('creature') && archetypes.includes('mana_acceleration')) {
+                        html += '<tr>';
+                        html += '<td>(Stompy)<td>';
+                        html += '</tr>';
+                    } else if (archetypes.includes('creature') && archetypes.includes('direct_damage')) {
+                        html += '<tr>';
+                        html += '<td>(Sligh)<td>';
+                        html += '</tr>';
+                    } else if (archetype_counts.weenie / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>(Weenie)</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
