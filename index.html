@@ -789,6 +789,7 @@
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
+                        'Yorvo, Lord of Garenbrig': 'Yorvo',
                         'Wilderness Reclamation': 'Reclamation',
                     };
                     let keycount = {};
@@ -867,6 +868,8 @@
                         artifact_cards: [],
                         planeswalker: 0,
                         planeswalker_cards: [],
+                        permission: 0,
+                        permission_cards: [],
                         spells: 0,
                         spells_cards: [],
                         mana_acceleration: 0,
@@ -996,6 +999,10 @@
                         if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                             archetype_counts.planeswalker += count;
                             archetype_counts.planeswalker_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')) {
+                            archetype_counts.permission += count;
+                            archetype_counts.permission_cards.push(d[0]);
                         }
                         if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
                             archetype_counts.spells += count;
@@ -1147,10 +1154,16 @@
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= 0.24) {
+                    if (archetype_counts.planeswalker / counts_sum >= 0.21) {
                         archetypes.push('planeswalker');
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.permission / counts_sum >= 0.26) {
+                        archetypes.push('permission');
+                        html += '<tr>';
+                        html += '<td>Permission</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.spells / counts_sum >= 0.32) {
@@ -1207,22 +1220,32 @@
                         html += '</tr>';
                     }
 
-                    if (archetypes.includes('creature') && archetypes.includes('wrath')) {
-                        html += '<tr>';
-                        html += '<td>(Midrange)<td>';
-                        html += '</tr>';
-                    } else if (archetypes.includes('creature') && archetypes.includes('mana_acceleration')) {
-                        html += '<tr>';
-                        html += '<td>(Stompy)<td>';
-                        html += '</tr>';
-                    } else if (archetypes.includes('creature') && archetypes.includes('direct_damage')) {
-                        html += '<tr>';
-                        html += '<td>(Sligh)<td>';
-                        html += '</tr>';
-                    } else if (archetype_counts.weenie / counts_sum >= 0.26) {
-                        html += '<tr>';
-                        html += '<td>(Weenie)</td>';
-                        html += '</tr>';
+                    if (archetypes.includes('creature')) {
+                        if (archetypes.includes('wrath')) {
+                            html += '<tr>';
+                            html += '<td>(Midrange)<td>';
+                            html += '</tr>';
+                        } else if (archetypes.includes('permission')) {
+                            html += '<tr>';
+                            html += '<td>(Clock Permission)<td>';
+                            html += '</tr>';
+                        } else if (archetypes.includes('mana_acceleration')) {
+                            html += '<tr>';
+                            html += '<td>(Stompy)<td>';
+                            html += '</tr>';
+                        } else if (archetypes.includes('direct_damage')) {
+                            html += '<tr>';
+                            html += '<td>(Sligh)<td>';
+                            html += '</tr>';
+                        } else if (archetype_counts.weenie / counts_sum >= 0.26) {
+                            html += '<tr>';
+                            html += '<td>(Weenie)</td>';
+                            html += '</tr>';
+                        } else {
+                            html += '<tr>';
+                            html += '<td>(Aggro)</td>';
+                            html += '</tr>';
+                        }
                     }
                     html += '</table>';
                     $('#archetype').html(html);
