@@ -97,30 +97,42 @@
     </div>
     <br>
 
+    <h3 style="margin-bottom: 0;">Main</h3>
     <div style="display: inline-block; vertical-align: top; width: 480px;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
-            <h3>Rarity</h3>
-            <div id="rarity"></div>
+            <h4>Rarity</h4>
+            <div id="rarity_main"></div>
         </div>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
-            <h3>Card Type</h3>
-            <div id="type"></div>
+            <h4>Card Type</h4>
+            <div id="type_main"></div>
         </div>
     </div>
 
     <div style="display: inline-block; vertical-align: top; width: 662px;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
-            <h3>Mana Curve</h3>
-            <table>
-                <tr>
-                    <th>CMC</th>
-                </tr>
-                <tr>
-                    <td>
-                        <div id="cmc"></div>
-                    </td>
-                </tr>
-            </table>
+            <h4>Mana Curve</h4>
+            <div id="cmc_main"></div>
+        </div>
+    </div>
+    <br>
+
+    <h3 style="margin-bottom: 0;">Sideboard</h3>
+    <div style="display: inline-block; vertical-align: top; width: 480px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+            <h4>Rarity</h4>
+            <div id="rarity_side"></div>
+        </div>
+        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+            <h4>Card Type</h4>
+            <div id="type_side"></div>
+        </div>
+    </div>
+
+    <div style="display: inline-block; vertical-align: top; width: 662px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+            <h4>Mana Curve</h4>
+            <div id="cmc_side"></div>
         </div>
     </div>
 
@@ -224,9 +236,6 @@
                 if (d === 'Commander') {
                     commander = true;
                 }
-                if (d === 'Sideboard') {
-                    sideboard = counts.length;
-                }
 
                 let s = d.split(' ');
                 if (s.length >= 3) {
@@ -239,6 +248,10 @@
 
                     link += count + '_' + set + '_' + number + '_';
                 } else {
+                    if (d !== 'Commander') {
+                        sideboard = counts.length;
+                    }
+
                     link += d + '___';
                 }
             });
@@ -378,9 +391,23 @@
 
                 // cmc
                 {
-                    let colors = {};
-                    ['Colorless', 'White', 'Blue', 'Black', 'Red', 'Green', 'Multicolored'].forEach(d => {
-                        colors[d] = {
+                    let keys = ['Colorless', 'White', 'Blue', 'Black', 'Red', 'Green', 'Multicolored'];
+                    let colors_main = {};
+                    let colors_side = {};
+                    keys.forEach(d => {
+                        colors_main[d] = {
+                            cmc_l: 0,
+                            cmc_0: 0,
+                            cmc_1: 0,
+                            cmc_2: 0,
+                            cmc_3: 0,
+                            cmc_4: 0,
+                            cmc_5: 0,
+                            cmc_6: 0,
+                            cmc_7: 0,
+                            cmc_x: 0,
+                        };
+                        colors_side[d] = {
                             cmc_l: 0,
                             cmc_0: 0,
                             cmc_1: 0,
@@ -415,7 +442,7 @@
                                 return 'Multicolored';
                         }
                     };
-                    let addColorsCount = (d, count) => {
+                    let addColorsCount = (colors, d, count) => {
                         let color_key = getColorKey(d.colorIdentity);
 
                         if (d.types.includes('Land')) {
@@ -457,21 +484,30 @@
                         }
                         let count = counts[i];
 
-                        if (sideboard === -1 || count <= sideboard) {
-                            addColorsCount(d[0], count);
+                        if (sideboard === -1 || i <= sideboard) {
+                            addColorsCount(colors_main, d[0], count);
                             if (d.length > 1) {
                                 if (d[0].layout !== 'transform') {
-                                    addColorsCount(d[1], count);
+                                    addColorsCount(colors_main, d[1], count);
+                                }
+                            }
+                        } else {
+                            addColorsCount(colors_side, d[0], count);
+                            if (d.length > 1) {
+                                if (d[0].layout !== 'transform') {
+                                    addColorsCount(colors_side, d[1], count);
                                 }
                             }
                         }
                     });
-                    $('#cmc').html('<canvas></canvas>');
-                    let canvas = $('#cmc canvas')[0];
+
+                    let getCmcArray = (d) => [d.cmc_l, d.cmc_0, d.cmc_1, d.cmc_2, d.cmc_3, d.cmc_4, d.cmc_5, d.cmc_6, d.cmc_7, d.cmc_x];
+
+                    $('#cmc_main').html('<canvas></canvas>');
+                    let canvas = $('#cmc_main canvas')[0];
                     canvas.width = 640;
                     canvas.height = 240;
 
-                    let getCmcArray = (d) => [d.cmc_l, d.cmc_0, d.cmc_1, d.cmc_2, d.cmc_3, d.cmc_4, d.cmc_5, d.cmc_6, d.cmc_7, d.cmc_x];
                     new Chart(canvas, {
                         type: 'bar',
                         data: {
@@ -479,37 +515,116 @@
                             datasets: [
                                 {
                                     label: 'Colorless',
-                                    data: getCmcArray(colors['Colorless']),
+                                    data: getCmcArray(colors_main['Colorless']),
                                     backgroundColor: '#E0E0E0',
                                 },
                                 {
                                     label: 'White',
-                                    data: getCmcArray(colors['White']),
+                                    data: getCmcArray(colors_main['White']),
                                     backgroundColor: '#FFFDDB',
                                 },
                                 {
                                     label: 'Blue',
-                                    data: getCmcArray(colors['Blue']),
+                                    data: getCmcArray(colors_main['Blue']),
                                     backgroundColor: '#C8E0F7',
                                 },
                                 {
                                     label: 'Black',
-                                    data: getCmcArray(colors['Black']),
+                                    data: getCmcArray(colors_main['Black']),
                                     backgroundColor: '#D0C7C0',
                                 },
                                 {
                                     label: 'Red',
-                                    data: getCmcArray(colors['Red']),
+                                    data: getCmcArray(colors_main['Red']),
                                     backgroundColor: '#E5B08F',
                                 },
                                 {
                                     label: 'Green',
-                                    data: getCmcArray(colors['Green']),
+                                    data: getCmcArray(colors_main['Green']),
                                     backgroundColor: '#B7D9B5',
                                 },
                                 {
                                     label: 'Multicolored',
-                                    data: getCmcArray(colors['Multicolored']),
+                                    data: getCmcArray(colors_main['Multicolored']),
+                                    backgroundColor: '#E5D97C',
+                                },
+                            ],
+                        },
+                        options: {
+                            responsive: false,
+                            plugins: {
+                                legend: {
+                                    position: 'right',
+                                },
+                                tooltip: {
+                                    bodyAlign: 'right',
+                                    footerAlign: 'right',
+                                    callbacks: {
+                                        footer: (tooltipItem) => {
+                                            let sum = tooltipItem.reduce((p, v) => p + v.parsed.y, 0);
+                                            return 'Sum: ' + sum;
+                                        },
+                                    },
+                                },
+                            },
+                            interaction: {
+                                intersect: false,
+                                mode: 'index',
+                            },
+                            scales: {
+                                x: {
+                                    stacked: true,
+                                },
+                                y: {
+                                    stacked: true,
+                                },
+                            },
+                        },
+                    });
+
+                    $('#cmc_side').html('<canvas></canvas>');
+                    canvas = $('#cmc_side canvas')[0];
+                    canvas.width = 640;
+                    canvas.height = 240;
+
+                    new Chart(canvas, {
+                        type: 'bar',
+                        data: {
+                            labels: ['Land', '0', '1', '2', '3', '4', '5', '6', '7+', 'X'],
+                            datasets: [
+                                {
+                                    label: 'Colorless',
+                                    data: getCmcArray(colors_side['Colorless']),
+                                    backgroundColor: '#E0E0E0',
+                                },
+                                {
+                                    label: 'White',
+                                    data: getCmcArray(colors_side['White']),
+                                    backgroundColor: '#FFFDDB',
+                                },
+                                {
+                                    label: 'Blue',
+                                    data: getCmcArray(colors_side['Blue']),
+                                    backgroundColor: '#C8E0F7',
+                                },
+                                {
+                                    label: 'Black',
+                                    data: getCmcArray(colors_side['Black']),
+                                    backgroundColor: '#D0C7C0',
+                                },
+                                {
+                                    label: 'Red',
+                                    data: getCmcArray(colors_side['Red']),
+                                    backgroundColor: '#E5B08F',
+                                },
+                                {
+                                    label: 'Green',
+                                    data: getCmcArray(colors_side['Green']),
+                                    backgroundColor: '#B7D9B5',
+                                },
+                                {
+                                    label: 'Multicolored',
+                                    data: getCmcArray(colors_side['Multicolored']),
                                     backgroundColor: '#E5D97C',
                                 },
                             ],
@@ -549,59 +664,62 @@
 
                 // type
                 {
-                    let types = {};
-                    ['Land', 'Planeswalker', 'Creature', 'Artifact', 'Enchantment', 'Instant', 'Sorcery'].forEach(d => {
-                        types[d] = {
+                    let keys = ['Land', 'Planeswalker', 'Creature', 'Artifact', 'Enchantment', 'Instant', 'Sorcery'];
+                    let types_main = {};
+                    let types_side = {};
+                    keys.forEach(d => {
+                        types_main[d] = {
+                            front: 0,
+                            back: 0,
+                        };
+                        types_side[d] = {
                             front: 0,
                             back: 0,
                         };
                     });
-                    let multitype_front = 0;
-                    let multitype_back = 0;
 
-                    let keys = Object.keys(types);
                     data.forEach((d, i) => {
                         if (d.length === 0) {
                             return;
                         }
                         let count = counts[i];
 
-                        keys.forEach(key => {
-                            if (d[0].types.includes(key)) {
-                                types[key].front += count;
-                            }
+                        if (sideboard === -1 || i <= sideboard) {
+                            keys.forEach(key => {
+                                if (d[0].types.includes(key)) {
+                                    types_main[key].front += count;
+                                }
 
-                            if (d.length > 1) {
-                                if (d[1].types.includes(key)) {
-                                    if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
-                                        types[key].back += count;
+                                if (d.length > 1) {
+                                    if (d[1].types.includes(key)) {
+                                        if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
+                                            types_main[key].back += count;
+                                        }
                                     }
                                 }
-                            }
-                        });
-                        if (d[0].types.length > 1) {
-                            multitype_front += count;
-                        }
-                        if (d.length > 1) {
-                            if (d[1].types.length > 1) {
-                                multitype_back += count;
-                            }
+                            });
+                        } else {
+                            keys.forEach(key => {
+                                if (d[0].types.includes(key)) {
+                                    types_side[key].front += count;
+                                }
+
+                                if (d.length > 1) {
+                                    if (d[1].types.includes(key)) {
+                                        if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
+                                            types_side[key].back += count;
+                                        }
+                                    }
+                                }
+                            });
                         }
                     });
 
                     let html = '';
                     html += '<table style="border-collapse: collapse">';
-                    html += '<tr>';
-                    html += '<th>Front</th>';
-                    html += '<th>Back</th>';
-                    html += '<th>Sum</th>';
-                    html += '<th>Type</th>';
-                    html += '</tr>';
                     keys.forEach(key => {
                         html += '<tr>';
-                        html += '<td style="text-align: right;">' + types[key].front + '</td>';
-                        html += '<td style="text-align: right;">' + types[key].back + '</td>';
-                        html += '<td style="text-align: right;">' + (types[key].front + types[key].back) + '</td>';
+                        html += '<td style="text-align: right;">' + (types_main[key].front + types_main[key].back) + '</td>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
 
@@ -611,14 +729,12 @@
                                 html += '</tr>';
                                 break;
                             case 'Enchantment':
-                                let frontP = types['Planeswalker'].front + types['Creature'].front + types['Artifact'].front + types['Enchantment'].front;
-                                let backP = types['Planeswalker'].back + types['Creature'].back + types['Artifact'].back + types['Enchantment'].back;
+                                let frontP = types_main['Planeswalker'].front + types_main['Creature'].front + types_main['Artifact'].front + types_main['Enchantment'].front;
+                                let backP = types_main['Planeswalker'].back + types_main['Creature'].back + types_main['Artifact'].back + types_main['Enchantment'].back;
                                 html += '<tr style="border-bottom: 3px double #BCBCBC;">';
                                 html += '</tr>';
 
                                 html += '<tr>';
-                                html += '<td style="text-align: right;">' + frontP + '</td>';
-                                html += '<td style="text-align: right;">' + backP + '</td>';
                                 html += '<td style="text-align: right;">' + (frontP + backP) + '</td>';
                                 html += '<td>(Non-land Permanent)</td>';
                                 html += '</tr>';
@@ -627,14 +743,12 @@
                                 html += '</tr>';
                                 break;
                             case 'Sorcery':
-                                let frontN = types['Instant'].front + types['Sorcery'].front;
-                                let backN = types['Instant'].back + types['Sorcery'].back;
+                                let frontN = types_main['Instant'].front + types_main['Sorcery'].front;
+                                let backN = types_main['Instant'].back + types_main['Sorcery'].back;
                                 html += '<tr style="border-bottom: 3px double #BCBCBC;">';
                                 html += '</tr>';
 
                                 html += '<tr>';
-                                html += '<td style="text-align: right;">' + frontN + '</td>';
-                                html += '<td style="text-align: right;">' + backN + '</td>';
                                 html += '<td style="text-align: right;">' + (frontN + backN) + '</td>';
                                 html += '<td>(Non-permanent)</td>';
                                 html += '</tr>';
@@ -642,41 +756,96 @@
                         }
                     });
                     html += '</table>';
-                    $('#type').html(html);
+                    $('#type_main').html(html);
+
+                    html = '';
+                    html += '<table style="border-collapse: collapse">';
+                    keys.forEach(key => {
+                        html += '<tr>';
+                        html += '<td style="text-align: right;">' + (types_side[key].front + types_side[key].back) + '</td>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+
+                        switch (key) {
+                            case 'Land':
+                                html += '<tr style="border-bottom: 1px solid #808080;">';
+                                html += '</tr>';
+                                break;
+                            case 'Enchantment':
+                                let frontP = types_side['Planeswalker'].front + types_side['Creature'].front + types_side['Artifact'].front + types_side['Enchantment'].front;
+                                let backP = types_side['Planeswalker'].back + types_side['Creature'].back + types_side['Artifact'].back + types_side['Enchantment'].back;
+                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
+                                html += '</tr>';
+
+                                html += '<tr>';
+                                html += '<td style="text-align: right;">' + (frontP + backP) + '</td>';
+                                html += '<td>(Non-land Permanent)</td>';
+                                html += '</tr>';
+
+                                html += '<tr style="border-bottom: 1px solid #808080;">';
+                                html += '</tr>';
+                                break;
+                            case 'Sorcery':
+                                let frontN = types_side['Instant'].front + types_side['Sorcery'].front;
+                                let backN = types_side['Instant'].back + types_side['Sorcery'].back;
+                                html += '<tr style="border-bottom: 3px double #BCBCBC;">';
+                                html += '</tr>';
+
+                                html += '<tr>';
+                                html += '<td style="text-align: right;">' + (frontN + backN) + '</td>';
+                                html += '<td>(Non-permanent)</td>';
+                                html += '</tr>';
+                                break;
+                        }
+                    });
+                    html += '</table>';
+                    $('#type_side').html(html);
                 }
 
                 // rarity
                 {
-                    let raritys = {
-                        Mythic: 0,
-                        Rare: 0,
-                        Uncommon: 0,
-                        Common: 0,
-                    };
-                    let keys = Object.keys(raritys);
+                    let keys = ['Mythic', 'Rare', 'Uncommon', 'Common'];
+                    let raritys_main = {};
+                    let raritys_side = {};
+                    keys.forEach(key => {
+                        raritys_main[key] = 0;
+                        raritys_side[key] = 0;
+                    });
+
                     data.forEach((d, i) => {
                         if (d.length === 0) {
                             return;
                         }
                         let count = counts[i];
 
-                        raritys[d[0].rarity] += count;
+                        if (sideboard === -1 || i <= sideboard) {
+                            raritys_main[d[0].rarity] += count;
+                        } else {
+                            raritys_side[d[0].rarity] += count;
+                        }
                     });
 
                     let html = '';
                     html += '<table>';
-                    html += '<tr>';
-                    html += '<th></th>';
-                    html += '<th>Rarity</th>';
-                    html += '</tr>';
                     keys.forEach(key => {
                         html += '<tr>';
-                        html += '<td style="text-align: right;">' + raritys[key] + '</td>';
+                        html += '<td style="text-align: right;">' + raritys_main[key] + '</td>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
                     });
                     html += '</table>';
-                    $('#rarity').html(html);
+                    $('#rarity_main').html(html);
+
+                    html = '';
+                    html += '<table>';
+                    keys.forEach(key => {
+                        html += '<tr>';
+                        html += '<td style="text-align: right;">' + raritys_side[key] + '</td>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    });
+                    html += '</table>';
+                    $('#rarity_side').html(html);
                 }
 
                 // set
