@@ -35,6 +35,8 @@
 
     <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Color</h3>
+        <div id="color"></div>
+        <br>
         <table>
             <tr>
                 <th>Mana Symbol</th>
@@ -48,6 +50,8 @@
     </div>
     <div style="display: inline-block; vertical-align: top; margin: 8px;">
         <h3>Archetype</h3>
+        <div id="decktype"></div>
+        <br>
         <table>
             <tr>
                 <th>Keycard</th>
@@ -251,7 +255,7 @@
                     }
                 });
 
-                // symbol
+                // color / symbol
                 {
                     let symbols = {
                         C: 0,
@@ -284,9 +288,13 @@
                             }
                         });
                     });
+                    symbols.sum = symbols.W + symbols.U + symbols.B + symbols.G + symbols.R;
+                    console.log(symbols);
                     if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
                         symbols.C = 1;
                     }
+
+                    // symbol
                     $('#symbol').html('<canvas></canvas>');
                     let canvas = $('#symbol canvas')[0];
                     canvas.width = 80;
@@ -312,6 +320,38 @@
                             },
                         },
                     });
+
+                    // color
+                    let colors = [];
+                    if (symbols.W / symbols.sum >= 0.12) {
+                        colors.push('White');
+                    }
+                    if (symbols.U / symbols.sum >= 0.12) {
+                        colors.push('Blue');
+                    }
+                    if (symbols.B / symbols.sum >= 0.12) {
+                        colors.push('Black');
+                    }
+                    if (symbols.R / symbols.sum >= 0.12) {
+                        colors.push('Red');
+                    }
+                    if (symbols.G / symbols.sum >= 0.12) {
+                        colors.push('Green');
+                    }
+                    switch (colors.length) {
+                        case 0:
+                            $('#color').html('Colorless');
+                            break;
+                        case 1:
+                            $('#color').html('Mono ' + colors[0]);
+                            break;
+                        case 5:
+                            $('#color').html('5-color');
+                            break;
+                        default:
+                            $('#color').html(colors.join(' '));
+                            break;
+                    }
                 }
 
                 // cmc
@@ -826,7 +866,7 @@
                     $('#keycard').html(html);
                 }
 
-                // subtype / keyword / archetype
+                // decktype / subtype / keyword / archetype
                 {
                     let archetype_counts = {
                         gate: 0,
@@ -1000,7 +1040,9 @@
                             archetype_counts.planeswalker += count;
                             archetype_counts.planeswalker_cards.push(d[0]);
                         }
-                        if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')) {
+                        if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
+                            || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
+                            || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection')))) {
                             archetype_counts.permission += count;
                             archetype_counts.permission_cards.push(d[0]);
                         }
@@ -1052,10 +1094,10 @@
                             archetype_counts.wrath_cards.push(d[0]);
                         }
                     });
-                    let html;
+                    console.log(archetype_counts);
 
                     // subtype
-                    html = '';
+                    let html = '';
                     html += '<table>';
                     if (archetype_counts.gate / counts_sum >= 0.16) {
                         html += '<tr>';
@@ -1214,43 +1256,33 @@
                         html += '<td>Control</td>';
                         html += '</tr>';
                     }
-                    if (archetypes.length === 0) {
-                        html += '<tr>';
-                        html += '<td>???</td>';
-                        html += '</tr>';
-                    }
-
-                    if (archetypes.includes('creature')) {
-                        if (archetypes.includes('wrath')) {
-                            html += '<tr>';
-                            html += '<td>(Midrange)<td>';
-                            html += '</tr>';
-                        } else if (archetypes.includes('permission')) {
-                            html += '<tr>';
-                            html += '<td>(Clock Permission)<td>';
-                            html += '</tr>';
-                        } else if (archetypes.includes('mana_acceleration')) {
-                            html += '<tr>';
-                            html += '<td>(Stompy)<td>';
-                            html += '</tr>';
-                        } else if (archetypes.includes('direct_damage')) {
-                            html += '<tr>';
-                            html += '<td>(Sligh)<td>';
-                            html += '</tr>';
-                        } else if (archetype_counts.weenie / counts_sum >= 0.26) {
-                            html += '<tr>';
-                            html += '<td>(Weenie)</td>';
-                            html += '</tr>';
-                        } else {
-                            html += '<tr>';
-                            html += '<td>(Aggro)</td>';
-                            html += '</tr>';
-                        }
-                    }
                     html += '</table>';
                     $('#archetype').html(html);
 
-                    console.log(archetype_counts);
+                    // decktype
+                    let decktype = '???';
+                    if (archetypes.includes('creature')) {
+                        if (archetypes.includes('wrath')) {
+                            decktype = 'Midrange';
+                        } else if (archetypes.includes('permission')) {
+                            decktype = 'Clock Permission';
+                        } else if (archetypes.includes('mana_acceleration')) {
+                            decktype = 'Stompy';
+                        } else if (archetypes.includes('direct_damage')) {
+                            decktype = 'Sligh';
+                        } else if (archetype_counts.weenie / counts_sum >= 0.26) {
+                            decktype = 'Weenie';
+                        } else {
+                            decktype = 'Aggro';
+                        }
+                    } else if (archetypes.includes('mana_acceleration')) {
+                        decktype = 'Ramp';
+                    } else if (archetypes.includes('wrath')) {
+                        decktype = 'Control';
+                    } else {
+                        decktype = 'Combo';
+                    }
+                    $('#decktype').html(decktype);
                 }
 
                 // image
