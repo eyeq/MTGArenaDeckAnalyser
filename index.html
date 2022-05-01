@@ -247,22 +247,37 @@
                     commander = true;
                 }
 
-                let s = d.split(' ');
-                if (s.length >= 3) {
-                    let count = Number(s[0]);
-                    let set = s[s.length - 2].replace(/[()]/g, '');
-                    let number = s[s.length - 1];
 
-                    counts.push(count);
-                    promises.push(send(set, number));
-
-                    link += count + '_' + set + '_' + number + '_';
-                } else {
+                let index0 = d.indexOf(' ');
+                if (index0 === -1) {
                     if (d !== 'Commander') {
                         sideboard = counts.length;
                     }
 
                     link += d + '___';
+                } else {
+                    let index1 = d.indexOf(' (');
+                    let s = d.split(' ');
+
+                    let count = Number(s[0]);
+
+                    let name = '';
+                    if (index1 === -1) {
+                        name = d.substr(index0 + 1);
+                    } else {
+                        name = d.substr(index0 + 1, index1 - 2);
+                    }
+
+                    let set = '';
+                    let number = '';
+                    if (s.length >= 3) {
+                        set = s[s.length - 2].replace(/[()]/g, '');
+                        number = s[s.length - 1];
+                    }
+                    counts.push(count);
+                    promises.push(send(name, set, number));
+
+                    link += count + '_' + set + '_' + number + '_';
                 }
             });
             $('#link').html('<a href="' + link + '">Copy link address</a>');
@@ -1616,18 +1631,57 @@
             });
         }
 
-        function send(set, number) {
+        function send(name, set, number) {
             return new Promise((resolve, reject) => {
-                let request = new XMLHttpRequest();
-                request.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + set + '&number=' + number);
-                request.onload = () => {
-                    let data = JSON.parse(request.response);
-                    resolve(data.cards);
+                sendName = (resolve, reject, name) => {
+                    if (name) {
+                        let request = new XMLHttpRequest();
+                        request.open('GET', 'https://api.magicthegathering.io/v1/cards?name=' + encodeURIComponent(name));
+                        request.onload = () => {
+                            let data = JSON.parse(request.response);
+
+                            if (data.cards.length === 0) {
+                                resolve([]);
+                            } else {
+                                let request2 = new XMLHttpRequest();
+                                request2.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + data.cards[0].set + '&number=' + data.cards[0].number);
+                                request2.onload = () => {
+                                    let data2 = JSON.parse(request2.response);
+                                    resolve(data2.cards);
+                                }
+                                request2.onerror = () => {
+                                    reject();
+                                }
+                                request2.send();
+                            }
+                        };
+                        request.onerror = () => {
+                            reject();
+                        }
+                        request.send();
+                    } else {
+                        resolve([]);
+                    }
                 };
-                request.onerror = () => {
-                    reject();
+
+                if (set) {
+                    let request = new XMLHttpRequest();
+                    request.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + set + '&number=' + number);
+                    request.onload = () => {
+                        let data = JSON.parse(request.response);
+                        if (data.cards.length === 0) {
+                            sendName(resolve, reject, name);
+                        } else {
+                            resolve(data.cards);
+                        }
+                    };
+                    request.onerror = () => {
+                        reject();
+                    }
+                    request.send();
+                } else {
+                    sendName(resolve, reject, name);
                 }
-                request.send();
             });
         }
     </script>
