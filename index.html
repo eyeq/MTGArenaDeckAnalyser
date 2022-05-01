@@ -35,6 +35,7 @@
     <div style="display: inline-block; vertical-align: top; width: 640px;">
         <h2 style="margin-bottom: 0;">Share this deck</h2>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
+            <textarea id="output" style="width: 400px; height: 200px;" readonly onclick="this.select();"></textarea>
             <div id="link"></div>
         </div>
     </div>
@@ -299,6 +300,33 @@
                     }
                 });
 
+                // output
+                {
+                    let val = '';
+                    if (commander) {
+                        val += 'Commander\n';
+                    } else {
+                        val += 'Deck\n';
+                    }
+                    let first = true;
+                    data.forEach((d, i) => {
+                        if (d.length === 0) {
+                            return;
+                        }
+                        let count = counts[i];
+
+                        if (!commander && sideboard !== 0 && sideboard === i) {
+                            val += '\nSideboard\n';
+                        }
+                        val += count + ' ' + d[0].name + ' (' + d[0].set + ') ' + d[0].number + '\n';
+                        if (commander && first) {
+                            val += '\nDeck\n';
+                        }
+                        first = false;
+                    });
+                    $('#output').val(val);
+                }
+
                 // color / symbol
                 {
                     let symbols = {
@@ -515,7 +543,7 @@
                         }
                         let count = counts[i];
 
-                        if (sideboard === -1 || i <= sideboard) {
+                        if (commander || i <= sideboard) {
                             addColorsCount(colors_main, d[0], count);
                             if (d.length > 1) {
                                 if (d[0].layout !== 'transform') {
@@ -715,7 +743,7 @@
                         }
                         let count = counts[i];
 
-                        if (sideboard === -1 || i <= sideboard) {
+                        if (commander || i <= sideboard) {
                             keys.forEach(key => {
                                 if (d[0].types.includes(key)) {
                                     types_main[key].front += count;
@@ -831,7 +859,7 @@
                         }
                         let count = counts[i];
 
-                        if (sideboard === -1 || i <= sideboard) {
+                        if (commander || i <= sideboard) {
                             raritys_main[d[0].rarity] += count;
                         } else {
                             raritys_side[d[0].rarity] += count;
