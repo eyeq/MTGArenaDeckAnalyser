@@ -1071,9 +1071,11 @@
                         'Nicol Bolas, Dragon-God': 'Bolas',
                         'Nine Lives': 'Nine Lives',
                         'Nissa, Who Shakes the World': 'Nissa',
+                        'Niv-Mizzet Reborn': 'Niv-Mizzet',
                         'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
+                        'Thud': 'Thud',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
                         'Yorvo, Lord of Garenbrig': 'Yorvo',
                         'Wilderness Reclamation': 'Reclamation',
@@ -1120,6 +1122,8 @@
 
                         elemental: 0,
                         elemental_cards: [],
+                        goblin: 0,
+                        goblin_cards: [],
                         human: 0,
                         human_cards: [],
                         knight: 0,
@@ -1226,6 +1230,10 @@
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
                             archetype_counts.elemental_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('goblin') || text_temp.includes('goblin')) {
+                            archetype_counts.goblin += count;
+                            archetype_counts.goblin_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('human') || text_temp.includes('human')) {
                             archetype_counts.human += count;
@@ -1389,6 +1397,11 @@
                     if (archetype_counts.elemental / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.goblin / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Goblin</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.human / counts_sum >= ratio_lord) {
