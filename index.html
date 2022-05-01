@@ -187,6 +187,15 @@
             }
 
             $('input[name="size"]').on('change', resizeImage);
+
+            $('#board').on('click', '.flip', e => {
+                   let target = $(e.target);
+                    let back = target.prev();
+                    let front = back.prev();
+
+                    back.toggle();
+                    front.toggle();
+                });
         })();
 
         function resizeImage() {
@@ -1560,16 +1569,7 @@
                         html += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
                         html += '</div>';
                     });
-                    $('#board')
-                        .html(html)
-                        .on('click', '.flip', e => {
-                            let target = $(e.target);
-                            let back = target.prev();
-                            let front = back.prev();
-
-                            back.toggle();
-                            front.toggle();
-                        });
+                    $('#board').html(html);
 
                     resizeImage();
                 }
