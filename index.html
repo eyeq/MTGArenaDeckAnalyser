@@ -14,6 +14,7 @@
         #board {
             max-width: 1120px;
         }
+
         #board[style*="width"] {
             max-width: unset;
         }
@@ -183,20 +184,20 @@
                         val += ' ';
                     }
                 });
-                let text = $('#input').val(val);
+                $('#input').val(val);
                 read();
             }
 
             $('input[name="size"]').on('change', resizeImage);
 
             $('#board').on('click', '.flip', e => {
-                   let target = $(e.target);
-                    let back = target.prev();
-                    let front = back.prev();
+                let target = $(e.target);
+                let back = target.prev();
+                let front = back.prev();
 
-                    back.toggle();
-                    front.toggle();
-                });
+                back.toggle();
+                front.toggle();
+            });
         })();
 
         function resizeImage() {
@@ -449,10 +450,10 @@
                                 || colors.includes('Blue') && colors.includes('Black') && colors.includes('Red')
                                 || colors.includes('Black') && colors.includes('Red') && colors.includes('Green')
                                 || colors.includes('Red') && colors.includes('Green') && colors.includes('White')) {
-                                    $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Shard)</span>');
-                                } else {
-                                    $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Wedge)</span>');
-                                }
+                                $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Shard)</span>');
+                            } else {
+                                $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Wedge)</span>');
+                            }
                             break;
                         case 4:
                             $('#color').html('4-color');
@@ -851,7 +852,7 @@
                     html += '<td>Permanent Sepll</td>'
                     html += '</tr>';
                     html += '<tr>';
-                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>' + nonpermanent_spell + '</td>'
                     html += '<td>Non-permanent Sepll</td>'
                     html += '</tr>';
                     html += '</table>';
