@@ -1061,6 +1061,8 @@
                         adventure: 0,
                         adventure_cards: [],
 
+                        blood: 0,
+                        blood_cards: [],
                         food: 0,
                         food_cards: [],
 
@@ -1179,6 +1181,10 @@
                         }
 
                         // subtype artifact
+                        if (creature_type || type_temp.includes('blood') || text_temp.includes('blood')) {
+                            archetype_counts.blood += count;
+                            archetype_counts.blood_cards.push(d[0]);
+                        }
                         if (creature_type || type_temp.includes('food') || text_temp.includes('food')) {
                             archetype_counts.food += count;
                             archetype_counts.food_cards.push(d[0]);
@@ -1341,6 +1347,11 @@
                         html += '</tr>';
                     }
 
+                    if (archetype_counts.blood / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Blood</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.food / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Food</td>';
@@ -1406,7 +1417,7 @@
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= ratio_role) {
+                    if (archetype_counts.planeswalker / counts_sum >= ratio_refer) {
                         archetypes.push('planeswalker');
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
