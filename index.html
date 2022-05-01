@@ -1051,6 +1051,8 @@
                         knight_cards: [],
                         vampire: 0,
                         vampire_cards: [],
+                        warrior: 0,
+                        warrior_cards: [],
                         wolf: 0,
                         wolf_cards: [],
                         zombie: 0,
@@ -1153,6 +1155,10 @@
                         if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
                             archetype_counts.vampire += count;
                             archetype_counts.vampire_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('warrior') || text_temp.includes('warrior')) {
+                            archetype_counts.warrior += count;
+                            archetype_counts.warrior_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
                             archetype_counts.wolf += count;
@@ -1296,6 +1302,11 @@
                         html += '<td>Vampire</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.warrior / counts_sum >= 0.26) {
+                        html += '<tr>';
+                        html += '<td>Warrior</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.wolf / counts_sum >= 0.26) {
                         html += '<tr>';
                         html += '<td>Wolf</td>';
@@ -1373,7 +1384,7 @@
                         html += '<td>Superfriends</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.permission / counts_sum >= 0.26) {
+                    if (archetype_counts.permission / counts_sum >= 0.21) {
                         archetypes.push('permission');
                         html += '<tr>';
                         html += '<td>Permission</td>';
