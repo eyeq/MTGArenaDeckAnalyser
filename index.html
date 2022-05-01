@@ -1050,6 +1050,7 @@
                         'Happily Ever After': 'Happily Ever After',
                         'Hero of Precinct One': 'Hero',
                         'Irencrag Pyromancer': 'Irencrag',
+                        'Korvold, Fae-Cursed King': 'Korvold',
                         'Lich\'s Mastery': 'Lich',
                         'March of the Multitudes': 'March',
                         'Nicol Bolas, Dragon-God': 'Bolas',
@@ -1139,6 +1140,8 @@
                         sacrifice_cards: [],
                         second_draw: 0,
                         second_draw_cards: [],
+                        toughness: 0,
+                        toughness_cards: [],
 
                         self_mill: 0,
                         self_mill_cards: [],
@@ -1279,6 +1282,10 @@
                         if (text_temp.includes('whenever you draw your second card each turn')) {
                             archetype_counts.second_draw += count;
                             archetype_counts.second_draw_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('equal to its toughness')) {
+                            archetype_counts.toughness += count;
+                            archetype_counts.toughness_cards.push(d[0]);
                         }
 
                         // decktype
@@ -1454,7 +1461,12 @@
                     }
                     if (archetype_counts.second_draw / counts_sum >= ratio_key) {
                         html += '<tr>';
-                        html += '<td>Second Draw</td>';
+                        html += '<td>Second-Draw</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.toughness / counts_sum >= ratio_key) {
+                        html += '<tr>';
+                        html += '<td>Toughness</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
@@ -1557,7 +1569,7 @@
                         }
                     } else if (archetypes.includes('mana_acceleration')) {
                         decktype = 'Ramp';
-                    } else if (archetypes.includes('wrath')) {
+                    } else if (archetypes.includes('wrath') || archetypes.includes('permission')) {
                         decktype = 'Control';
                     } else {
                         decktype = 'Combo';
