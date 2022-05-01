@@ -1064,11 +1064,13 @@
                         'Goldspan Dragon': 'Dragon',
                         'Golos, Tireless Pilgrim': 'Golos',
                         'Happily Ever After': 'Happily Ever After',
+                        'Hazoret the Fervent': 'Hazoret',
                         'Hero of Precinct One': 'Hero',
                         'Irencrag Pyromancer': 'Irencrag',
                         'Korvold, Fae-Cursed King': 'Korvold',
                         'Lich\'s Mastery': 'Lich',
                         'March of the Multitudes': 'March',
+                        'Nexus of Fate': 'Nexus',
                         'Nicol Bolas, Dragon-God': 'Bolas',
                         'Nine Lives': 'Nine Lives',
                         'Nissa, Who Shakes the World': 'Nissa',
@@ -1076,6 +1078,7 @@
                         'Oko, Thief of Crowns': 'Oko',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
+                        'Teferi, Hero of Dominaria': 'Teferi', 
                         'Thud': 'Thud',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
                         'Yorvo, Lord of Garenbrig': 'Yorvo',
@@ -1175,6 +1178,8 @@
                         self_mill_cards: [],
                         artifact: 0,
                         artifact_cards: [],
+                        fog: 0,
+                        fog_cards: [],
                         planeswalker: 0,
                         planeswalker_cards: [],
                         permission: 0,
@@ -1345,6 +1350,13 @@
                         if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
                             archetype_counts.artifact += count;
                             archetype_counts.artifact_cards.push(d[0]);
+                        }
+                        if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
+                            || text_temp.includes('your life total can\'t change')
+                            || text_temp.includes('your life total to less than 1')
+                            || text_temp.includes('your life total would be reduced to 0')) {
+                            archetype_counts.fog += count;
+                            archetype_counts.fog_cards.push(d[0]);
                         }
                         if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                             archetype_counts.planeswalker += count;
@@ -1561,6 +1573,12 @@
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.fog / counts_sum >= 0.10) {
+                        archetypes.push('fog');
+                        html += '<tr>';
+                        html += '<td>Fog</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.planeswalker / counts_sum >= ratio_refer) {
                         archetypes.push('planeswalker');
                         html += '<tr>';
@@ -1642,7 +1660,7 @@
                         }
                     } else if (archetypes.includes('mana_acceleration')) {
                         decktype = 'Ramp';
-                    } else if (archetypes.includes('wrath') || archetypes.includes('permission')) {
+                    } else if (archetypes.includes('wrath') || archetypes.includes('fog') || archetypes.includes('permission')) {
                         decktype = 'Control';
                     } else {
                         decktype = 'Combo';
