@@ -1150,6 +1150,8 @@
 
                         dredge: 0,
                         dredge_cards: [],
+                        energy: 0,
+                        energy_cards: [],
                         explore: 0,
                         explore_cards: [],
                         flying: 0,
@@ -1290,6 +1292,10 @@
                         if (text_temp.includes('dredge')) {
                             archetype_counts.dredge += count;
                             archetype_counts.dredge_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('{e}')) {
+                            archetype_counts.energy += count;
+                            archetype_counts.energy_cards.push(d[0]);
                         }
                         if (text_temp.includes('explores')) {
                             archetype_counts.explore += count;
@@ -1484,6 +1490,11 @@
                     if (archetype_counts.dredge / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Dredge</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.energy / counts_sum >= 0.30) {
+                        html += '<tr>';
+                        html += '<td>Energy</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.explore / counts_sum >= ratio_refer) {
