@@ -1159,6 +1159,8 @@
                         sacrifice_cards: [],
                         second_draw: 0,
                         second_draw_cards: [],
+                        surveil: 0,
+                        surveil_cards: [],
                         toughness: 0,
                         toughness_cards: [],
 
@@ -1305,6 +1307,10 @@
                         if (text_temp.includes('whenever you draw your second card each turn')) {
                             archetype_counts.second_draw += count;
                             archetype_counts.second_draw_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('surveil')) {
+                            archetype_counts.surveil += count;
+                            archetype_counts.surveil_cards.push(d[0]);
                         }
                         if (text_temp.includes('equal to its toughness')) {
                             archetype_counts.toughness += count;
@@ -1490,6 +1496,11 @@
                     if (archetype_counts.second_draw / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Second-Draw</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.surveil / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Surveil</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.toughness / counts_sum >= ratio_key) {
