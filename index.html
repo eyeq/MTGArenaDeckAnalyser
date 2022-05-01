@@ -1079,6 +1079,8 @@
                         second_draw: 0,
                         second_draw_cards: [],
 
+                        self_mill: 0,
+                        self_mill_cards: [],
                         artifact: 0,
                         artifact_cards: [],
                         planeswalker: 0,
@@ -1215,6 +1217,11 @@
                         }
 
                         // decktype
+                        if (text_temp.includes('put into your graveyard from your library')
+                            || text_temp.includes('your library has no cards')) {
+                            archetype_counts.self_mill += count;
+                            archetype_counts.self_mill_cards.push(d[0]);
+                        }
                         if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
                             archetype_counts.artifact += count;
                             archetype_counts.artifact_cards.push(d[0]);
@@ -1387,6 +1394,12 @@
                     html = '';
                     html += '<table>';
                     let archetypes = [];
+                    if (archetype_counts.self_mill / counts_sum >= 0.10) {
+                        archetypes.push('self_mill');
+                        html += '<tr>';
+                        html += '<td>Self-Mill</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.artifact / counts_sum >= 0.32) {
                         archetypes.push('artifact');
                         html += '<tr>';
