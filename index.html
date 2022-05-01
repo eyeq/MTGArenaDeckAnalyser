@@ -1120,6 +1120,8 @@
                         gate: 0,
                         gate_cards: [],
 
+                        angel: 0,
+                        angel_cards: [],
                         elemental: 0,
                         elemental_cards: [],
                         goblin: 0,
@@ -1228,6 +1230,10 @@
                         let creature_type = false;
                         if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
                             creature_type = true;
+                        }
+                        if (creature_type || type_temp.includes('angel') || text_temp.includes('angel')) {
+                            archetype_counts.angel += count;
+                            archetype_counts.angel_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
@@ -1400,6 +1406,11 @@
                         html += '</tr>';
                     }
 
+                    if (archetype_counts.angel / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Angel</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.elemental / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
@@ -1521,7 +1532,7 @@
                         html += '<td>Self-Mill</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.artifact / counts_sum >= 0.32) {
+                    if (archetype_counts.artifact / counts_sum >= 0.30) {
                         archetypes.push('artifact');
                         html += '<tr>';
                         html += '<td>Artifact</td>';
@@ -1539,7 +1550,7 @@
                         html += '<td>Permission</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.spells / counts_sum >= 0.32) {
+                    if (archetype_counts.spells / counts_sum >= 0.30) {
                         archetypes.push('spells');
                         html += '<tr>';
                         html += '<td>Spells</td>';
@@ -1551,7 +1562,7 @@
                         html += '<td>Ramp</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.instant / counts_sum >= 0.32) {
+                    if (archetype_counts.instant / counts_sum >= 0.30) {
                         archetypes.push('instant');
                         html += '<tr>';
                         html += '<td>Flash</td>';
@@ -1563,13 +1574,13 @@
                         html += '<td>Token</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.creature / counts_sum >= 0.32) {
+                    if (archetype_counts.creature / counts_sum >= 0.30) {
                         archetypes.push('creature');
                         html += '<tr>';
                         html += '<td>Beatdown</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.direct_damage / counts_sum >= 0.32) {
+                    if (archetype_counts.direct_damage / counts_sum >= 0.30) {
                         archetypes.push('direct_damage');
                         html += '<tr>';
                         html += '<td>Burn</td>';
