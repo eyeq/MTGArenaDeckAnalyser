@@ -380,11 +380,33 @@
                         case 1:
                             $('#color').html('Mono ' + colors[0]);
                             break;
+                        case 2:
+                            if (colors.includes('White') && colors.includes('Blue')
+                                || colors.includes('Blue') && colors.includes('Black')
+                                || colors.includes('Black') && colors.includes('Red')
+                                || colors.includes('Red') && colors.includes('Green')
+                                || colors.includes('Green') && colors.includes('White')) {
+                                $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Allied)</span>');
+                            } else {
+                                $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Enemy)</span>');
+                            }
+                            break;
+                        case 3:
+                            if (colors.includes('Green') && colors.includes('White') && colors.includes('Blue')
+                                || colors.includes('White') && colors.includes('Blue') && colors.includes('Black')
+                                || colors.includes('Blue') && colors.includes('Black') && colors.includes('Red')
+                                || colors.includes('Black') && colors.includes('Red') && colors.includes('Green')
+                                || colors.includes('Red') && colors.includes('Green') && colors.includes('White')) {
+                                    $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Shard)</span>');
+                                } else {
+                                    $('#color').html(colors.join(' ') + '<br><span style="position: absolute;">(Wedge)</span>');
+                                }
+                            break;
+                        case 4:
+                            $('#color').html('4-color');
+                            break;
                         case 5:
                             $('#color').html('5-color');
-                            break;
-                        default:
-                            $('#color').html(colors.join(' '));
                             break;
                     }
                 }
