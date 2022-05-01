@@ -1072,6 +1072,8 @@
                         heroci_cards: [],
                         mentor: 0,
                         mentor_cards: [],
+                        mill: 0,
+                        mill_cards: [],
                         sacrifice: 0,
                         sacrifice_cards: [],
                         second_draw: 0,
@@ -1199,6 +1201,10 @@
                             archetype_counts.mentor += count;
                             archetype_counts.mentor_cards.push(d[0]);
                         }
+                        if (text_temp.includes('mill')) {
+                            archetype_counts.mill += count;
+                            archetype_counts.mill_cards.push(d[0]);
+                        }
                         if (text_temp.includes('sacrifice')) {
                             archetype_counts.sacrifice += count;
                             archetype_counts.sacrifice_cards.push(d[0]);
@@ -1273,46 +1279,50 @@
                     });
                     console.log(archetype_counts);
 
+                    let ratio_key = 0.09;
+                    let ratio_refer = 0.16;
+                    let ratio_role = 0.21;
+                    let ratio_lord = 0.26;
                     // subtype
                     let html = '';
                     html += '<table>';
-                    if (archetype_counts.gate / counts_sum >= 0.16) {
+                    if (archetype_counts.gate / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
                         html += '</tr>';
                     }
 
-                    if (archetype_counts.elemental / counts_sum >= 0.26) {
+                    if (archetype_counts.elemental / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.human / counts_sum >= 0.26) {
+                    if (archetype_counts.human / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Human</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.knight / counts_sum >= 0.26) {
+                    if (archetype_counts.knight / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Knight</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.vampire / counts_sum >= 0.26) {
+                    if (archetype_counts.vampire / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Vampire</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.warrior / counts_sum >= 0.26) {
+                    if (archetype_counts.warrior / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Warrior</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.wolf / counts_sum >= 0.26) {
+                    if (archetype_counts.wolf / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Wolf</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.zombie / counts_sum >= 0.26) {
+                    if (archetype_counts.zombie / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Zombie</td>';
                         html += '</tr>';
@@ -1324,7 +1334,7 @@
                         html += '</tr>';
                     }
 
-                    if (archetype_counts.food / counts_sum >= 0.16) {
+                    if (archetype_counts.food / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Food</td>';
                         html += '</tr>';
@@ -1335,32 +1345,37 @@
                     // keyword
                     html = '';
                     html += '<table>';
-                    if (archetype_counts.explore / counts_sum >= 0.16) {
+                    if (archetype_counts.explore / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Explore</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.flying / counts_sum >= 0.26) {
+                    if (archetype_counts.flying / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Flyer</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.heroic / counts_sum >= 0.10) {
+                    if (archetype_counts.heroic / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Heroic</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mentor / counts_sum >= 0.23) {
+                    if (archetype_counts.mentor / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Mentor</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.sacrifice / counts_sum >= 0.24) {
+                    if (archetype_counts.mill / counts_sum >= ratio_role) {
+                        html += '<tr>';
+                        html += '<td>Mill</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.sacrifice / counts_sum >= ratio_role) {
                         html += '<tr>';
                         html += '<td>Sacrifice</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.second_draw / counts_sum >= 0.09) {
+                    if (archetype_counts.second_draw / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Second Draw</td>';
                         html += '</tr>';
@@ -1378,13 +1393,13 @@
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= 0.21) {
+                    if (archetype_counts.planeswalker / counts_sum >= ratio_role) {
                         archetypes.push('planeswalker');
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.permission / counts_sum >= 0.21) {
+                    if (archetype_counts.permission / counts_sum >= ratio_role) {
                         archetypes.push('permission');
                         html += '<tr>';
                         html += '<td>Permission</td>';
@@ -1396,7 +1411,7 @@
                         html += '<td>Spells</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mana_acceleration / counts_sum >= 0.21) {
+                    if (archetype_counts.mana_acceleration / counts_sum >= ratio_role) {
                         archetypes.push('mana_acceleration');
                         html += '<tr>';
                         html += '<td>Ramp</td>';
