@@ -235,7 +235,7 @@
             let promises = [];
 
             let commander = false;
-            let sideboard = -1;
+            let sideboard = 10000;
             let empty_row = [];
             let link = location.pathname + '?input=';
             text.split('\n').forEach(d => {
@@ -250,7 +250,7 @@
 
                 let index0 = d.indexOf(' ');
                 if (index0 === -1) {
-                    if (d !== 'Commander') {
+                    if (d !== 'Commander' && counts.length !== 0) {
                         sideboard = counts.length;
                     }
 
