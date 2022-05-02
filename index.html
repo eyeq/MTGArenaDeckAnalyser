@@ -1163,119 +1163,66 @@
                 // decktype / supertype / subtype / keyword / archetype
                 {
                     let archetype_counts = {
-                        snow: 0,
-                        snow_cards: [],
+                        snow: [],
 
-                        desert: 0,
-                        desert_cards: [],
-                        gate: 0,
-                        gate_cards: [],
+                        desert: [],
+                        gate: [],
 
-                        angel: 0,
-                        angel_cards: [],
-                        cleric: 0,
-                        cleric_cards: [],
-                        elemental: 0,
-                        elemental_cards: [],
-                        goblin: 0,
-                        goblin_cards: [],
-                        human: 0,
-                        human_cards: [],
-                        knight: 0,
-                        knight_cards: [],
-                        rat: 0,
-                        rat_cards: [],
-                        rogue: 0,
-                        rogue_cards: [],
-                        spirit: 0,
-                        spirit_cards: [],
-                        vampire: 0,
-                        vampire_cards: [],
-                        warrior: 0,
-                        warrior_cards: [],
-                        wizard: 0,
-                        wizard_cards: [],
-                        wolf: 0,
-                        wolf_cards: [],
-                        zombie: 0,
-                        zombie_cards: [],
+                        angel: [],
+                        cleric: [],
+                        elemental: [],
+                        goblin: [],
+                        human: [],
+                        knight: [],
+                        rat: [],
+                        rogue: [],
+                        spirit: [],
+                        vampire: [],
+                        warrior: [],
+                        wizard: [],
+                        wolf: [],
+                        zombie: [],
 
-                        adventure: 0,
-                        adventure_cards: [],
+                        adventure: [],
 
-                        blood: 0,
-                        blood_cards: [],
-                        equipment: 0,
-                        equipment_cards: [],
-                        food: 0,
-                        food_cards: [],
-                        treasure: 0,
-                        treasure_cards: [],
-                        vehicle: 0,
-                        vehicle_cards: [],
+                        blood: [],
+                        equipment: [],
+                        food: [],
+                        treasure: [],
+                        vehicle: [],
 
-                        aura: 0,
-                        aura_cards: [],
-                        rune: 0,
-                        rune_cards: [],
-                        shrine: 0,
-                        shrine_cards: [],
+                        aura: [],
+                        rune: [],
+                        shrine: [],
 
-                        dredge: 0,
-                        dredge_cards: [],
-                        energy: 0,
-                        energy_cards: [],
-                        explore: 0,
-                        explore_cards: [],
-                        flying: 0,
-                        flying_cards: [],
-                        heroic: 0,
-                        heroci_cards: [],
-                        mentor: 0,
-                        mentor_cards: [],
-                        mill: 0,
-                        mill_cards: [],
-                        modified: 0,
-                        modified_cards: [],
-                        party: 0,
-                        party_cards: [],
-                        sacrifice: 0,
-                        sacrifice_cards: [],
-                        second_draw: 0,
-                        second_draw_cards: [],
-                        surveil: 0,
-                        surveil_cards: [],
-                        toughness: 0,
-                        toughness_cards: [],
+                        dredge: [],
+                        energy: [],
+                        explore: [],
+                        flying: [],
+                        heroic: [],
+                        mentor: [],
+                        mill: [],
+                        modified: [],
+                        party: [],
+                        sacrifice: [],
+                        second_draw: [],
+                        surveil: [],
+                        toughness: [],
 
-                        self_mill: 0,
-                        self_mill_cards: [],
-                        artifact: 0,
-                        artifact_cards: [],
-                        fog: 0,
-                        fog_cards: [],
-                        planeswalker: 0,
-                        planeswalker_cards: [],
-                        permission: 0,
-                        permission_cards: [],
-                        spells: 0,
-                        spells_cards: [],
-                        mana_acceleration: 0,
-                        mana_acceleration_cards: [],
-                        instant: 0,
-                        instant_cards: [],
-                        token: 0,
-                        token_cards: [],
-                        creature: 0,
-                        creature_cards: [],
-                        weenie: 0,
-                        weenie_cards: [],
-                        direct_damage: 0,
-                        direct_damage_cards: [],
-                        reanimate: 0,
-                        reanimate_cards: [],
-                        wrath: 0,
-                        wrath_cards: [],
+                        self_mill: [],
+                        artifact: [],
+                        fog: [],
+                        planeswalker: [],
+                        permission: [],
+                        spells: [],
+                        mana_acceleration: [],
+                        instant: [],
+                        token: [],
+                        creature: [],
+                        weenie: [],
+                        direct_damage: [],
+                        reanimate: [],
+                        wrath: [],
                     };
                     data.forEach((d, i) => {
                         if (d.length === 0) {
@@ -1306,18 +1253,21 @@
 
                         // supertype
                         if (type_temp.includes('snow')) {
-                            archetype_counts.snow += count;
-                            archetype_counts.snow_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.snow.push(d[0]);
+                            }
                         }
 
                         // subtype land
                         if (text_temp.includes('desert')) {
-                            archetype_counts.desert += count;
-                            archetype_counts.desert_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.desert.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('gate')) {
-                            archetype_counts.gate += count;
-                            archetype_counts.gate_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.gate.push(d[0]);
+                            }
                         }
 
                         // subtype creature
@@ -1326,224 +1276,273 @@
                             creature_type = true;
                         }
                         if (creature_type || type_temp.includes('angel') || text_temp.includes('angel')) {
-                            archetype_counts.angel += count;
-                            archetype_counts.angel_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.angel.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('cleric') || text_temp.includes('cleric')) {
-                            archetype_counts.cleric += count;
-                            archetype_counts.cleric_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.cleric.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
-                            archetype_counts.elemental += count;
-                            archetype_counts.elemental_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.elemental.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('goblin') || text_temp.includes('goblin')) {
-                            archetype_counts.goblin += count;
-                            archetype_counts.goblin_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.goblin.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('human') || text_temp.includes('human')) {
-                            archetype_counts.human += count;
-                            archetype_counts.human_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.human.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('knight') || text_temp.includes('knight')) {
-                            archetype_counts.knight += count;
-                            archetype_counts.knight_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.knight.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('rat') || text_temp.includes('rat')) {
-                            archetype_counts.rat += count;
-                            archetype_counts.rat_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.rat.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('rogue') || text_temp.includes('rogue')) {
-                            archetype_counts.rogue += count;
-                            archetype_counts.rogue_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.rogue.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('spirit') || text_temp.includes('spirit')) {
-                            archetype_counts.spirit += count;
-                            archetype_counts.spirit_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.spirit.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
-                            archetype_counts.vampire += count;
-                            archetype_counts.vampire_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.vampire.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('warrior') || text_temp.includes('warrior')) {
-                            archetype_counts.warrior += count;
-                            archetype_counts.warrior_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.warrior.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('wizard') || text_temp.includes('wizard')) {
-                            archetype_counts.wizard += count;
-                            archetype_counts.wizard_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.wizard.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
-                            archetype_counts.wolf += count;
-                            archetype_counts.wolf_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.wolf.push(d[0]);
+                            }
                         }
                         if (creature_type || type_temp.includes('zombie') || text_temp.includes('zombie')) {
-                            archetype_counts.zombie += count;
-                            archetype_counts.zombie_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.zombie.push(d[0]);
+                            }
                         }
 
                         // subtype spell
                         if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
-                            archetype_counts.adventure += count;
-                            archetype_counts.adventure_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.adventure.push(d[0]);
+                            }
                         }
 
                         // subtype artifact
                         if (type_temp.includes('blood') || text_temp.includes('blood')) {
-                            archetype_counts.blood += count;
-                            archetype_counts.blood_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.blood.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('equipment')) {
-                            archetype_counts.equipment += count;
-                            archetype_counts.equipment_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.equipment.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('food') || text_temp.includes('food')) {
-                            archetype_counts.food += count;
-                            archetype_counts.food_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.food.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
-                            archetype_counts.treasure += count;
-                            archetype_counts.treasure_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.treasure.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('vehicle')) {
-                            archetype_counts.vehicle += count;
-                            archetype_counts.vehicle_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.vehicle.push(d[0]);
+                            }
                         }
 
                         // subtype enchantment
                         if (type_temp.includes('aura')) {
-                            archetype_counts.aura += count;
-                            archetype_counts.aura_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.aura.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('rune')) {
-                            archetype_counts.rune += count;
-                            archetype_counts.rune_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.rune.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('shrine')) {
-                            archetype_counts.shrine += count;
-                            archetype_counts.shrine_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.shrine.push(d[0]);
+                            }
                         }
 
                         // keyword
                         if (text_temp.includes('dredge')) {
-                            archetype_counts.dredge += count;
-                            archetype_counts.dredge_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.dredge.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('{e}')) {
-                            archetype_counts.energy += count;
-                            archetype_counts.energy_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.energy.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('explores')) {
-                            archetype_counts.explore += count;
-                            archetype_counts.explore_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.explore.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('flying')) {
-                            archetype_counts.flying += count;
-                            archetype_counts.flying_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.flying.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('heroic')
                             || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                             || text_temp.includes('becomes the target of a spell you control')) {
-                            archetype_counts.heroic += count;
-                            archetype_counts.heroci_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.heroic.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('mentor')) {
-                            archetype_counts.mentor += count;
-                            archetype_counts.mentor_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.mentor.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('mill')) {
-                            archetype_counts.mill += count;
-                            archetype_counts.mill_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.mill.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('modified')) {
-                            archetype_counts.modified += count;
-                            archetype_counts.modified_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.modified.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('party')) {
-                            archetype_counts.party += count;
-                            archetype_counts.party_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.party.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('sacrifice')) {
-                            archetype_counts.sacrifice += count;
-                            archetype_counts.sacrifice_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.sacrifice.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('whenever you draw your second card each turn')) {
-                            archetype_counts.second_draw += count;
-                            archetype_counts.second_draw_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.second_draw.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('surveil')) {
-                            archetype_counts.surveil += count;
-                            archetype_counts.surveil_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.surveil.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('equal to its toughness')) {
-                            archetype_counts.toughness += count;
-                            archetype_counts.toughness_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.toughness.push(d[0]);
+                            }
                         }
 
                         // decktype
                         if (text_temp.includes('put into your graveyard from your library')
                             || text_temp.includes('your library has no cards')) {
-                            archetype_counts.self_mill += count;
-                            archetype_counts.self_mill_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.self_mill.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
-                            archetype_counts.artifact += count;
-                            archetype_counts.artifact_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.artifact.push(d[0]);
+                            }
                         }
                         if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
                             || text_temp.includes('your life total can\'t change')
                             || text_temp.includes('your life total to less than 1')
                             || text_temp.includes('your life total would be reduced to 0')) {
-                            archetype_counts.fog += count;
-                            archetype_counts.fog_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.fog.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
-                            archetype_counts.planeswalker += count;
-                            archetype_counts.planeswalker_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.planeswalker.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                             || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                             || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection')))) {
-                            archetype_counts.permission += count;
-                            archetype_counts.permission_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.permission.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
-                            archetype_counts.spells += count;
-                            archetype_counts.spells_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.spells.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('add {')
                             || (text_temp.includes('add ') && text_temp.includes('mana'))
                             || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
                             || (text_temp.includes('play') && text_temp.includes('additional land'))) {
-                            archetype_counts.mana_acceleration += count;
-                            archetype_counts.mana_acceleration_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.mana_acceleration.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('instant') || text_temp.includes('flash')) {
-                            archetype_counts.instant += count;
-                            archetype_counts.instant_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.instant.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('creature token')) {
-                            archetype_counts.token += count;
-                            archetype_counts.token_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.token.push(d[0]);
+                            }
                         }
                         if (type_temp.includes('creature') || text_temp.includes('creature token')
                             || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
-                            archetype_counts.creature += count;
-                            archetype_counts.creature_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.creature.push(d[0]);
+                            }
                             if (d[0].cmc < 3) {
-                                archetype_counts.weenie += count;
-                                archetype_counts.weenie_cards.push(d[0]);
+                                for (let i = 0; i < count; i++) {
+                                    archetype_counts.weenie.push(d[0]);
+                                }
                             }
                         }
                         if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
                             || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
-                            archetype_counts.direct_damage += count;
-                            archetype_counts.direct_damage_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.direct_damage.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('graveyard to the battlefield')
                             || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))) {
-                            archetype_counts.reanimate += count;
-                            archetype_counts.reanimate_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.reanimate.push(d[0]);
+                            }
                         }
                         if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
                             || text_temp.includes('exile all') || text_temp.includes('exile each')
@@ -1551,8 +1550,9 @@
                             || text_temp.includes('sacrifices the rest')
                             || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
                             || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
-                            archetype_counts.wrath += count;
-                            archetype_counts.wrath_cards.push(d[0]);
+                            for (let i = 0; i < count; i++) {
+                                archetype_counts.wrath.push(d[0]);
+                            }
                         }
                     });
                     console.log(archetype_counts);
@@ -1565,7 +1565,7 @@
                     // supertype
                     let html = '';
                     html += '<table>';
-                    if (archetype_counts.snow / counts_sum >= ratio_refer) {
+                    if (archetype_counts.snow.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Snow</td>';
                         html += '</tr>';
@@ -1577,135 +1577,135 @@
                     html = '';
                     html += '<table>';
                     // subtype land
-                    if (archetype_counts.desert / counts_sum >= ratio_refer) {
+                    if (archetype_counts.desert.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Desert</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.gate / counts_sum >= ratio_refer) {
+                    if (archetype_counts.gate.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
                         html += '</tr>';
                     }
 
                     // subtype creature
-                    if (archetype_counts.angel / counts_sum >= ratio_lord) {
+                    if (archetype_counts.angel.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Angel</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.cleric / counts_sum >= ratio_lord) {
+                    if (archetype_counts.cleric.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Cleric</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.elemental / counts_sum >= ratio_lord) {
+                    if (archetype_counts.elemental.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.goblin / counts_sum >= ratio_lord) {
+                    if (archetype_counts.goblin.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Goblin</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.human / counts_sum >= ratio_lord) {
+                    if (archetype_counts.human.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Human</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.knight / counts_sum >= ratio_lord) {
+                    if (archetype_counts.knight.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Knight</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.rat / counts_sum >= ratio_lord) {
+                    if (archetype_counts.rat.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Rat</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.rogue / counts_sum >= ratio_lord) {
+                    if (archetype_counts.rogue.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Rogue</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.spirit / counts_sum >= ratio_lord) {
+                    if (archetype_counts.spirit.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Spirit</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.vampire / counts_sum >= ratio_lord) {
+                    if (archetype_counts.vampire.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Vampire</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.warrior / counts_sum >= ratio_lord) {
+                    if (archetype_counts.warrior.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Warrior</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.wizard / counts_sum >= ratio_lord) {
+                    if (archetype_counts.wizard.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Wizard</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.wolf / counts_sum >= ratio_lord) {
+                    if (archetype_counts.wolf.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Wolf</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.zombie / counts_sum >= ratio_lord) {
+                    if (archetype_counts.zombie.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Zombie</td>';
                         html += '</tr>';
                     }
 
                     // subtype spell
-                    if (archetype_counts.adventure / counts_sum >= 0.21) {
+                    if (archetype_counts.adventure.length / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Adventure</td>';
                         html += '</tr>';
                     }
 
                     // subtype artifact
-                    if (archetype_counts.blood / counts_sum >= ratio_refer) {
+                    if (archetype_counts.blood.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Blood</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.equipment / counts_sum >= ratio_refer) {
+                    if (archetype_counts.equipment.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Equipment</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.food / counts_sum >= ratio_refer) {
+                    if (archetype_counts.food.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Food</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.treasure / counts_sum >= ratio_refer) {
+                    if (archetype_counts.treasure.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Treasure</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.vehicle / counts_sum >= ratio_refer) {
+                    if (archetype_counts.vehicle.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Vehicle</td>';
                         html += '</tr>';
                     }
 
                     // subtype enchantment
-                    if (archetype_counts.aura / counts_sum >= ratio_refer) {
+                    if (archetype_counts.aura.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Aura</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.rune / counts_sum >= ratio_refer) {
+                    if (archetype_counts.rune.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Rune</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.shrine / counts_sum >= ratio_lord) {
+                    if (archetype_counts.shrine.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Shrine</td>';
                         html += '</tr>';
@@ -1717,67 +1717,67 @@
                     // keyword
                     html = '';
                     html += '<table>';
-                    if (archetype_counts.dredge / counts_sum >= ratio_refer) {
+                    if (archetype_counts.dredge.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Dredge</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.energy / counts_sum >= 0.21) {
+                    if (archetype_counts.energy.length / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Energy</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.explore / counts_sum >= ratio_refer) {
+                    if (archetype_counts.explore.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Explore</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.flying / counts_sum >= ratio_lord) {
+                    if (archetype_counts.flying.length / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Flyer</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.heroic / counts_sum >= ratio_key) {
+                    if (archetype_counts.heroic.length / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Heroic</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mentor / counts_sum >= 0.21) {
+                    if (archetype_counts.mentor.length / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Mentor</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mill / counts_sum >= ratio_role) {
+                    if (archetype_counts.mill.length / counts_sum >= ratio_role) {
                         html += '<tr>';
                         html += '<td>Mill</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.modified / counts_sum >= ratio_key) {
+                    if (archetype_counts.modified.length / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Modified</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.party / counts_sum >= ratio_key) {
+                    if (archetype_counts.party.length / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Party</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.sacrifice / counts_sum >= ratio_role) {
+                    if (archetype_counts.sacrifice.length / counts_sum >= ratio_role) {
                         html += '<tr>';
                         html += '<td>Sacrifice</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.second_draw / counts_sum >= ratio_key) {
+                    if (archetype_counts.second_draw.length / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Second-Draw</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.surveil / counts_sum >= ratio_refer) {
+                    if (archetype_counts.surveil.length / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Surveil</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.toughness / counts_sum >= ratio_key) {
+                    if (archetype_counts.toughness.length / counts_sum >= ratio_key) {
                         html += '<tr>';
                         html += '<td>Toughness</td>';
                         html += '</tr>';
@@ -1789,79 +1789,79 @@
                     html = '';
                     html += '<table>';
                     let archetypes = [];
-                    if (archetype_counts.self_mill / counts_sum >= 0.10) {
+                    if (archetype_counts.self_mill.length / counts_sum >= 0.10) {
                         archetypes.push('self_mill');
                         html += '<tr>';
                         html += '<td>Self-Mill</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.artifact / counts_sum >= 0.30) {
+                    if (archetype_counts.artifact.length / counts_sum >= 0.30) {
                         archetypes.push('artifact');
                         html += '<tr>';
                         html += '<td>Artifact</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.fog / counts_sum >= 0.10) {
+                    if (archetype_counts.fog.length / counts_sum >= 0.10) {
                         archetypes.push('fog');
                         html += '<tr>';
                         html += '<td>Fog</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.planeswalker / counts_sum >= ratio_refer) {
+                    if (archetype_counts.planeswalker.length / counts_sum >= ratio_refer) {
                         archetypes.push('planeswalker');
                         html += '<tr>';
                         html += '<td>Superfriends</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.permission / counts_sum >= ratio_role) {
+                    if (archetype_counts.permission.length / counts_sum >= ratio_role) {
                         archetypes.push('permission');
                         html += '<tr>';
                         html += '<td>Permission</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.spells / counts_sum >= 0.30) {
+                    if (archetype_counts.spells.length / counts_sum >= 0.30) {
                         archetypes.push('spells');
                         html += '<tr>';
                         html += '<td>Spells</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.mana_acceleration / counts_sum >= ratio_role) {
+                    if (archetype_counts.mana_acceleration.length / counts_sum >= ratio_role) {
                         archetypes.push('mana_acceleration');
                         html += '<tr>';
                         html += '<td>Ramp</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.instant / counts_sum >= 0.30) {
+                    if (archetype_counts.instant.length / counts_sum >= 0.30) {
                         archetypes.push('instant');
                         html += '<tr>';
                         html += '<td>Flash</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.token / counts_sum >= 0.23) {
+                    if (archetype_counts.token.length / counts_sum >= 0.23) {
                         archetypes.push('token');
                         html += '<tr>';
                         html += '<td>Token</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.creature / counts_sum >= 0.30) {
+                    if (archetype_counts.creature.length / counts_sum >= 0.30) {
                         archetypes.push('creature');
                         html += '<tr>';
                         html += '<td>Beatdown</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.direct_damage / counts_sum >= 0.30) {
+                    if (archetype_counts.direct_damage.length / counts_sum >= 0.30) {
                         archetypes.push('direct_damage');
                         html += '<tr>';
                         html += '<td>Burn</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.reanimate / counts_sum >= 0.10) {
+                    if (archetype_counts.reanimate.length / counts_sum >= 0.10) {
                         archetypes.push('reanimate');
                         html += '<tr>';
                         html += '<td>Reanimate</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.wrath / counts_sum >= 0.05) {
+                    if (archetype_counts.wrath.length / counts_sum >= 0.05) {
                         archetypes.push('wrath');
                         html += '<tr>';
                         html += '<td>Control</td>';
@@ -1881,7 +1881,7 @@
                             decktype = 'Stompy';
                         } else if (archetypes.includes('direct_damage')) {
                             decktype = 'Sligh';
-                        } else if (archetype_counts.weenie / counts_sum >= 0.26) {
+                        } else if (archetype_counts.weenie.length / counts_sum >= 0.26) {
                             decktype = 'Weenie';
                         } else {
                             decktype = 'Aggro';
