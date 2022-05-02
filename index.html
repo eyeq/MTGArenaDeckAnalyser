@@ -1217,6 +1217,8 @@
                         mentor_cards: [],
                         mill: 0,
                         mill_cards: [],
+                        party: 0,
+                        party_cards: [],
                         sacrifice: 0,
                         sacrifice_cards: [],
                         second_draw: 0,
@@ -1424,6 +1426,10 @@
                         if (text_temp.includes('mill')) {
                             archetype_counts.mill += count;
                             archetype_counts.mill_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('party')) {
+                            archetype_counts.party += count;
+                            archetype_counts.party_cards.push(d[0]);
                         }
                         if (text_temp.includes('sacrifice')) {
                             archetype_counts.sacrifice += count;
@@ -1702,6 +1708,11 @@
                     if (archetype_counts.mill / counts_sum >= ratio_role) {
                         html += '<tr>';
                         html += '<td>Mill</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.party / counts_sum >= ratio_key) {
+                        html += '<tr>';
+                        html += '<td>Party</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.sacrifice / counts_sum >= ratio_role) {
