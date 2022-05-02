@@ -214,28 +214,34 @@
 
         function resizeImage() {
             let img = $('#board img');
+            let p = $('#board span');
 
             let val = $('input:radio[name="size"]:checked').val();
             switch (val) {
                 case 't':
                     img.prop('width', '106');
                     img.prop('height', '148');
+                    p.css('font-size', '14px');
                     break;
                 case 's':
                     img.prop('width', '159');
                     img.prop('height', '222');
+                    p.css('font-size', '21px');
                     break;
                 case 'm':
                     img.prop('width', '212');
                     img.prop('height', '296');
+                    p.css('font-size', '28px');
                     break;
                 case 'l':
                     img.prop('width', '265');
                     img.prop('height', '370');
+                    p.css('font-size', '35px');
                     break;
                 case 'h':
                     img.prop('width', '530');
                     img.prop('height', '740');
+                    p.css('font-size', '70px');
                     break;
             }
         }
@@ -2051,20 +2057,20 @@
                         html += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
 
                         html += '<div class="front">';
-                        html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</p>';
+                        html += '<span style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</span>';
                         html += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
                         html += '</div>';
                         if (d.length > 1) {
                             if (d[0].imageUrl !== d[1].imageUrl) {
                                 html += '<div class="back" style="display: none;">';
-                                html += '<p style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</p>';
+                                html += '<span style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</span>';
                                 html += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
                                 html += '</div>';
 
-                                html += '<span class="flip material-symbols-outlined" style="position: absolute; bottom: 0; left: calc(50% - 12px); border-radius: 50%; background: white; cursor: pointer;">sync</span>';
+                                html += '<p class="flip" style="position: absolute; margin: 5%; bottom: 7px; left: 40.75%; width: 18.5%; height: 13.25%; text-align: center; border-radius: 50%; background: white; cursor: pointer;"><span class="material-symbols-outlined" style="margin-top: 13.25%;">sync</span></p>';
                             }
                         }
-                        html += '<p style="position: absolute; bottom: 8px; margin: 8px; border-radius: 4px; width: 20%; font-weight: bold; text-align: center; background: white;">' + count + '</p>';
+                        html += '<span style="position: absolute; margin: 5%; bottom: calc(7px + 5%); border-radius: 4px; width: 18.5%; height: 13.25%; text-align: center; font-weight: bold; background: white;">' + count + '</span>';
                         html += '</div>';
                     });
                     $('#board').html(html);
