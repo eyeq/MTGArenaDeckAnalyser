@@ -36,7 +36,7 @@
     <div style="display: inline-block; vertical-align: top; width: 640px;">
         <h2 style="margin-bottom: 0;">Share this deck</h2>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
-            <textarea id="output" style="width: 400px; height: 200px;" readonly onclick="this.select();"></textarea>
+            <textarea id="output" style="width: 400px; height: 200px; background-color: #F0F0F0;" readonly onclick="this.select();"></textarea>
             <div id="link"></div>
         </div>
     </div>
@@ -189,6 +189,14 @@
             }
 
             $('input[name="size"]').on('change', resizeImage);
+
+            $('#keycard').on('mouseenter', '.key', e => {
+                let target = $(e.target);
+                target.next().show();
+            }).on('mouseleave', '.key', e => {
+                let target = $(e.target);
+                target.next().hide();
+            });
 
             $('#board').on('click', '.flip', e => {
                 let target = $(e.target);
@@ -1096,12 +1104,18 @@
 
                         if (commander) {
                             if (i === 0) {
-                                keycards.push(d[0].name);
+                                keycards.push({
+                                    name: d[0].name,
+                                    imageUrl: d[0].imageUrl,
+                                });
                             }
                         } else {
                             if (count === 4) {
                                 if (d[0].name in keymap) {
-                                    keycards.push(keymap[d[0].name]);
+                                    keycards.push({
+                                        name: keymap[d[0].name],
+                                        imageUrl: d[0].imageUrl,
+                                    });
                                 }
                             }
                         }
@@ -1111,7 +1125,7 @@
                     html += '<table>';
                     keycards.forEach(d => {
                         html += '<tr>';
-                        html += '<td>' + d + '</td>';
+                        html += '<td><span class="key">' + d.name + '</span><img style="position: absolute; display: none;" alt="" src="' + d.imageUrl + '"></td>';
                         html += '</tr>';
                     });
                     html += '</table>';
