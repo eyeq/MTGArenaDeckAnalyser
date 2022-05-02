@@ -1175,6 +1175,8 @@
                         vampire_cards: [],
                         warrior: 0,
                         warrior_cards: [],
+                        wizard: 0,
+                        wizard_cards: [],
                         wolf: 0,
                         wolf_cards: [],
                         zombie: 0,
@@ -1336,6 +1338,10 @@
                         if (creature_type || type_temp.includes('warrior') || text_temp.includes('warrior')) {
                             archetype_counts.warrior += count;
                             archetype_counts.warrior_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('wizard') || text_temp.includes('wizard')) {
+                            archetype_counts.wizard += count;
+                            archetype_counts.wizard_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
                             archetype_counts.wolf += count;
@@ -1588,6 +1594,11 @@
                     if (archetype_counts.warrior / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Warrior</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.wizard / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Wizard</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.wolf / counts_sum >= ratio_lord) {
