@@ -830,7 +830,7 @@
                     html += '<td>Permanent Sepll</td>'
                     html += '</tr>';
                     html += '<tr>';
-                    html += '<td>' + permanent_spell + '</td>'
+                    html += '<td>' + nonpermanent_spell + '</td>'
                     html += '<td>Non-permanent Sepll</td>'
                     html += '</tr>';
                     html += '</table>';
@@ -1162,26 +1162,276 @@
 
                 // decktype / supertype / subtype / keyword / archetype
                 {
+                    let creature_types = {
+                        Advisor: [],
+                        Aetherborn: [],
+                        Ally: [],
+                        Angel: [],
+                        Antelope: [],
+                        Ape: [],
+                        Archer: [],
+                        Archon: [],
+                        Army: [],
+                        Artificer: [],
+                        Assassin: [],
+                        'Assembly-Worker': [],
+                        Atog: [],
+                        Aurochs: [],
+                        Avatar: [],
+                        Azra: [],
+                        Badger: [],
+                        Barbarian: [],
+                        Bard: [],
+                        Basilisk: [],
+                        Bat: [],
+                        Bear: [],
+                        Beast: [],
+                        Beeble: [],
+                        Beholder: [],
+                        Berserker: [],
+                        Bird: [],
+                        Blinkmoth: [],
+                        Boar: [],
+                        Bringer: [],
+                        Brushwagg: [],
+                        Camarid: [],
+                        Camel: [],
+                        Caribou: [],
+                        Carrier: [],
+                        Cat: [],
+                        Centaur: [],
+                        Cephalid: [],
+                        Chimera: [],
+                        Citizen: [],
+                        Cleric: [],
+                        Cockatrice: [],
+                        Construct: [],
+                        Coward: [],
+                        Crab: [],
+                        Crocodile: [],
+                        Cyclops: [],
+                        Dauthi: [],
+                        Demigod: [],
+                        Demon: [],
+                        Deserter: [],
+                        Devil: [],
+                        Dinosaur: [],
+                        Djinn: [],
+                        Dog: [],
+                        Dragon: [],
+                        Drake: [],
+                        Dreadnought: [],
+                        Drone: [],
+                        Druid: [],
+                        Dryad: [],
+                        Dwarf: [],
+                        Efreet: [],
+                        Egg: [],
+                        Elder: [],
+                        Eldrazi: [],
+                        Elemental: [],
+                        Elephant: [],
+                        Elf: [],
+                        Elk: [],
+                        Eye: [],
+                        Faerie: [],
+                        Ferret: [],
+                        Fish: [],
+                        Flagbearer: [],
+                        Fox: [],
+                        Fractal: [],
+                        Frog: [],
+                        Fungus: [],
+                        Gargoyle: [],
+                        Germ: [],
+                        Giant: [],
+                        Gnoll: [],
+                        Gnome: [],
+                        Goat: [],
+                        Goblin: [],
+                        God: [],
+                        Golem: [],
+                        Gorgon: [],
+                        Graveborn: [],
+                        Gremlin: [],
+                        Griffin: [],
+                        Hag: [],
+                        Halfling: [],
+                        Hamster: [],
+                        Harpy: [],
+                        Hellion: [],
+                        Hippo: [],
+                        Hippogriff: [],
+                        Homarid: [],
+                        Homunculus: [],
+                        Horror: [],
+                        Horse: [],
+                        Human: [],
+                        Hydra: [],
+                        Hyena: [],
+                        Illusion: [],
+                        Imp: [],
+                        Incarnation: [],
+                        Inkling: [],
+                        Insect: [],
+                        Jackal: [],
+                        Jellyfish: [],
+                        Juggernaut: [],
+                        Kavu: [],
+                        Kirin: [],
+                        Kithkin: [],
+                        Knight: [],
+                        Kobold: [],
+                        Kor: [],
+                        Kraken: [],
+                        Lamia: [],
+                        Lammasu: [],
+                        Leech: [],
+                        Leviathan: [],
+                        Lhurgoyf: [],
+                        Licid: [],
+                        Lizard: [],
+                        Manticore: [],
+                        Masticore: [],
+                        Mercenary: [],
+                        Merfolk: [],
+                        Metathran: [],
+                        Minion: [],
+                        Minotaur: [],
+                        Mole: [],
+                        Monger: [],
+                        Mongoose: [],
+                        Monk: [],
+                        Monkey: [],
+                        Moonfolk: [],
+                        Mouse: [],
+                        Mutant: [],
+                        Myr: [],
+                        Mystic: [],
+                        Naga: [],
+                        Nautilus: [],
+                        Nephilim: [],
+                        Nightmare: [],
+                        Nightstalker: [],
+                        Ninja: [],
+                        Noble: [],
+                        Noggle: [],
+                        Nomad: [],
+                        Nymph: [],
+                        Octopus: [],
+                        Ogre: [],
+                        Ooze: [],
+                        Orb: [],
+                        Orc: [],
+                        Orgg: [],
+                        Otter: [],
+                        Ouphe: [],
+                        Ox: [],
+                        Oyster: [],
+                        Pangolin: [],
+                        Peasant: [],
+                        Pegasus: [],
+                        Pentavite: [],
+                        Pest: [],
+                        Phelddagrif: [],
+                        Phoenix: [],
+                        Phyrexian: [],
+                        Pilot: [],
+                        Pincher: [],
+                        Pirate: [],
+                        Plant: [],
+                        Praetor: [],
+                        Prism: [],
+                        Processor: [],
+                        Raccoon: [],
+                        Rabbit: [],
+                        Ranger: [],
+                        Rat: [],
+                        Rebel: [],
+                        Reflection: [],
+                        Rhino: [],
+                        Rigger: [],
+                        Rogue: [],
+                        Sable: [],
+                        Salamander: [],
+                        Samurai: [],
+                        Sand: [],
+                        Saproling: [],
+                        Satyr: [],
+                        Scarecrow: [],
+                        Scion: [],
+                        Scorpion: [],
+                        Scout: [],
+                        Sculpture: [],
+                        Serf: [],
+                        Serpent: [],
+                        Servo: [],
+                        Shade: [],
+                        Shaman: [],
+                        Shapeshifter: [],
+                        Shark: [],
+                        Sheep: [],
+                        Siren: [],
+                        Skeleton: [],
+                        Slith: [],
+                        Sliver: [],
+                        Slug: [],
+                        Snake: [],
+                        Soldier: [],
+                        Soltari: [],
+                        Spawn: [],
+                        Specter: [],
+                        Spellshaper: [],
+                        Sphinx: [],
+                        Spider: [],
+                        Spike: [],
+                        Spirit: [],
+                        Splinter: [],
+                        Sponge: [],
+                        Squid: [],
+                        Squirrel: [],
+                        Starfish: [],
+                        Surrakar: [],
+                        Survivor: [],
+                        Tentacle: [],
+                        Tetravite: [],
+                        Thalakos: [],
+                        Thopter: [],
+                        Thrull: [],
+                        Tiefling: [],
+                        Treefolk: [],
+                        Trilobite: [],
+                        Triskelavite: [],
+                        Troll: [],
+                        Turtle: [],
+                        Unicorn: [],
+                        Vampire: [],
+                        Vedalken: [],
+                        Viashino: [],
+                        Volver: [],
+                        Wall: [],
+                        Warlock: [],
+                        Warrior: [],
+                        Weird: [],
+                        // Werewolf: [],
+                        Whale: [],
+                        Wizard: [],
+                        Wolf: [],
+                        Wolverine: [],
+                        Wombat: [],
+                        Worm: [],
+                        Wraith: [],
+                        Wurm: [],
+                        Yeti: [],
+                        Zombie: [],
+                        Zubera: [],
+                    };
+
                     let archetype_counts = {
                         snow: [],
 
                         desert: [],
                         gate: [],
-
-                        angel: [],
-                        cleric: [],
-                        elemental: [],
-                        goblin: [],
-                        human: [],
-                        knight: [],
-                        rat: [],
-                        rogue: [],
-                        spirit: [],
-                        vampire: [],
-                        warrior: [],
-                        wizard: [],
-                        wolf: [],
-                        zombie: [],
 
                         adventure: [],
 
@@ -1248,6 +1498,33 @@
                             text_temp = text_temp.split(d[1].name).join('.');
                         }
 
+                        // subtype creature
+                        let creature_type = false;
+                        if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
+                            creature_type = true;
+                        }
+                        Object.keys(creature_types).forEach(key => {
+                            let target = [key];
+                            switch (key) {
+                                case 'Dwarf':
+                                    target.push('Dwarves');
+                                    break;
+                                case 'Elf':
+                                    target.push('Elves');
+                                    break;
+                                case 'Wolf':
+                                    target.push('Wolves');
+                                    target.push('Werewolf');
+                                    target.push('Werewolves');
+                                    break;
+                            }
+                            if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
+                                for (let i = 0; i < count; i++) {
+                                    creature_types[key].push(d[0]);
+                                }
+                            }
+                        });
+
                         type_temp = type_temp.toLowerCase();
                         text_temp = text_temp.toLowerCase();
 
@@ -1267,82 +1544,6 @@
                         if (text_temp.includes('gate')) {
                             for (let i = 0; i < count; i++) {
                                 archetype_counts.gate.push(d[0]);
-                            }
-                        }
-
-                        // subtype creature
-                        let creature_type = false;
-                        if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
-                            creature_type = true;
-                        }
-                        if (creature_type || type_temp.includes('angel') || text_temp.includes('angel')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.angel.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('cleric') || text_temp.includes('cleric')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.cleric.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.elemental.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('goblin') || text_temp.includes('goblin')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.goblin.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('human') || text_temp.includes('human')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.human.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('knight') || text_temp.includes('knight')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.knight.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('rat') || text_temp.includes('rat')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.rat.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('rogue') || text_temp.includes('rogue')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.rogue.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('spirit') || text_temp.includes('spirit')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.spirit.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.vampire.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('warrior') || text_temp.includes('warrior')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.warrior.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('wizard') || text_temp.includes('wizard')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.wizard.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('wolf') || text_temp.includes('wolf') || text_temp.includes('wolves')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.wolf.push(d[0]);
-                            }
-                        }
-                        if (creature_type || type_temp.includes('zombie') || text_temp.includes('zombie')) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.zombie.push(d[0]);
                             }
                         }
 
@@ -1555,6 +1756,7 @@
                             }
                         }
                     });
+                    console.log(creature_types);
                     console.log(archetype_counts);
 
                     let ratio_key = 0.09;
@@ -1589,76 +1791,13 @@
                     }
 
                     // subtype creature
-                    if (archetype_counts.angel.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Angel</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.cleric.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Cleric</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.elemental.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Elemental</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.goblin.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Goblin</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.human.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Human</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.knight.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Knight</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.rat.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Rat</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.rogue.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Rogue</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.spirit.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Spirit</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.vampire.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Vampire</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.warrior.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Warrior</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.wizard.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Wizard</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.wolf.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Wolf</td>';
-                        html += '</tr>';
-                    }
-                    if (archetype_counts.zombie.length / counts_sum >= ratio_lord) {
-                        html += '<tr>';
-                        html += '<td>Zombie</td>';
-                        html += '</tr>';
-                    }
+                    Object.keys(creature_types).forEach(key => {
+                        if (creature_types[key].length / counts_sum >= ratio_lord) {
+                            html += '<tr>';
+                            html += '<td>' + key + '</td>';
+                            html += '</tr>';
+                        }
+                    });
 
                     // subtype spell
                     if (archetype_counts.adventure.length / counts_sum >= 0.21) {
