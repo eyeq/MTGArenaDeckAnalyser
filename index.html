@@ -76,6 +76,7 @@
             <table>
                 <tr>
                     <th style="width: 90px;">Keycard</th>
+                    <th style="width: 90px;">Supertype</th>
                     <th style="width: 90px;">Subtype</th>
                     <th style="width: 90px;">Keyword</th>
                     <th style="width: 90px;">Type</th>
@@ -83,6 +84,9 @@
                 <tr>
                     <td>
                         <div id="keycard"></div>
+                    </td>
+                    <td>
+                        <div id="supertype"></div>
                     </td>
                     <td>
                         <div id="subtype"></div>
@@ -311,7 +315,7 @@
                     });
 
                     if (d.length > 1 && d[0].layout === 'modal_dfc') {
-                        if (d[0].imageUrl === d[1].imageUrl) {
+                        if (d[0].imageUrl && d[0].imageUrl === d[1].imageUrl) {
                             let url = new URL(d[1].imageUrl);
                             let searchParams = url.searchParams;
 
@@ -1063,6 +1067,7 @@
                         'Doom Foretold': 'Doom',
                         'Embercleave': 'Embercleave',
                         'Experimental Frenzy': 'Frenzy',
+                        'Faceless Haven': 'Faceless Haven',
                         'Feather, the Redeemed': 'Feather',
                         'Feasting Troll King': 'Troll King',
                         'Field of the Dead': 'Field',
@@ -1075,6 +1080,7 @@
                         'Hazoret the Fervent': 'Hazoret',
                         'Hero of Precinct One': 'Hero',
                         'Irencrag Pyromancer': 'Irencrag',
+                        'Kenrith, the Returned King': 'Kenrith',
                         'Korvold, Fae-Cursed King': 'Korvold',
                         'Lich\'s Mastery': 'Lich',
                         'March of the Multitudes': 'March',
@@ -1132,9 +1138,12 @@
                     $('#keycard').html(html);
                 }
 
-                // decktype / subtype / keyword / archetype
+                // decktype / supertype / subtype / keyword / archetype
                 {
                     let archetype_counts = {
+                        snow: 0,
+                        snow_cards: [],
+
                         gate: 0,
                         gate_cards: [],
 
@@ -1243,6 +1252,12 @@
 
                         type_temp = type_temp.toLowerCase();
                         text_temp = text_temp.toLowerCase();
+
+                        // supertype
+                        if (type_temp.includes('snow')) {
+                            archetype_counts.snow += count;
+                            archetype_counts.snow_cards.push(d[0]);
+                        }
 
                         // subtype land
                         if (type_temp.includes('gate') || text_temp.includes('gate')) {
@@ -1439,6 +1454,11 @@
                     // subtype
                     let html = '';
                     html += '<table>';
+                    if (archetype_counts.snow / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Snow</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.gate / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
