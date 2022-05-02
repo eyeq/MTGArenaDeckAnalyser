@@ -1099,8 +1099,11 @@
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
                         'Teferi, Hero of Dominaria': 'Teferi', 
+                        'Thassa\'s Oracle': 'Oracle',
                         'Thud': 'Thud',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
+                        'Ugin, the Spirit Dragon': 'Ugin',
+                        'Ulamog, the Ceaseless Hunger': 'Ulamog',
                         'Uro, Titan of Nature\'s Wrath': '',
                         'Yorvo, Lord of Garenbrig': 'Yorvo',
                         'Walking Ballista': 'Ballista',
@@ -1171,6 +1174,8 @@
                         knight_cards: [],
                         rogue: 0,
                         rogue_cards: [],
+                        spirit: 0,
+                        spirit_cards: [],
                         vampire: 0,
                         vampire_cards: [],
                         warrior: 0,
@@ -1197,7 +1202,7 @@
                         vehicle_cards: [],
 
                         aura: 0,
-                        arua_cads: [],
+                        aura_cards: [],
                         rune: 0,
                         rune_cards: [],
                         shrine: 0,
@@ -1332,6 +1337,10 @@
                         if (creature_type || type_temp.includes('rogue') || text_temp.includes('rogue')) {
                             archetype_counts.rogue += count;
                             archetype_counts.rogue_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('spirit') || text_temp.includes('spirit')) {
+                            archetype_counts.spirit += count;
+                            archetype_counts.spirit_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('vampire') || text_temp.includes('vampire')) {
                             archetype_counts.vampire += count;
@@ -1590,6 +1599,11 @@
                     if (archetype_counts.rogue / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Rogue</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.spirit / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Spirit</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.vampire / counts_sum >= ratio_lord) {
