@@ -1182,6 +1182,8 @@
                         food_cards: [],
                         treasure: 0,
                         treasure_cards: [],
+                        vehicle: 0,
+                        vehicle_cards: [],
 
                         dredge: 0,
                         dredge_cards: [],
@@ -1333,6 +1335,10 @@
                         if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
                             archetype_counts.treasure += count;
                             archetype_counts.treasure_cards.push(d[0]);
+                        }
+                        if (type_temp.includes('vehicle') || text_temp.includes('vehicle')) {
+                            archetype_counts.vehicle += count;
+                            archetype_counts.vehicle_cards.push(d[0]);
                         }
 
                         // keyword
@@ -1543,6 +1549,11 @@
                     if (archetype_counts.treasure / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Treasure</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.vehicle / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Vehicle</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
