@@ -1151,6 +1151,8 @@
                         snow: 0,
                         snow_cards: [],
 
+                        desert: 0,
+                        desert_cards: [],
                         gate: 0,
                         gate_cards: [],
 
@@ -1276,7 +1278,11 @@
                         }
 
                         // subtype land
-                        if (type_temp.includes('gate') || text_temp.includes('gate')) {
+                        if (text_temp.includes('desert')) {
+                            archetype_counts.desert += count;
+                            archetype_counts.desert_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('gate')) {
                             archetype_counts.gate += count;
                             archetype_counts.gate_cards.push(d[0]);
                         }
@@ -1502,6 +1508,11 @@
                     html = '';
                     html += '<table>';
                     // subtype land
+                    if (archetype_counts.desert / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Desert</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.gate / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
