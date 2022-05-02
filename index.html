@@ -1191,6 +1191,8 @@
 
                         aura: 0,
                         arua_cads: [],
+                        rune: 0,
+                        rune_cards: [],
 
                         dredge: 0,
                         dredge_cards: [],
@@ -1361,6 +1363,10 @@
                         if (type_temp.includes('aura')) {
                             archetype_counts.aura += count;
                             archetype_counts.aura_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('rune')) {
+                            archetype_counts.rune += count;
+                            archetype_counts.rune_cards.push(d[0]);
                         }
 
                         // keyword
@@ -1604,6 +1610,11 @@
                     if (archetype_counts.aura / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Aura</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.rune / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Rune</td>';
                         html += '</tr>';
                     }
 
