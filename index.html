@@ -1058,6 +1058,7 @@
                 // keycard
                 {
                     let keymap = {
+                        'Alrund\'s Epiphany': 'Epiphany',
                         'Arclight Phoenix': 'Phoenix',
                         'Bolas\'s Citadel': 'Citadel',
                         'Casualties of War': 'Casualties',
@@ -1070,10 +1071,12 @@
                         'Faceless Haven': 'Faceless Haven',
                         'Feather, the Redeemed': 'Feather',
                         'Feasting Troll King': 'Troll King',
+                        'Felidar Guardian': 'Felidar',
                         'Field of the Dead': 'Field',
                         'Fires of Invention': 'Fires',
                         'Flood of Tears': 'Tears',
                         'Ghalta, Primal Hunger': 'Ghalta',
+                        'God-Pharaoh\'s Gift': 'Gift',
                         'Goldspan Dragon': 'Dragon',
                         'Golos, Tireless Pilgrim': 'Golos',
                         'Happily Ever After': 'Happily Ever After',
@@ -1082,6 +1085,7 @@
                         'Irencrag Pyromancer': 'Irencrag',
                         'Kenrith, the Returned King': 'Kenrith',
                         'Korvold, Fae-Cursed King': 'Korvold',
+                        'Kroxa, Titan of Death\'s Hunger': 'Kroxa',
                         'Lich\'s Mastery': 'Lich',
                         'March of the Multitudes': 'March',
                         'Nexus of Fate': 'Nexus',
@@ -1090,12 +1094,15 @@
                         'Nissa, Who Shakes the World': 'Nissa',
                         'Niv-Mizzet Reborn': 'Niv-Mizzet',
                         'Oko, Thief of Crowns': 'Oko',
+                        'Omnath, Locus of Creation': 'Omnath',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
                         'Teferi, Hero of Dominaria': 'Teferi', 
                         'Thud': 'Thud',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
+                        'Uro, Titan of Nature\'s Wrath': '',
                         'Yorvo, Lord of Garenbrig': 'Yorvo',
+                        'Walking Ballista': 'Ballista',
                         'Wilderness Reclamation': 'Reclamation',
                     };
                     let keycount = {};
@@ -1173,6 +1180,8 @@
                         blood_cards: [],
                         food: 0,
                         food_cards: [],
+                        treasure: 0,
+                        treasure_cards: [],
 
                         dredge: 0,
                         dredge_cards: [],
@@ -1313,13 +1322,17 @@
                         }
 
                         // subtype artifact
-                        if (creature_type || type_temp.includes('blood') || text_temp.includes('blood')) {
+                        if (type_temp.includes('blood') || text_temp.includes('blood')) {
                             archetype_counts.blood += count;
                             archetype_counts.blood_cards.push(d[0]);
                         }
-                        if (creature_type || type_temp.includes('food') || text_temp.includes('food')) {
+                        if (type_temp.includes('food') || text_temp.includes('food')) {
                             archetype_counts.food += count;
                             archetype_counts.food_cards.push(d[0]);
+                        }
+                        if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
+                            archetype_counts.treasure += count;
+                            archetype_counts.treasure_cards.push(d[0]);
                         }
 
                         // keyword
@@ -1525,6 +1538,11 @@
                     if (archetype_counts.food / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Food</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.treasure / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Treasure</td>';
                         html += '</tr>';
                     }
                     html += '</table>';
