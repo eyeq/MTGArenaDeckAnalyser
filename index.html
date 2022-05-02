@@ -1178,6 +1178,8 @@
 
                         blood: 0,
                         blood_cards: [],
+                        equipment: 0,
+                        equipment_cards: [],
                         food: 0,
                         food_cards: [],
                         treasure: 0,
@@ -1318,6 +1320,7 @@
                             archetype_counts.zombie_cards.push(d[0]);
                         }
 
+                        // subtype spell
                         if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
                             archetype_counts.adventure += count;
                             archetype_counts.adventure_cards.push(d[0]);
@@ -1328,6 +1331,10 @@
                             archetype_counts.blood += count;
                             archetype_counts.blood_cards.push(d[0]);
                         }
+                        if (type_temp.includes('equipment')) {
+                            archetype_counts.equipment += count;
+                            archetype_counts.equipment_cards.push(d[0]);
+                        }
                         if (type_temp.includes('food') || text_temp.includes('food')) {
                             archetype_counts.food += count;
                             archetype_counts.food_cards.push(d[0]);
@@ -1336,7 +1343,7 @@
                             archetype_counts.treasure += count;
                             archetype_counts.treasure_cards.push(d[0]);
                         }
-                        if (type_temp.includes('vehicle') || text_temp.includes('vehicle')) {
+                        if (type_temp.includes('vehicle')) {
                             archetype_counts.vehicle += count;
                             archetype_counts.vehicle_cards.push(d[0]);
                         }
@@ -1470,7 +1477,8 @@
                     let ratio_refer = 0.16;
                     let ratio_role = 0.21;
                     let ratio_lord = 0.26;
-                    // subtype
+
+                    // supertype
                     let html = '';
                     html += '<table>';
                     if (archetype_counts.snow / counts_sum >= ratio_refer) {
@@ -1478,12 +1486,20 @@
                         html += '<td>Snow</td>';
                         html += '</tr>';
                     }
+                    html += '</table>';
+                    $('#supertype').html(html);
+
+                    // subtype
+                    html = '';
+                    html += '<table>';
+                    // subtype land
                     if (archetype_counts.gate / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Gate</td>';
                         html += '</tr>';
                     }
 
+                    // subtype creature
                     if (archetype_counts.angel / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Angel</td>';
@@ -1530,15 +1546,22 @@
                         html += '</tr>';
                     }
 
+                    // subtype spell
                     if (archetype_counts.adventure / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Adventure</td>';
                         html += '</tr>';
                     }
 
+                    // subtype artifact
                     if (archetype_counts.blood / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Blood</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.equipment / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Equipment</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.food / counts_sum >= ratio_refer) {
@@ -1567,7 +1590,7 @@
                         html += '<td>Dredge</td>';
                         html += '</tr>';
                     }
-                    if (archetype_counts.energy / counts_sum >= 0.30) {
+                    if (archetype_counts.energy / counts_sum >= 0.21) {
                         html += '<tr>';
                         html += '<td>Energy</td>';
                         html += '</tr>';
