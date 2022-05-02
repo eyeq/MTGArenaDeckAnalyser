@@ -1158,6 +1158,8 @@
 
                         angel: 0,
                         angel_cards: [],
+                        cleric: 0,
+                        cleric_cards: [],
                         elemental: 0,
                         elemental_cards: [],
                         goblin: 0,
@@ -1193,6 +1195,8 @@
                         arua_cads: [],
                         rune: 0,
                         rune_cards: [],
+                        shrine: 0,
+                        shrine_cards: [],
 
                         dredge: 0,
                         dredge_cards: [],
@@ -1298,6 +1302,10 @@
                             archetype_counts.angel += count;
                             archetype_counts.angel_cards.push(d[0]);
                         }
+                        if (creature_type || type_temp.includes('cleric') || text_temp.includes('cleric')) {
+                            archetype_counts.cleric += count;
+                            archetype_counts.cleric_cards.push(d[0]);
+                        }
                         if (creature_type || type_temp.includes('elemental') || text_temp.includes('elemental')) {
                             archetype_counts.elemental += count;
                             archetype_counts.elemental_cards.push(d[0]);
@@ -1367,6 +1375,10 @@
                         if (text_temp.includes('rune')) {
                             archetype_counts.rune += count;
                             archetype_counts.rune_cards.push(d[0]);
+                        }
+                        if (type_temp.includes('shrine')) {
+                            archetype_counts.shrine += count;
+                            archetype_counts.shrine_cards.push(d[0]);
                         }
 
                         // keyword
@@ -1531,6 +1543,11 @@
                         html += '<td>Angel</td>';
                         html += '</tr>';
                     }
+                    if (archetype_counts.cleric / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Cleric</td>';
+                        html += '</tr>';
+                    }
                     if (archetype_counts.elemental / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Elemental</td>';
@@ -1615,6 +1632,11 @@
                     if (archetype_counts.rune / counts_sum >= ratio_refer) {
                         html += '<tr>';
                         html += '<td>Rune</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.shrine / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Shrine</td>';
                         html += '</tr>';
                     }
 
