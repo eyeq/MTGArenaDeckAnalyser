@@ -168,8 +168,8 @@
     <br>
 
     <footer style="padding: 16px; background: #f9f9fb;">
-        <p>Using "Magic: The Gathering API(api.magicthegathering.io)".</p>
-        <p>Thanks for <a href="https://magicthegathering.io/">MTG Developers</a> and <a href="https://mtgjson.com/">MTGJSON</a>.</p>
+        <p>Using Scryfall REST API(api.scryfall.com)".</p>
+        <p>Thanks for <a href="https://scryfall.com/">Scryfall Magic: The Gathering Search</a>.</p>
     </footer>
 
     <script>
@@ -219,29 +219,29 @@
             let val = $('input:radio[name="size"]:checked').val();
             switch (val) {
                 case 't':
-                    img.prop('width', '106');
-                    img.prop('height', '148');
-                    p.css('font-size', '14px');
+                    img.prop('width', '122');
+                    img.prop('height', '170');
+                    p.css('font-size', '16px');
                     break;
                 case 's':
-                    img.prop('width', '159');
-                    img.prop('height', '222');
-                    p.css('font-size', '21px');
+                    img.prop('width', '183');
+                    img.prop('height', '255');
+                    p.css('font-size', '24px');
                     break;
                 case 'm':
-                    img.prop('width', '212');
-                    img.prop('height', '296');
-                    p.css('font-size', '28px');
+                    img.prop('width', '244');
+                    img.prop('height', '340');
+                    p.css('font-size', '32px');
                     break;
                 case 'l':
-                    img.prop('width', '265');
-                    img.prop('height', '370');
-                    p.css('font-size', '35px');
+                    img.prop('width', '366');
+                    img.prop('height', '510');
+                    p.css('font-size', '48px');
                     break;
                 case 'h':
-                    img.prop('width', '530');
-                    img.prop('height', '740');
-                    p.css('font-size', '70px');
+                    img.prop('width', '488');
+                    img.prop('height', '680');
+                    p.css('font-size', '72px');
                     break;
             }
         }
@@ -305,35 +305,6 @@
             Promise.all(promises).then((data) => {
                 console.log(data);
 
-                // fix api.magicthegathering.io
-                data.forEach((d, i) => {
-                    if (d.length === 0) {
-                        return;
-                    }
-                    d.forEach(d => {
-                        d.color = d.color || [];
-                        d.colorIdentity = d.colorIdentity || [];
-                        d.manaCost = d.manaCost || '';
-
-                        d.types = d.types || [];
-                        d.supertypes = d.supertypes || [];
-                        d.subtypes = d.subtypes || [];
-                    });
-
-                    if (d.length > 1 && d[0].layout === 'modal_dfc') {
-                        if (d[0].imageUrl && d[0].imageUrl === d[1].imageUrl) {
-                            let url = new URL(d[1].imageUrl);
-                            let searchParams = url.searchParams;
-
-                            let id = searchParams.get('multiverseid');
-                            searchParams.set('multiverseid', Number(id) + 1);
-                            url.search = searchParams.toString();
-
-                            d[1].imageUrl = url.href;
-                        }
-                    }
-                });
-
                 // output
                 {
                     let val = '';
@@ -344,7 +315,7 @@
                     }
                     let first = true;
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
@@ -352,7 +323,7 @@
                         if (!commander && sideboard !== 0 && sideboard === i) {
                             val += '\nSideboard\n';
                         }
-                        val += count + ' ' + d[0].name + ' (' + d[0].set + ') ' + d[0].number + '\n';
+                        val += count + ' ' + d.name + ' (' + d.set.toUpperCase() + ') ' + d.collector_number + '\n';
                         if (commander && first) {
                             val += '\nDeck\n';
                         }
@@ -375,27 +346,20 @@
                     };
                     let keys = Object.keys(symbols);
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
                         keys.forEach(key => {
-                            if (!d[0].types.includes('Land')) {
-                                symbols[key] += (d[0].manaCost.split(key).length - 1) * count;
-                            }
-
-                            if (d.length > 1) {
-                                if (d[0].layout !== 'transform') {
-                                    if (!d[1].types.includes('Land')) {
-                                        symbols[key] += (d[1].manaCost.split(key).length - 1) * count;
-                                    }
-                                }
+                            if (d.mana_cost) {
+                                symbols[key] += (d.mana_cost.split(key).length - 1) * count;
                             }
                         });
                     });
                     symbols.sum = symbols.W + symbols.U + symbols.B + symbols.G + symbols.R;
                     console.log(symbols);
+
                     if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
                         symbols.C = 1;
                     }
@@ -513,12 +477,15 @@
                             cmc_x: 0,
                         };
                     });
-                    let getColorKey = (colorIdentity) => {
-                        switch (colorIdentity.length) {
+                    let getColorKey = (colors) => {
+                        if (!colors) {
+                            return 'Colorless';
+                        }
+                        switch (colors.length) {
                             case 0:
                                 return 'Colorless';
                             case 1:
-                                switch (colorIdentity[0]) {
+                                switch (colors[0]) {
                                     case 'W':
                                         return 'White';
                                     case 'U':
@@ -536,60 +503,71 @@
                         }
                     };
                     let addColorsCount = (colors, d, count) => {
-                        let color_key = getColorKey(d.colorIdentity);
+                        let color_key = getColorKey(d.colors);
 
-                        if (d.types.includes('Land')) {
+                        if (d.type_line.includes('Land')) {
                             colors[color_key].cmc_l += count;
-                        } else if (d.manaCost.includes('{X}')) {
-                            colors[color_key].cmc_x += count;
-                        } else {
-                            switch (d.cmc) {
-                                case 0:
-                                    colors[color_key].cmc_0 += count;
-                                    break;
-                                case 1:
-                                    colors[color_key].cmc_1 += count;
-                                    break;
-                                case 2:
-                                    colors[color_key].cmc_2 += count;
-                                    break;
-                                case 3:
-                                    colors[color_key].cmc_3 += count;
-                                    break;
-                                case 4:
-                                    colors[color_key].cmc_4 += count;
-                                    break;
-                                case 5:
-                                    colors[color_key].cmc_5 += count;
-                                    break;
-                                case 6:
-                                    colors[color_key].cmc_6 += count;
-                                    break;
-                                default:
-                                    colors[color_key].cmc_7 += count;
-                                    break;
+                        } else if (d.mana_cost) {
+                            if (d.mana_cost.includes('{X}')) {
+                                colors[color_key].cmc_x += count;
+                            } else {
+                                let cmc = 0;
+                                let n = d.mana_cost.replace(/[^0-9]/g, '');
+                                if (n) {
+                                    cmc += Number(n);
+                                    cmc += d.mana_cost.split('{').length - 2;
+                                } else {
+                                    cmc += d.mana_cost.split('{').length - 1;
+                                }
+
+                                switch (cmc) {
+                                    case 0:
+                                        colors[color_key].cmc_0 += count;
+                                        break;
+                                    case 1:
+                                        colors[color_key].cmc_1 += count;
+                                        break;
+                                    case 2:
+                                        colors[color_key].cmc_2 += count;
+                                        break;
+                                    case 3:
+                                        colors[color_key].cmc_3 += count;
+                                        break;
+                                    case 4:
+                                        colors[color_key].cmc_4 += count;
+                                        break;
+                                    case 5:
+                                        colors[color_key].cmc_5 += count;
+                                        break;
+                                    case 6:
+                                        colors[color_key].cmc_6 += count;
+                                        break;
+                                    default:
+                                        colors[color_key].cmc_7 += count;
+                                        break;
+                                }
                             }
                         }
                     };
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
                         if (commander || i <= sideboard) {
-                            addColorsCount(colors_main, d[0], count);
-                            if (d.length > 1) {
-                                if (d[0].layout !== 'transform') {
-                                    addColorsCount(colors_main, d[1], count);
-                                }
+                            if (d.card_faces && d.layout !== 'transform') {
+                                addColorsCount(colors_main, d.card_faces[0], count);
+                                addColorsCount(colors_main, d.card_faces[1], count);
+                            } else {
+                                addColorsCount(colors_main, d, count);
                             }
                         } else {
-                            addColorsCount(colors_side, d[0], count);
-                            if (d.length > 1) {
-                                if (d[0].layout !== 'transform') {
-                                    addColorsCount(colors_side, d[1], count);
-                                }
+                            if (d.card_faces && d.layout !== 'transform') {
+                                addColorsCount(colors_side, d.card_faces[0], count);
+                                addColorsCount(colors_side, d.card_faces[1], count);
+                            } else {
+                                addColorsCount(colors_side, d, count);
                             }
                         }
                     });
@@ -772,36 +750,38 @@
                     });
 
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
                         if (commander || i <= sideboard) {
                             keys.forEach(key => {
-                                if (d[0].types.includes(key)) {
-                                    types_main[key].front += count;
-                                }
-
-                                if (d.length > 1) {
-                                    if (d[1].types.includes(key)) {
-                                        if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
-                                            types_main[key].back += count;
-                                        }
+                                if (d.card_faces && key !== 'Land') {
+                                    if (d.card_faces[0].type_line.includes(key)) {
+                                        types_main[key].front += count;
+                                    }
+                                    if (d.card_faces[1].type_line.includes(key)) {
+                                        types_main[key].front += count;
+                                    }
+                                } else {
+                                    if (d.type_line.includes(key)) {
+                                        types_main[key].front += count;
                                     }
                                 }
                             });
                         } else {
                             keys.forEach(key => {
-                                if (d[0].types.includes(key)) {
-                                    types_side[key].front += count;
-                                }
-
-                                if (d.length > 1) {
-                                    if (d[1].types.includes(key)) {
-                                        if (!d[0].types.includes('Land') || !d[1].types.includes('Land')) {
-                                            types_side[key].back += count;
-                                        }
+                                if (d.card_faces && key !== 'Land') {
+                                    if (d.card_faces[0].type_line.includes(key)) {
+                                        types_side[key].front += count;
+                                    }
+                                    if (d.card_faces[1].type_line.includes(key)) {
+                                        types_side[key].front += count;
+                                    }
+                                } else {
+                                    if (d.type_line.includes(key)) {
+                                        types_side[key].front += count;
                                     }
                                 }
                             });
@@ -888,15 +868,26 @@
                     });
 
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
+                        if (d.type_line.includes('Basic')) {
+                            return;
+                        }
                         if (commander || i <= sideboard) {
-                            raritys_main[d[0].rarity] += count;
+                            keys.forEach(key => {
+                                if (key.toLowerCase() === d.rarity) {
+                                    raritys_main[key] += count;
+                                }
+                            });
                         } else {
-                            raritys_side[d[0].rarity] += count;
+                            keys.forEach(key => {
+                                if (key.toLowerCase() === d.rarity) {
+                                    raritys_side[key] += count;
+                                }
+                            });
                         }
                     });
 
@@ -927,14 +918,17 @@
                 {
                     let sets = {};
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
-                        if (!d[0].supertypes.includes('Basic')) {
-                            d[0].printings.forEach(d => sets[d] = (sets[d] || 0) + count);
+                        if (d.type_line.includes('Basic')) {
+                            return;
                         }
+                        new Set(d.printings).forEach(d => {
+                            sets[d] = (sets[d] || 0) + count;
+                        });
                     });
                     let keys = Object.keys(sets);
                     keys.sort((a, b) => sets[b] - sets[a]);
@@ -947,7 +941,7 @@
                     keys.forEach(key => {
                         html += '<tr>';
                         html += '<td style="text-align: right;">' + sets[key] + '</td>';
-                        html += '<td>' + key + '</td>';
+                        html += '<td>' + key.toUpperCase() + '</td>';
                         html += '</tr>';
                     });
                     html += '</table>';
@@ -957,11 +951,11 @@
                 // format
                 {
                     let formats = {
-                        paper: ['Standard', 'Pioneer', 'Modern', 'Legacy', 'Vintage'],
+                        paper: ['Standard', 'Explorer', 'Pioneer', 'Modern', 'Legacy', 'Vintage'],
                         paper_p: ['Pauper'],
                         arena: ['Alchemy', 'Historic'],
-                        brawl: ['Brawl', 'Historicbrawl', 'Commander'],
-                        brawl_p: ['Paupercommander'],
+                        brawl: ['Brawl', 'HistoricBrawl', 'Commander'],
+                        brawl_p: ['PauperCommander'],
                     };
                     let standard = {
                         m18: true,
@@ -970,26 +964,26 @@
                         m21: true,
                     };
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
-                        let legalities = d[0].legalities.map(d => d.format);
-                        formats.paper = formats.paper.filter(d => legalities.includes(d));
-                        formats.paper_p = formats.paper_p.filter(d => legalities.includes(d));
-                        formats.arena = formats.arena.filter(d => legalities.includes(d));
-                        formats.brawl = formats.brawl.filter(d => legalities.includes(d));
-                        formats.brawl_p = formats.brawl_p.filter(d => legalities.includes(d));
 
-                        if (!['KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM', 'M19'].some(set => d[0].printings.includes(set))) {
+                        formats.paper = formats.paper.filter(key => d.legalities[key.toLowerCase()] === 'legal');
+                        formats.paper_p = formats.paper_p.filter(key => d.legalities[key.toLowerCase()] === 'legal');
+                        formats.arena = formats.arena.filter(key => d.legalities[key.toLowerCase()] === 'legal');
+                        formats.brawl = formats.brawl.filter(key => d.legalities[key.toLowerCase()] === 'legal');
+                        formats.brawl_p = formats.brawl_p.filter(key => d.legalities[key.toLowerCase()] === 'legal');
+
+                        if (!['KLD', 'AER', 'AKH', 'HOU', 'XLN', 'RIX', 'DOM', 'M19'].some(set => d.printings.includes(set.toLowerCase()))) {
                             standard.m18 = false;
                         }
-                        if (!['XLN', 'RIX', 'DOM', 'M19', 'GRN', 'RNA', 'WAR', 'M20'].some(set => d[0].printings.includes(set))) {
+                        if (!['XLN', 'RIX', 'DOM', 'M19', 'GRN', 'RNA', 'WAR', 'M20'].some(set => d.printings.includes(set.toLowerCase()))) {
                             standard.m19 = false;
                         }
-                        if (!['GRN', 'RNA', 'WAR', 'M20', 'ELD', 'THB', 'IKO', 'M21'].some(set => d[0].printings.includes(set))) {
+                        if (!['GRN', 'RNA', 'WAR', 'M20', 'ELD', 'THB', 'IKO', 'M21'].some(set => d.printings.includes(set.toLowerCase()))) {
                             standard.m20 = false;
                         }
-                        if (!['ELD', 'THB', 'IKO', 'M21', 'ZNR', 'KHM', 'STX', 'AFR'].some(set => d[0].printings.includes(set))) {
+                        if (!['ELD', 'THB', 'IKO', 'M21', 'ZNR', 'KHM', 'STX', 'AFR'].some(set => d.printings.includes(set.toLowerCase()))) {
                             standard.m21 = false;
                         }
                     });
@@ -1130,25 +1124,25 @@
 
                     let keycards = [];
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
-                        let count = counts[i] + (keycount[d[0].name] || 0);
-                        keycount[d[0].name] = count;
+                        let count = counts[i] + (keycount[d.name] || 0);
+                        keycount[d.name] = count;
 
                         if (commander) {
                             if (i === 0) {
                                 keycards.push({
-                                    name: d[0].name,
-                                    imageUrl: d[0].imageUrl,
+                                    name: d.name,
+                                    image_uris: d.image_uris,
                                 });
                             }
                         } else {
                             if (count >= 4) {
-                                if (d[0].name in keymap) {
+                                if (d.name in keymap) {
                                     keycards.push({
-                                        name: keymap[d[0].name],
-                                        imageUrl: d[0].imageUrl,
+                                        name: keymap[d.name],
+                                        image_uris: d.image_uris,
                                     });
                                 }
                             }
@@ -1159,7 +1153,7 @@
                     html += '<table>';
                     keycards.forEach(d => {
                         html += '<tr>';
-                        html += '<td><span class="key">' + d.name + '</span><img style="position: absolute; display: none;" alt="" src="' + d.imageUrl + '"></td>';
+                        html += '<td><span class="key">' + d.name + '</span><img style="position: absolute; display: none;" alt="" src="' + d.image_uris.normal + '"></td>';
                         html += '</tr>';
                     });
                     html += '</table>';
@@ -1481,27 +1475,27 @@
                         wrath: [],
                     };
                     data.forEach((d, i) => {
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
                         let type_temp = '';
                         let text_temp = '';
-                        if (!d[0].types.includes('Land')) {
-                            type_temp += d[0].type;
-                            text_temp += d[0].text;
-                        }
-                        if (d.length > 1) {
-                            if (!d[1].types.includes('Land')) {
-                                type_temp += ' ' + d[1].type;
-                                text_temp += ' ' + d[1].text;
+                        if (d.card_faces) {
+                            if (!d.card_faces[0].type_line.includes('Land')) {
+                                type_temp += ' ' + d.card_faces[0].type_line; 
+                                text_temp += ' ' + d.card_faces[0].oracle_text.split(d.card_faces[0].name).join('.');
                             }
-                        }
-
-                        text_temp = text_temp.split(d[0].name).join('.');
-                        if (d.length > 1) {
-                            text_temp = text_temp.split(d[1].name).join('.');
+                            if (!d.card_faces[1].type_line.includes('Land')) {
+                                type_temp += ' ' + d.card_faces[1].type_line; 
+                                text_temp += ' ' + d.card_faces[1].oracle_text.split(d.card_faces[1].name).join('.');
+                            }
+                        } else {
+                            if (!d.type_line.includes('Land')) {
+                                type_temp = d.type_line;
+                                text_temp = d.oracle_text.split(d.name).join('.');
+                            }
                         }
 
                         // subtype creature
@@ -1526,7 +1520,7 @@
                             }
                             if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
                                 for (let i = 0; i < count; i++) {
-                                    creature_types[key].push(d[0]);
+                                    creature_types[key].push(d);
                                 }
                             }
                         });
@@ -1537,139 +1531,139 @@
                         // supertype
                         if (type_temp.includes('snow')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.snow.push(d[0]);
+                                archetype_counts.snow.push(d);
                             }
                         }
 
                         // subtype land
                         if (text_temp.includes('desert')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.desert.push(d[0]);
+                                archetype_counts.desert.push(d);
                             }
                         }
                         if (text_temp.includes('gate')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.gate.push(d[0]);
+                                archetype_counts.gate.push(d);
                             }
                         }
 
                         // subtype spell
                         if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.adventure.push(d[0]);
+                                archetype_counts.adventure.push(d);
                             }
                         }
 
                         // subtype artifact
                         if (type_temp.includes('blood') || text_temp.includes('blood')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.blood.push(d[0]);
+                                archetype_counts.blood.push(d);
                             }
                         }
                         if (type_temp.includes('equipment')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.equipment.push(d[0]);
+                                archetype_counts.equipment.push(d);
                             }
                         }
                         if (type_temp.includes('food') || text_temp.includes('food')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.food.push(d[0]);
+                                archetype_counts.food.push(d);
                             }
                         }
                         if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.treasure.push(d[0]);
+                                archetype_counts.treasure.push(d);
                             }
                         }
                         if (type_temp.includes('vehicle')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.vehicle.push(d[0]);
+                                archetype_counts.vehicle.push(d);
                             }
                         }
 
                         // subtype enchantment
                         if (type_temp.includes('aura')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.aura.push(d[0]);
+                                archetype_counts.aura.push(d);
                             }
                         }
                         if (text_temp.includes('rune')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.rune.push(d[0]);
+                                archetype_counts.rune.push(d);
                             }
                         }
                         if (type_temp.includes('shrine')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.shrine.push(d[0]);
+                                archetype_counts.shrine.push(d);
                             }
                         }
 
                         // keyword
                         if (text_temp.includes('dredge')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.dredge.push(d[0]);
+                                archetype_counts.dredge.push(d);
                             }
                         }
                         if (text_temp.includes('{e}')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.energy.push(d[0]);
+                                archetype_counts.energy.push(d);
                             }
                         }
                         if (text_temp.includes('explores')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.explore.push(d[0]);
+                                archetype_counts.explore.push(d);
                             }
                         }
                         if (text_temp.includes('flying')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.flying.push(d[0]);
+                                archetype_counts.flying.push(d);
                             }
                         }
                         if (text_temp.includes('heroic')
                             || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                             || text_temp.includes('becomes the target of a spell you control')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.heroic.push(d[0]);
+                                archetype_counts.heroic.push(d);
                             }
                         }
                         if (text_temp.includes('mentor')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.mentor.push(d[0]);
+                                archetype_counts.mentor.push(d);
                             }
                         }
                         if (text_temp.includes('mill')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.mill.push(d[0]);
+                                archetype_counts.mill.push(d);
                             }
                         }
                         if (text_temp.includes('modified')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.modified.push(d[0]);
+                                archetype_counts.modified.push(d);
                             }
                         }
                         if (text_temp.includes('party')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.party.push(d[0]);
+                                archetype_counts.party.push(d);
                             }
                         }
                         if (text_temp.includes('sacrifice')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.sacrifice.push(d[0]);
+                                archetype_counts.sacrifice.push(d);
                             }
                         }
                         if (text_temp.includes('whenever you draw your second card each turn')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.second_draw.push(d[0]);
+                                archetype_counts.second_draw.push(d);
                             }
                         }
                         if (text_temp.includes('surveil')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.surveil.push(d[0]);
+                                archetype_counts.surveil.push(d);
                             }
                         }
                         if (text_temp.includes('equal to its toughness')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.toughness.push(d[0]);
+                                archetype_counts.toughness.push(d);
                             }
                         }
 
@@ -1677,12 +1671,12 @@
                         if (text_temp.includes('put into your graveyard from your library')
                             || text_temp.includes('your library has no cards')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.self_mill.push(d[0]);
+                                archetype_counts.self_mill.push(d);
                             }
                         }
                         if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.artifact.push(d[0]);
+                                archetype_counts.artifact.push(d);
                             }
                         }
                         if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
@@ -1690,24 +1684,24 @@
                             || text_temp.includes('your life total to less than 1')
                             || text_temp.includes('your life total would be reduced to 0')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.fog.push(d[0]);
+                                archetype_counts.fog.push(d);
                             }
                         }
                         if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.planeswalker.push(d[0]);
+                                archetype_counts.planeswalker.push(d);
                             }
                         }
                         if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                             || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                             || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection')))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.permission.push(d[0]);
+                                archetype_counts.permission.push(d);
                             }
                         }
                         if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.spells.push(d[0]);
+                                archetype_counts.spells.push(d);
                             }
                         }
                         if (text_temp.includes('add {')
@@ -1715,40 +1709,40 @@
                             || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
                             || (text_temp.includes('play') && text_temp.includes('additional land'))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.mana_acceleration.push(d[0]);
+                                archetype_counts.mana_acceleration.push(d);
                             }
                         }
                         if (type_temp.includes('instant') || text_temp.includes('flash')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.instant.push(d[0]);
+                                archetype_counts.instant.push(d);
                             }
                         }
                         if (text_temp.includes('creature token')) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.token.push(d[0]);
+                                archetype_counts.token.push(d);
                             }
                         }
                         if (type_temp.includes('creature') || text_temp.includes('creature token')
                             || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.creature.push(d[0]);
+                                archetype_counts.creature.push(d);
                             }
-                            if (d[0].cmc < 3) {
+                            if (d.cmc < 3) {
                                 for (let i = 0; i < count; i++) {
-                                    archetype_counts.weenie.push(d[0]);
+                                    archetype_counts.weenie.push(d);
                                 }
                             }
                         }
                         if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
                             || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.direct_damage.push(d[0]);
+                                archetype_counts.direct_damage.push(d);
                             }
                         }
                         if (text_temp.includes('graveyard to the battlefield')
                             || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.reanimate.push(d[0]);
+                                archetype_counts.reanimate.push(d);
                             }
                         }
                         if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
@@ -1758,7 +1752,7 @@
                             || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
                             || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
                             for (let i = 0; i < count; i++) {
-                                archetype_counts.wrath.push(d[0]);
+                                archetype_counts.wrath.push(d);
                             }
                         }
                     });
@@ -2048,29 +2042,31 @@
                         if (i !== 0 && empty_row.includes(i)) {
                             html += '<hr style="height: 2px; background: #000000;">';
                         }
-                        if (d.length === 0) {
+                        if (!d) {
                             return;
                         }
                         let count = counts[i];
 
-                        html += '<div style="display: inline-block; position: relative;">';
-                        html += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
-
-                        html += '<div class="front">';
-                        html += '<span style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[0].name + '</span>';
-                        html += '<img alt="" src="' + d[0].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
-                        html += '</div>';
-                        if (d.length > 1) {
-                            if (d[0].imageUrl !== d[1].imageUrl) {
-                                html += '<div class="back" style="display: none;">';
-                                html += '<span style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d[1].name + '</span>';
-                                html += '<img alt="" src="' + d[1].imageUrl + '" onerror="this.style.visibility = \'hidden\'">';
-                                html += '</div>';
-
-                                html += '<p class="flip" style="position: absolute; margin: 5%; bottom: 7px; left: 40.75%; width: 18.5%; height: 13.25%; text-align: center; border-radius: 50%; background: white; cursor: pointer;"><span class="material-symbols-outlined" style="margin-top: 13.25%;">sync</span></p>';
+                        let flip = false;
+                        if (d.card_faces) {
+                            if (d.card_faces[0].image_uris) {
+                                flip = true;
                             }
                         }
-                        html += '<span style="position: absolute; margin: 5%; bottom: calc(7px + 5%); border-radius: 4px; width: 18.5%; height: 13.25%; text-align: center; font-weight: bold; background: white;">' + count + '</span>';
+
+                        html += '<div style="display: inline-block; position: relative;">';
+                        html += '<img style="position: absolute; z-index: -1; margin: 0; background: #E7E9EB;" alt="" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=">';
+                        html += '<span style="position: absolute; z-index: -1; margin: 4px; width: calc(100% - 8px); word-wrap: break-word;">' + d.name + '</span>';
+                        html += '<div>';
+                        if (flip) {
+                            html += '<img alt="" src="' + d.card_faces[0].image_uris.normal + '" onerror="this.style.visibility = \'hidden\'">';
+                            html += '<img alt="" src="' + d.card_faces[1].image_uris.normal + '" onerror="this.style.visibility = \'hidden\'" style="display: none;">';
+                            html += '<p class="flip" style="position: absolute; margin: 5%; bottom: 7px; left: 38.25%; width: 20%; height: 14%; text-align: center; border-radius: 50%; background: white; cursor: pointer;"><span class="material-symbols-outlined" style="margin-top: 14%; pointer-events: none;">sync</span></p>';
+                        } else {
+                            html += '<img alt="" src="' + d.image_uris.normal + '" onerror="this.style.visibility = \'hidden\'">';
+                        }
+                        html += '</div>';
+                        html += '<span style="position: absolute; margin: 5%; bottom: calc(7px + 5%); border-radius: 4px; width: 20%; height: 14%; text-align: center; font-weight: bold; background: white;">' + count + '</span>';
                         html += '</div>';
                     });
                     $('#board').html(html);
@@ -2082,55 +2078,50 @@
 
         function send(name, set, number) {
             return new Promise((resolve, reject) => {
-                sendName = (resolve, reject, name) => {
-                    if (name) {
-                        let request = new XMLHttpRequest();
-                        request.open('GET', 'https://api.magicthegathering.io/v1/cards?name=' + encodeURIComponent(name));
-                        request.onload = () => {
-                            let data = JSON.parse(request.response);
+                let ret = undefined;
 
-                            if (data.cards.length === 0) {
-                                resolve([]);
-                            } else {
-                                let request2 = new XMLHttpRequest();
-                                request2.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + data.cards[0].set + '&number=' + data.cards[0].number);
-                                request2.onload = () => {
-                                    let data2 = JSON.parse(request2.response);
-                                    resolve(data2.cards);
-                                }
-                                request2.onerror = () => {
-                                    reject();
-                                }
-                                request2.send();
-                            }
-                        };
-                        request.onerror = () => {
-                            reject();
-                        }
-                        request.send();
-                    } else {
-                        resolve([]);
-                    }
-                };
-
-                if (set) {
+                if (!ret && set) {
                     let request = new XMLHttpRequest();
-                    request.open('GET', 'https://api.magicthegathering.io/v1/cards?set=' + set + '&number=' + number);
-                    request.onload = () => {
-                        let data = JSON.parse(request.response);
-                        if (data.cards.length === 0) {
-                            sendName(resolve, reject, name);
-                        } else {
-                            resolve(data.cards);
-                        }
-                    };
-                    request.onerror = () => {
-                        reject();
-                    }
+                    request.open('GET', 'https://api.scryfall.com/cards/' + set.toLowerCase() + '/' + number, false);
                     request.send();
-                } else {
-                    sendName(resolve, reject, name);
+                    if (request.response) {
+                        let data = JSON.parse(request.response);
+                        if (data.object === 'card') {
+                            ret = data;
+                        }
+                    }
                 }
+
+                if (!ret && name) {
+                    let request = new XMLHttpRequest();
+                    request.open('GET', 'https://api.scryfall.com/cards/named?fuzzy=' + encodeURIComponent(name), false);
+                    request.send();
+                    if (request.response) {
+                        let data = JSON.parse(request.response);
+                        if (data.object === 'card') {
+                            ret = data;
+                        }
+                    }
+                }
+
+                if (ret) {
+                    ret.printings = [ret.set];
+
+                    let request = new XMLHttpRequest();
+                    request.open('GET', ret.prints_search_uri, false);
+                    request.send();
+                    if (request.response) {
+                        let data = JSON.parse(request.response);
+                        if (data.object === 'list') {
+                            ret.printings = [];
+                            data.data.forEach(d => {
+                                ret.printings.push(d.set);
+                            });
+                        }
+                    }
+                }
+
+                resolve(ret);
             });
         }
     </script>
