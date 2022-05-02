@@ -1187,6 +1187,9 @@
                         vehicle: 0,
                         vehicle_cards: [],
 
+                        aura: 0,
+                        arua_cads: [],
+
                         dredge: 0,
                         dredge_cards: [],
                         energy: 0,
@@ -1346,6 +1349,12 @@
                         if (type_temp.includes('vehicle')) {
                             archetype_counts.vehicle += count;
                             archetype_counts.vehicle_cards.push(d[0]);
+                        }
+
+                        // subtype enchantment
+                        if (type_temp.includes('aura')) {
+                            archetype_counts.aura += count;
+                            archetype_counts.aura_cards.push(d[0]);
                         }
 
                         // keyword
@@ -1579,6 +1588,14 @@
                         html += '<td>Vehicle</td>';
                         html += '</tr>';
                     }
+
+                    // subtype enchantment
+                    if (archetype_counts.aura / counts_sum >= ratio_refer) {
+                        html += '<tr>';
+                        html += '<td>Aura</td>';
+                        html += '</tr>';
+                    }
+
                     html += '</table>';
                     $('#subtype').html(html);
 
