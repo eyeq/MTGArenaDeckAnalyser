@@ -1084,6 +1084,7 @@
                         'Happily Ever After': 'Happily Ever After',
                         'Hazoret the Fervent': 'Hazoret',
                         'Hero of Precinct One': 'Hero',
+                        'Hinata, Dawn-Crowned': 'Hinata',
                         'Irencrag Pyromancer': 'Irencrag',
                         'Kenrith, the Returned King': 'Kenrith',
                         'Korvold, Fae-Cursed King': 'Korvold',
@@ -1096,6 +1097,7 @@
                         'Nine Lives': 'Nine Lives',
                         'Nissa, Who Shakes the World': 'Nissa',
                         'Niv-Mizzet Reborn': 'Niv-Mizzet',
+                        'Ob Nixilis, the Adversary': 'Nixilis',
                         'Oko, Thief of Crowns': 'Oko',
                         'Omnath, Locus of Creation': 'Omnath',
                         'Persistent Petitioners': 'Petitioners',
@@ -1233,6 +1235,8 @@
                         mentor_cards: [],
                         mill: 0,
                         mill_cards: [],
+                        modified: 0,
+                        modified_cards: [],
                         party: 0,
                         party_cards: [],
                         sacrifice: 0,
@@ -1450,6 +1454,10 @@
                         if (text_temp.includes('mill')) {
                             archetype_counts.mill += count;
                             archetype_counts.mill_cards.push(d[0]);
+                        }
+                        if (text_temp.includes('modified')) {
+                            archetype_counts.modified += count;
+                            archetype_counts.modified_cards.push(d[0]);
                         }
                         if (text_temp.includes('party')) {
                             archetype_counts.party += count;
@@ -1742,6 +1750,11 @@
                     if (archetype_counts.mill / counts_sum >= ratio_role) {
                         html += '<tr>';
                         html += '<td>Mill</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.modified / counts_sum >= ratio_key) {
+                        html += '<tr>';
+                        html += '<td>Modified</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.party / counts_sum >= ratio_key) {
