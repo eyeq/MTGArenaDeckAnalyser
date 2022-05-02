@@ -1059,6 +1059,7 @@
                 {
                     let keymap = {
                         'Alrund\'s Epiphany': 'Epiphany',
+                        'Approach of the Second Sun': 'Second Sun',
                         'Arclight Phoenix': 'Phoenix',
                         'Bolas\'s Citadel': 'Citadel',
                         'Casualties of War': 'Casualties',
@@ -1066,6 +1067,7 @@
                         'Command the Dreadhorde': 'Dreadhorde',
                         'Crackling Drake': 'Drake',
                         'Doom Foretold': 'Doom',
+                        'Dragon\'s Approach': '',
                         'Embercleave': 'Embercleave',
                         'Experimental Frenzy': 'Frenzy',
                         'Faceless Haven': 'Faceless Haven',
@@ -1087,6 +1089,7 @@
                         'Korvold, Fae-Cursed King': 'Korvold',
                         'Kroxa, Titan of Death\'s Hunger': 'Kroxa',
                         'Lich\'s Mastery': 'Lich',
+                        'Lotus Field': 'Lotus',
                         'March of the Multitudes': 'March',
                         'Nexus of Fate': 'Nexus',
                         'Nicol Bolas, Dragon-God': 'Bolas',
@@ -1095,10 +1098,14 @@
                         'Niv-Mizzet Reborn': 'Niv-Mizzet',
                         'Oko, Thief of Crowns': 'Oko',
                         'Omnath, Locus of Creation': 'Omnath',
+                        'Persistent Petitioners': 'Petitioners',
                         'Ramunap Ruins': 'Ramunap',
+                        'Rat Colony': 'Rats',
+                        'Relentless Rats': 'Rats',
                         'Sephara, Sky\'s Blade': 'Sephara',
                         'Scapeshift': 'Scapeshift',
-                        'Teferi, Hero of Dominaria': 'Teferi', 
+                        'Shadowborn Apostle': 'Shadowborn',
+                        'Teferi, Hero of Dominaria': 'Teferi',
                         'Thassa\'s Oracle': 'Oracle',
                         'Thud': 'Thud',
                         'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
@@ -1108,6 +1115,8 @@
                         'Yorvo, Lord of Garenbrig': 'Yorvo',
                         'Walking Ballista': 'Ballista',
                         'Wilderness Reclamation': 'Reclamation',
+                        'Winota, Joiner of Forces': 'Winota',
+                        'Witch\'s Oven': 'Oven',
                     };
                     let keycount = {};
 
@@ -1127,7 +1136,7 @@
                                 });
                             }
                         } else {
-                            if (count === 4) {
+                            if (count >= 4) {
                                 if (d[0].name in keymap) {
                                     keycards.push({
                                         name: keymap[d[0].name],
@@ -1172,6 +1181,8 @@
                         human_cards: [],
                         knight: 0,
                         knight_cards: [],
+                        rat: 0,
+                        rat_cards: [],
                         rogue: 0,
                         rogue_cards: [],
                         spirit: 0,
@@ -1333,6 +1344,10 @@
                         if (creature_type || type_temp.includes('knight') || text_temp.includes('knight')) {
                             archetype_counts.knight += count;
                             archetype_counts.knight_cards.push(d[0]);
+                        }
+                        if (creature_type || type_temp.includes('rat') || text_temp.includes('rat')) {
+                            archetype_counts.rat += count;
+                            archetype_counts.rat_cards.push(d[0]);
                         }
                         if (creature_type || type_temp.includes('rogue') || text_temp.includes('rogue')) {
                             archetype_counts.rogue += count;
@@ -1594,6 +1609,11 @@
                     if (archetype_counts.knight / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>Knight</td>';
+                        html += '</tr>';
+                    }
+                    if (archetype_counts.rat / counts_sum >= ratio_lord) {
+                        html += '<tr>';
+                        html += '<td>Rat</td>';
                         html += '</tr>';
                     }
                     if (archetype_counts.rogue / counts_sum >= ratio_lord) {
