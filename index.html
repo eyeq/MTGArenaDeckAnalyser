@@ -1249,6 +1249,12 @@
 
             // decktype / supertype / subtype / keyword / archetype
 
+            let super_types = {
+                'Legendary Sorcery': [],
+                Snow: [],
+                World: [],
+            };
+
             let creature_types = {
                 Advisor: [],
                 Aetherborn: [],
@@ -1515,8 +1521,6 @@
             };
 
             let archetype_counts = {
-                snow: [],
-
                 desert: [],
                 gate: [],
 
@@ -1585,6 +1589,13 @@
                         }
                     }
 
+                    // supertype
+                    Object.keys(super_types).forEach(key => {
+                        if (type_temp.includes(key)) {
+                            super_types[key].push(d);
+                        }
+                    });
+
                     // subtype creature
                     let creature_type = false;
                     if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
@@ -1612,11 +1623,6 @@
 
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
-
-                    // supertype
-                    if (type_temp.includes('snow')) {
-                        archetype_counts.snow.push(d);
-                    }
 
                     // subtype land
                     if (text_temp.includes('desert')) {
@@ -1771,11 +1777,14 @@
                 // supertype
                 let html = '';
                 html += '<table>';
-                if (archetype_counts.snow.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Snow</td>';
-                    html += '</tr>';
-                }
+                Object.keys(super_types).forEach(key => {
+                    let count = super_types[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.06) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
                 html += '</table>';
                 $('#supertype').html(html);
 
@@ -1796,7 +1805,8 @@
 
                 // subtype creature
                 Object.keys(creature_types).forEach(key => {
-                    if (creature_types[key].reduce((p, v) => p + v.count, 0) / counts_main >= ratio_lord) {
+                    let count = creature_types[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.20) {
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
