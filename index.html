@@ -193,11 +193,21 @@
             'Desert',
             'Gate',
         ];
+        var creature_types = [];
+        var permanent_types = [
+            'Blood',
+            'Clue',
+            'Food',
+            'Treasure',
+        ];
+        var artifact_types = [
+            'Equipment',
+            'Vehicle',
+        ]
         var spell_types = [
             'Adventure',
             'Arcane',
         ];
-        var creature_types = [];
 
         (() => {
             let url = new URL(location.href);
@@ -1288,15 +1298,11 @@
             let super_types_count = {};
             let land_types_count = {};
             let creature_types_count = {};
+            let permanent_types_count = {};
+            let artifact_types_count = {};
             let spell_types_count = {};
 
             let archetype_counts = {
-                blood: [],
-                equipment: [],
-                food: [],
-                treasure: [],
-                vehicle: [],
-
                 aura: [],
                 rune: [],
                 shrine: [],
@@ -1404,6 +1410,24 @@
                         }
                     });
 
+                    // subtype permanent
+                    permanent_types.forEach(key => {
+                        if (type_temp.includes(key) || text_temp.includes(key)) {
+                            if (!(key in permanent_types_count)) {
+                                permanent_types_count[key] = [];
+                            }
+                            permanent_types_count[key].push(d);
+                        }
+                    });
+                    artifact_types.forEach(key => {
+                        if (text_temp.includes(key)) {
+                            if (!(key in artifact_types_count)) {
+                                artifact_types_count[key] = [];
+                            }
+                            artifact_types_count[key].push(d);
+                        }
+                    });
+
                     // subtype spell
                     spell_types.forEach(key => {
                         if (text_temp.includes(key)) {
@@ -1416,23 +1440,6 @@
 
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
-
-                    // subtype artifact
-                    if (type_temp.includes('blood') || text_temp.includes('blood')) {
-                        archetype_counts.blood.push(d);
-                    }
-                    if (type_temp.includes('equipment')) {
-                        archetype_counts.equipment.push(d);
-                    }
-                    if (type_temp.includes('food') || text_temp.includes('food')) {
-                        archetype_counts.food.push(d);
-                    }
-                    if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
-                        archetype_counts.treasure.push(d);
-                    }
-                    if (type_temp.includes('vehicle')) {
-                        archetype_counts.vehicle.push(d);
-                    }
 
                     // subtype enchantment
                     if (type_temp.includes('aura')) {
@@ -1592,6 +1599,24 @@
                     }
                 });
 
+                // subtype permanent
+                Object.keys(permanent_types_count).forEach(key => {
+                    let count = permanent_types_count[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.20) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
+                Object.keys(artifact_types_count).forEach(key => {
+                    let count = artifact_types_count[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.13) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
+
                 // subtype spell
                 Object.keys(spell_types_count).forEach(key => {
                     let count = spell_types_count[key].reduce((p, v) => p + v.count, 0);
@@ -1601,33 +1626,6 @@
                         html += '</tr>';
                     }
                 });
-
-                // subtype artifact
-                if (archetype_counts.blood.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Blood</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.equipment.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Equipment</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.food.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Food</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.treasure.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Treasure</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.vehicle.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Vehicle</td>';
-                    html += '</tr>';
-                }
 
                 // subtype enchantment
                 if (archetype_counts.aura.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
@@ -1877,7 +1875,9 @@
                     supertype: super_types_count,
                     subtype_land: land_types_count,
                     subtype_creature: creature_types_count,
-                    spell: spell_types_count,
+                    subtype_permanent: permanent_types_count,
+                    subtype_spell: spell_types_count,
+                    subtype_artifact: artifact_types_count,
                     card: archetype_counts,
                 },
             });
