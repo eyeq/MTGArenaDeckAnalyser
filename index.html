@@ -1326,6 +1326,7 @@
                 surveil: [],
                 toughness: [],
 
+                legends: [],
                 self_mill: [],
                 artifact: [],
                 fog: [],
@@ -1500,6 +1501,11 @@
                     }
 
                     // decktype
+                    if (text_temp.includes(' legendary card') || text_temp.includes('legendary permanent card')
+                        || text_temp.includes('a legendary spell') || text_temp.includes('egendary spells')
+                        || text_temp.includes('legendary creature')) {
+                        archetype_counts.legends.push(d);
+                    }
                     if (text_temp.includes('put into your graveyard from your library')
                         || text_temp.includes('your library has no cards')) {
                         archetype_counts.self_mill.push(d);
@@ -1719,6 +1725,12 @@
                 html = '';
                 html += '<table>';
                 let archetypes = [];
+                if (archetype_counts.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                    archetypes.push('legends');
+                    html += '<tr>';
+                    html += '<td>Legends</td>';
+                    html += '</tr>';
+                }
                 if (archetype_counts.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     archetypes.push('self_mill');
                     html += '<tr>';
@@ -1791,7 +1803,7 @@
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.05) {
+                if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
                     archetypes.push('wrath');
                     html += '<tr>';
                     html += '<td>Control</td>';
