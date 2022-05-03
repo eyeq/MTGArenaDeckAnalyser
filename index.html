@@ -106,7 +106,7 @@
     </div>
     <br>
 
-    <h3 style="margin-bottom: 0;">Main</h3>
+    <h3 id="mainboard" style="margin-bottom: 0;">Main</h3>
     <div style="display: inline-block; vertical-align: top; width: 480px;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Rarity</h4>
@@ -126,7 +126,7 @@
     </div>
     <br>
 
-    <h3 style="margin-bottom: 0;">Sideboard</h3>
+    <h3 id="sideboard" style="margin-bottom: 0;">Sideboard</h3>
     <div style="display: inline-block; vertical-align: top; width: 480px;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Rarity</h4>
@@ -315,7 +315,25 @@
             }
             $('#progress').hide();
 
-            let counts_sum = inputs.reduce((p, v) => p + v.count, 0);
+            // counts;
+            let counts_main = 0;
+            let counts_side = 0;
+            {
+                data.forEach((d, i) => {
+                    if (!d) {
+                        return;
+                    }
+
+                    if (!d.sideboard) {
+                        counts_main += d.count;
+                    } else {
+                        counts_side += d.count;
+                    }
+                });
+
+                $('#mainboard').html('Main (' + counts_main + ')');
+                $('#sideboard').html('Sideboard (' + counts_side + ')');
+            }
 
             // link
             {
@@ -1707,7 +1725,7 @@
                 // supertype
                 let html = '';
                 html += '<table>';
-                if (archetype_counts.snow.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.snow.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Snow</td>';
                     html += '</tr>';
@@ -1719,12 +1737,12 @@
                 html = '';
                 html += '<table>';
                 // subtype land
-                if (archetype_counts.desert.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.desert.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Desert</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.gate.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.gate.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Gate</td>';
                     html += '</tr>';
@@ -1732,7 +1750,7 @@
 
                 // subtype creature
                 Object.keys(creature_types).forEach(key => {
-                    if (creature_types[key].reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
+                    if (creature_types[key].reduce((p, v) => p + v.count, 0) / counts_main >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -1740,51 +1758,51 @@
                 });
 
                 // subtype spell
-                if (archetype_counts.adventure.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
+                if (archetype_counts.adventure.reduce((p, v) => p + v.count, 0) / counts_main >= 0.21) {
                     html += '<tr>';
                     html += '<td>Adventure</td>';
                     html += '</tr>';
                 }
 
                 // subtype artifact
-                if (archetype_counts.blood.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.blood.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Blood</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.equipment.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.equipment.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Equipment</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.food.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.food.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Food</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.treasure.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.treasure.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Treasure</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.vehicle.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.vehicle.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Vehicle</td>';
                     html += '</tr>';
                 }
 
                 // subtype enchantment
-                if (archetype_counts.aura.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.aura.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Aura</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.rune.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.rune.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Rune</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.shrine.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
+                if (archetype_counts.shrine.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_lord) {
                     html += '<tr>';
                     html += '<td>Shrine</td>';
                     html += '</tr>';
@@ -1796,67 +1814,67 @@
                 // keyword
                 html = '';
                 html += '<table>';
-                if (archetype_counts.dredge.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.dredge.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Dredge</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.energy.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
+                if (archetype_counts.energy.reduce((p, v) => p + v.count, 0) / counts_main >= 0.21) {
                     html += '<tr>';
                     html += '<td>Energy</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.explore.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.explore.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Explore</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.flying.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
+                if (archetype_counts.flying.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_lord) {
                     html += '<tr>';
                     html += '<td>Flyer</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.heroic.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
+                if (archetype_counts.heroic.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Heroic</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mentor.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
+                if (archetype_counts.mentor.reduce((p, v) => p + v.count, 0) / counts_main >= 0.21) {
                     html += '<tr>';
                     html += '<td>Mentor</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mill.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
+                if (archetype_counts.mill.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     html += '<tr>';
                     html += '<td>Mill</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.modified.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
+                if (archetype_counts.modified.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Modified</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.party.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
+                if (archetype_counts.party.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Party</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.sacrifice.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
+                if (archetype_counts.sacrifice.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     html += '<tr>';
                     html += '<td>Sacrifice</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.second_draw.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
+                if (archetype_counts.second_draw.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Second-Draw</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.surveil.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.surveil.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Surveil</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.toughness.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
+                if (archetype_counts.toughness.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Toughness</td>';
                     html += '</tr>';
@@ -1868,79 +1886,79 @@
                 html = '';
                 html += '<table>';
                 let archetypes = [];
-                if (archetype_counts.self_mill.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
+                if (archetype_counts.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     archetypes.push('self_mill');
                     html += '<tr>';
                     html += '<td>Self-Mill</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.artifact.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
+                if (archetype_counts.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
                     archetypes.push('artifact');
                     html += '<tr>';
                     html += '<td>Artifact</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.fog.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
+                if (archetype_counts.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     archetypes.push('fog');
                     html += '<tr>';
                     html += '<td>Fog</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.planeswalker.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
+                if (archetype_counts.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     archetypes.push('planeswalker');
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.permission.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
+                if (archetype_counts.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     archetypes.push('permission');
                     html += '<tr>';
                     html += '<td>Permission</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.spells.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
+                if (archetype_counts.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
                     archetypes.push('spells');
                     html += '<tr>';
                     html += '<td>Spells</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
+                if (archetype_counts.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     archetypes.push('mana_acceleration');
                     html += '<tr>';
                     html += '<td>Ramp</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.instant.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
+                if (archetype_counts.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
                     archetypes.push('instant');
                     html += '<tr>';
                     html += '<td>Flash</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.token.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.23) {
+                if (archetype_counts.token.reduce((p, v) => p + v.count, 0) / counts_main >= 0.23) {
                     archetypes.push('token');
                     html += '<tr>';
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.creature.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
+                if (archetype_counts.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
                     archetypes.push('creature');
                     html += '<tr>';
                     html += '<td>Beatdown</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.direct_damage.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
+                if (archetype_counts.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
                     archetypes.push('direct_damage');
                     html += '<tr>';
                     html += '<td>Burn</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.reanimate.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
+                if (archetype_counts.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     archetypes.push('reanimate');
                     html += '<tr>';
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.05) {
+                if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.05) {
                     archetypes.push('wrath');
                     html += '<tr>';
                     html += '<td>Control</td>';
@@ -1960,7 +1978,7 @@
                         decktype = 'Stompy';
                     } else if (archetypes.includes('direct_damage')) {
                         decktype = 'Sligh';
-                    } else if (archetype_counts.weenie.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.26) {
+                    } else if (archetype_counts.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
                         decktype = 'Weenie';
                     } else {
                         decktype = 'Aggro';
