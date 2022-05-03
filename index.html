@@ -258,12 +258,8 @@
             let commander = false;
             let sideboard = 10000;
             let empty_row = [];
-            let link = location.pathname + '?input=';
             text.split('\n').forEach(d => {
                 d = d.trim();
-                if (d === '') {
-                    empty_row.push(inputs.length);
-                }
                 if (d === 'Commander') {
                     commander = true;
                 }
@@ -272,9 +268,8 @@
                 if (index0 === -1) {
                     if (inputs.length !== 0) {
                         sideboard = inputs.length;
+                        empty_row.push(inputs.length);
                     }
-
-                    link += d + '___';
                 } else {
                     let index1 = d.indexOf(' (');
                     let s = d.split(' ');
@@ -300,11 +295,8 @@
                         set: set,
                         number: number,
                     })
-
-                    link += count + '_' + set + '_' + number + '_';
                 }
             });
-            $('#link').html('<a href="' + link + '">Copy link address</a>');
 
             let data = [];
             $('#progress progress').prop('max', inputs.length)
@@ -324,6 +316,23 @@
             $('#progress').hide();
 
             let counts_sum = inputs.reduce((p, v) => p + v.count, 0);
+
+            // link
+            {
+                let link = location.pathname + '?input=';
+                data.forEach((d, i) => {
+                    if (empty_row.includes(i)) {
+                        link += '___';
+                    }
+                    if (!d) {
+                        return;
+                    }
+
+                    link += d.count + '_' + d.set.toUpperCase() + '_' + d.collector_number + '_';
+                });
+                $('#link').html('<a href="' + link + '">Copy link address</a>');
+            }
+
             // output
             {
                 let val = '';
@@ -1970,7 +1979,7 @@
             {
                 let html = '';
                 data.forEach((d, i) => {
-                    if (i !== 0 && empty_row.includes(i)) {
+                    if (empty_row.includes(i)) {
                         html += '<hr style="height: 2px; background: #000000;">';
                     }
                     if (!d) {
