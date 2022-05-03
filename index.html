@@ -193,6 +193,10 @@
             'Desert',
             'Gate',
         ];
+        var spell_types = [
+            'Adventure',
+            'Arcane',
+        ];
         var creature_types = [];
 
         (() => {
@@ -1284,10 +1288,9 @@
             let super_types_count = {};
             let land_types_count = {};
             let creature_types_count = {};
+            let spell_types_count = {};
 
             let archetype_counts = {
-                adventure: [],
-
                 blood: [],
                 equipment: [],
                 food: [],
@@ -1401,13 +1404,18 @@
                         }
                     });
 
+                    // subtype spell
+                    spell_types.forEach(key => {
+                        if (text_temp.includes(key)) {
+                            if (!(key in spell_types_count)) {
+                                spell_types_count[key] = [];
+                            }
+                            spell_types_count[key].push(d);
+                        }
+                    });
+
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
-
-                    // subtype spell
-                    if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
-                        archetype_counts.adventure.push(d);
-                    }
 
                     // subtype artifact
                     if (type_temp.includes('blood') || text_temp.includes('blood')) {
@@ -1585,11 +1593,14 @@
                 });
 
                 // subtype spell
-                if (archetype_counts.adventure.reduce((p, v) => p + v.count, 0) / counts_main >= 0.21) {
-                    html += '<tr>';
-                    html += '<td>Adventure</td>';
-                    html += '</tr>';
-                }
+                Object.keys(spell_types_count).forEach(key => {
+                    let count = spell_types_count[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.06) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
 
                 // subtype artifact
                 if (archetype_counts.blood.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
@@ -1866,6 +1877,7 @@
                     supertype: super_types_count,
                     subtype_land: land_types_count,
                     subtype_creature: creature_types_count,
+                    spell: spell_types_count,
                     card: archetype_counts,
                 },
             });
