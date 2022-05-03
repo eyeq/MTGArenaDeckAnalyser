@@ -203,7 +203,15 @@
         var artifact_types = [
             'Equipment',
             'Vehicle',
-        ]
+        ];
+        var enchantment_types = [
+            'Aura',
+            'Cartouche',
+            'Curse',
+            'Rune',
+            'Saga',
+            'Shrine',
+        ];
         var spell_types = [
             'Adventure',
             'Arcane',
@@ -1300,13 +1308,10 @@
             let creature_types_count = {};
             let permanent_types_count = {};
             let artifact_types_count = {};
+            let enchantment_types_count = {};
             let spell_types_count = {};
 
             let archetype_counts = {
-                aura: [],
-                rune: [],
-                shrine: [],
-
                 dredge: [],
                 energy: [],
                 explore: [],
@@ -1428,6 +1433,16 @@
                         }
                     });
 
+                    // subtype enchantment
+                    enchantment_types.forEach(key => {
+                        if (text_temp.includes(key)) {
+                            if (!(key in enchantment_types_count)) {
+                                enchantment_types_count[key] = [];
+                            }
+                            enchantment_types_count[key].push(d);
+                        }
+                    });
+
                     // subtype spell
                     spell_types.forEach(key => {
                         if (text_temp.includes(key)) {
@@ -1440,17 +1455,6 @@
 
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
-
-                    // subtype enchantment
-                    if (type_temp.includes('aura')) {
-                        archetype_counts.aura.push(d);
-                    }
-                    if (text_temp.includes('rune')) {
-                        archetype_counts.rune.push(d);
-                    }
-                    if (type_temp.includes('shrine')) {
-                        archetype_counts.shrine.push(d);
-                    }
 
                     // keyword
                     if (text_temp.includes('dredge')) {
@@ -1617,6 +1621,16 @@
                     }
                 });
 
+                // subtype enchantment
+                Object.keys(enchantment_types_count).forEach(key => {
+                    let count = enchantment_types_count[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.13) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
+
                 // subtype spell
                 Object.keys(spell_types_count).forEach(key => {
                     let count = spell_types_count[key].reduce((p, v) => p + v.count, 0);
@@ -1626,23 +1640,6 @@
                         html += '</tr>';
                     }
                 });
-
-                // subtype enchantment
-                if (archetype_counts.aura.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Aura</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.rune.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Rune</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.shrine.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_lord) {
-                    html += '<tr>';
-                    html += '<td>Shrine</td>';
-                    html += '</tr>';
-                }
 
                 html += '</table>';
                 $('#subtype').html(html);
@@ -1878,6 +1875,7 @@
                     subtype_permanent: permanent_types_count,
                     subtype_spell: spell_types_count,
                     subtype_artifact: artifact_types_count,
+                    subtype_enchantment: enchantment_types_count,
                     card: archetype_counts,
                 },
             });
