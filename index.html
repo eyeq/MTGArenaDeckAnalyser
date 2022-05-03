@@ -184,6 +184,13 @@
     </footer>
 
     <script>
+        var super_types = [
+            'Legendary Sorcery',
+            'Snow',
+            'World',
+        ];
+        var creature_types = [];
+
         (() => {
             let url = new URL(location.href);
             let searchParams = url.searchParams;
@@ -200,7 +207,6 @@
                     }
                 });
                 $('#input').val(val);
-                read();
             }
 
             $('input[name="size"]').on('change', resizeImage);
@@ -220,6 +226,13 @@
 
                 back.toggle();
                 front.toggle();
+            });
+
+            sendCatalogCreatureTypes().then(data => {
+                console.log(data);
+                creature_types = data.data;
+
+                read();
             });
         })();
 
@@ -1124,7 +1137,7 @@
                 } else {
                     if (formats.paper_p.length > 0) {
                         html += '<tr>';
-                        html += '<td>' + paper_p.brawl.join(' / ') + '</td>';
+                        html += '<td>' + formats.paper_p.join(' / ') + '</td>';
                         html += '</tr>';
                         html += '<tr>';
                         html += '</tr>';
@@ -1264,277 +1277,8 @@
             }
 
             // decktype / supertype / subtype / keyword / archetype
-
-            let super_types = {
-                'Legendary Sorcery': [],
-                Snow: [],
-                World: [],
-            };
-
-            let creature_types = {
-                Advisor: [],
-                Aetherborn: [],
-                Ally: [],
-                Angel: [],
-                Antelope: [],
-                Ape: [],
-                Archer: [],
-                Archon: [],
-                Army: [],
-                Artificer: [],
-                Assassin: [],
-                'Assembly-Worker': [],
-                Atog: [],
-                Aurochs: [],
-                Avatar: [],
-                Azra: [],
-                Badger: [],
-                Barbarian: [],
-                Bard: [],
-                Basilisk: [],
-                Bat: [],
-                Bear: [],
-                Beast: [],
-                Beeble: [],
-                Beholder: [],
-                Berserker: [],
-                Bird: [],
-                Blinkmoth: [],
-                Boar: [],
-                Bringer: [],
-                Brushwagg: [],
-                Camarid: [],
-                Camel: [],
-                Caribou: [],
-                Carrier: [],
-                Cat: [],
-                Centaur: [],
-                Cephalid: [],
-                Chimera: [],
-                Citizen: [],
-                Cleric: [],
-                Cockatrice: [],
-                Construct: [],
-                Coward: [],
-                Crab: [],
-                Crocodile: [],
-                Cyclops: [],
-                Dauthi: [],
-                Demigod: [],
-                Demon: [],
-                Deserter: [],
-                Devil: [],
-                Dinosaur: [],
-                Djinn: [],
-                Dog: [],
-                Dragon: [],
-                Drake: [],
-                Dreadnought: [],
-                Drone: [],
-                Druid: [],
-                Dryad: [],
-                Dwarf: [],
-                Efreet: [],
-                Egg: [],
-                Elder: [],
-                Eldrazi: [],
-                Elemental: [],
-                Elephant: [],
-                Elf: [],
-                Elk: [],
-                Eye: [],
-                Faerie: [],
-                Ferret: [],
-                Fish: [],
-                Flagbearer: [],
-                Fox: [],
-                Fractal: [],
-                Frog: [],
-                Fungus: [],
-                Gargoyle: [],
-                Germ: [],
-                Giant: [],
-                Gnoll: [],
-                Gnome: [],
-                Goat: [],
-                Goblin: [],
-                God: [],
-                Golem: [],
-                Gorgon: [],
-                Graveborn: [],
-                Gremlin: [],
-                Griffin: [],
-                Hag: [],
-                Halfling: [],
-                Hamster: [],
-                Harpy: [],
-                Hellion: [],
-                Hippo: [],
-                Hippogriff: [],
-                Homarid: [],
-                Homunculus: [],
-                Horror: [],
-                Horse: [],
-                Human: [],
-                Hydra: [],
-                Hyena: [],
-                Illusion: [],
-                Imp: [],
-                Incarnation: [],
-                Inkling: [],
-                Insect: [],
-                Jackal: [],
-                Jellyfish: [],
-                Juggernaut: [],
-                Kavu: [],
-                Kirin: [],
-                Kithkin: [],
-                Knight: [],
-                Kobold: [],
-                Kor: [],
-                Kraken: [],
-                Lamia: [],
-                Lammasu: [],
-                Leech: [],
-                Leviathan: [],
-                Lhurgoyf: [],
-                Licid: [],
-                Lizard: [],
-                Manticore: [],
-                Masticore: [],
-                Mercenary: [],
-                Merfolk: [],
-                Metathran: [],
-                Minion: [],
-                Minotaur: [],
-                Mole: [],
-                Monger: [],
-                Mongoose: [],
-                Monk: [],
-                Monkey: [],
-                Moonfolk: [],
-                Mouse: [],
-                Mutant: [],
-                Myr: [],
-                Mystic: [],
-                Naga: [],
-                Nautilus: [],
-                Nephilim: [],
-                Nightmare: [],
-                Nightstalker: [],
-                Ninja: [],
-                Noble: [],
-                Noggle: [],
-                Nomad: [],
-                Nymph: [],
-                Octopus: [],
-                Ogre: [],
-                Ooze: [],
-                Orb: [],
-                Orc: [],
-                Orgg: [],
-                Otter: [],
-                Ouphe: [],
-                Ox: [],
-                Oyster: [],
-                Pangolin: [],
-                Peasant: [],
-                Pegasus: [],
-                Pentavite: [],
-                Pest: [],
-                Phelddagrif: [],
-                Phoenix: [],
-                Phyrexian: [],
-                Pilot: [],
-                Pincher: [],
-                Pirate: [],
-                Plant: [],
-                Praetor: [],
-                Prism: [],
-                Processor: [],
-                Raccoon: [],
-                Rabbit: [],
-                Ranger: [],
-                Rat: [],
-                Rebel: [],
-                Reflection: [],
-                Rhino: [],
-                Rigger: [],
-                Rogue: [],
-                Sable: [],
-                Salamander: [],
-                Samurai: [],
-                Sand: [],
-                Saproling: [],
-                Satyr: [],
-                Scarecrow: [],
-                Scion: [],
-                Scorpion: [],
-                Scout: [],
-                Sculpture: [],
-                Serf: [],
-                Serpent: [],
-                Servo: [],
-                Shade: [],
-                Shaman: [],
-                Shapeshifter: [],
-                Shark: [],
-                Sheep: [],
-                Siren: [],
-                Skeleton: [],
-                Slith: [],
-                Sliver: [],
-                Slug: [],
-                Snake: [],
-                Soldier: [],
-                Soltari: [],
-                Spawn: [],
-                Specter: [],
-                Spellshaper: [],
-                Sphinx: [],
-                Spider: [],
-                Spike: [],
-                Spirit: [],
-                Splinter: [],
-                Sponge: [],
-                Squid: [],
-                Squirrel: [],
-                Starfish: [],
-                Surrakar: [],
-                Survivor: [],
-                Tentacle: [],
-                Tetravite: [],
-                Thalakos: [],
-                Thopter: [],
-                Thrull: [],
-                Tiefling: [],
-                Treefolk: [],
-                Trilobite: [],
-                Triskelavite: [],
-                Troll: [],
-                Turtle: [],
-                Unicorn: [],
-                Vampire: [],
-                Vedalken: [],
-                Viashino: [],
-                Volver: [],
-                Wall: [],
-                Warlock: [],
-                Warrior: [],
-                Weird: [],
-                // Werewolf: [],
-                Whale: [],
-                Wizard: [],
-                Wolf: [],
-                Wolverine: [],
-                Wombat: [],
-                Worm: [],
-                Wraith: [],
-                Wurm: [],
-                Yeti: [],
-                Zombie: [],
-                Zubera: [],
-            };
+            let super_types_count = {};
+            let creature_types_count = {};
 
             let archetype_counts = {
                 desert: [],
@@ -1606,9 +1350,12 @@
                     }
 
                     // supertype
-                    Object.keys(super_types).forEach(key => {
+                    super_types.forEach(key => {
                         if (type_temp.includes(key)) {
-                            super_types[key].push(d);
+                            if (!(key in super_types_count)) {
+                                super_types_count[key] = [];
+                            }
+                            super_types_count[key].push(d);
                         }
                     });
 
@@ -1617,7 +1364,7 @@
                     if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
                         creature_type = true;
                     }
-                    Object.keys(creature_types).forEach(key => {
+                    creature_types.forEach(key => {
                         let target = [key];
                         switch (key) {
                             case 'Dwarf':
@@ -1631,9 +1378,14 @@
                                 target.push('Werewolf');
                                 target.push('Werewolves');
                                 break;
+                            case 'Werewolf':
+                                return;
                         }
                         if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
-                            creature_types[key].push(d);
+                            if (!(key in creature_types_count)) {
+                                creature_types_count[key] = [];
+                            }
+                            creature_types_count[key].push(d);
                         }
                     });
 
@@ -1793,8 +1545,8 @@
                 // supertype
                 let html = '';
                 html += '<table>';
-                Object.keys(super_types).forEach(key => {
-                    let count = super_types[key].reduce((p, v) => p + v.count, 0);
+                Object.keys(super_types_count).forEach(key => {
+                    let count = super_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.06) {
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
@@ -1820,8 +1572,8 @@
                 }
 
                 // subtype creature
-                Object.keys(creature_types).forEach(key => {
-                    let count = creature_types[key].reduce((p, v) => p + v.count, 0);
+                Object.keys(creature_types_count).forEach(key => {
+                    let count = creature_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.20) {
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
@@ -2106,9 +1858,12 @@
             // Debuge
             console.log({
                 data: data,
-                symbols: symbols,
-                creature_types: creature_types,
-                archetype_counts: archetype_counts,
+                color_symbols: symbols,
+                archetype: {
+                    supertype: super_types_count,
+                    subtype_creature: creature_types_count,
+                    card: archetype_counts,
+                },
             });
         }
 
@@ -2145,6 +1900,25 @@
                     }
                 }
                 resolve(ret);
+            });
+        }
+
+        async function sendCatalogCreatureTypes() {
+            return new Promise((resolve, reject) => {
+                let request = new XMLHttpRequest();
+                request.open('GET', 'https://api.scryfall.com/catalog/creature-types');
+                request.onload = () => {
+                    let data = JSON.parse(request.response);
+                    if (data.object === 'catalog') {
+                        resolve(data);
+                    } else {
+                        reject();
+                    }
+                };
+                request.onerror = () => {
+                    reject();
+                };
+                request.send();
             });
         }
 
