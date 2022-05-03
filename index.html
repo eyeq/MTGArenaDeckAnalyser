@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://fonts.sandbox.google.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <style>
+        th {
+            text-align: left;
+        }
         #board {
             max-width: 1120px;
         }
@@ -29,14 +32,14 @@
         <h1>MTG Arena Deck Analyser</h1>
     </header>
 
-    <div style="display: inline-block; vertical-align: top; width: 480px;">
+    <div style="display: inline-block; vertical-align: top;">
         <h2 style="margin-bottom: 0;">Input</h2>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <textarea id="input" style="width: 400px; height: 240px;" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
         </div>
     </div>
 
-    <div style="display: inline-block; vertical-align: top; width: 640px;">
+    <div style="display: inline-block; vertical-align: top;">
         <h2 style="margin-bottom: 0;">Share this deck</h2>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <textarea id="output" style="width: 400px; height: 200px; background-color: #F0F0F0;" readonly onclick="this.select();"></textarea>
@@ -45,8 +48,8 @@
     </div>
 
     <h2 style="margin-bottom: 0;">Output</h2>
-    <div style="display: inline-block; vertical-align: top; width: 480px;">
-        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+    <div style="display: inline-block; vertical-align: top;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;;">
             <h3>Main Set</h3>
             <div id="set"></div>
         </div>
@@ -55,9 +58,10 @@
             <div id="format"></div>
         </div>
     </div>
+    <br>
 
-    <div style="display: inline-block; vertical-align: top; width: 662px;">
-        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+    <div style="display: inline-block; vertical-align: top; width: 100%;; max-width: 1120px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;">
             <h3>Color</h3>
             <div id="color"></div>
             <br>
@@ -72,17 +76,17 @@
                 </tr>
             </table>
         </div>
-        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px; width: calc(100% - 200px);">
             <h3>Archetype</h3>
             <div id="decktype"></div>
             <br>
-            <table>
+            <table style="width: 100%;">
                 <tr>
-                    <th style="width: 90px;">Keycard</th>
-                    <th style="width: 90px;">Supertype</th>
-                    <th style="width: 90px;">Subtype</th>
-                    <th style="width: 90px;">Keyword</th>
-                    <th style="width: 90px;">Type</th>
+                    <th style="width: 20%;">Keycard</th>
+                    <th style="width: 20%;">Supertype</th>
+                    <th style="width: 20%;">Subtype</th>
+                    <th style="width: 20%;">Keyword</th>
+                    <th style="width: 20%;">Type</th>
                 </tr>
                 <tr>
                     <td>
@@ -108,7 +112,7 @@
 
     <h3 id="mainboard" style="margin-bottom: 0;">Main</h3>
     <div style="display: inline-block; vertical-align: top; width: 480px;">
-        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;">
             <h4>Rarity</h4>
             <div id="rarity_main"></div>
             <h4>Price</h4>
@@ -130,7 +134,7 @@
 
     <h3 id="sideboard" style="margin-bottom: 0;">Sideboard</h3>
     <div style="display: inline-block; vertical-align: top; width: 480px;">
-        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+        <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;">
             <h4>Rarity</h4>
             <div id="rarity_side"></div>
             <h4>Price</h4>
@@ -416,8 +420,8 @@
                 // symbol
                 $('#symbol').html('<canvas></canvas>');
                 let canvas = $('#symbol canvas')[0];
-                canvas.width = 80;
-                canvas.height = 80;
+                canvas.width = 160;
+                canvas.height = 160;
 
                 new Chart(canvas, {
                     type: 'pie',
@@ -998,8 +1002,27 @@
                     }
                 });
 
-                $('#price_main').html(tix_main.toFixed(2) + ' Tix<br>' + usd_main.toFixed(2) + ' USD');
-                $('#price_side').html(tix_side.toFixed(2) + ' Tix<br>' + usd_side.toFixed(2) + ' USD');
+                let html = '';
+                html += '<table>';
+                html += '<tr>';
+                html += '<td>' + tix_main.toFixed(2) + ' Tix</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td>' + usd_main.toFixed(2) + ' USD</td>';
+                html += '</tr>';
+                html += '</table>';
+                $('#price_main').html(html);
+
+                html = '';
+                html += '<table>';
+                html += '<tr>';
+                html += '<td>' + tix_side.toFixed(2) + ' Tix</td>';
+                html += '</tr>';
+                html += '<tr>';
+                html += '<td>' + usd_side.toFixed(2) + ' USD</td>';
+                html += '</tr>';
+                html += '</table>';
+                $('#price_side').html(html);
             }
 
             // set
@@ -1086,59 +1109,52 @@
                     };
 
                     if (formats.brawl_p.length > 0) {
-                        formats.brawl_p.forEach(d => {
-                            html += '<tr>';
-                            html += '<td>' + format_names[d] + '</td>';
-                            html += '</tr>';
-                        });
+                        html += '<tr>';
+                        html += '<td>' + formats.brawl_p.join(' / ') + '</td>';
+                        html += '</tr>';
+                        html += '<tr>';
+                        html += '</tr>';
                     } else {
-                        formats.brawl.forEach(d => {
-                            html += '<tr>';
-                            html += '<td>' + format_names[d] + '</td>';
-                            html += '</tr>';
-                        });
+                        html += '<tr>';
+                        html += '<td>' + formats.brawl.join(' / ') + '</td>';
+                        html += '</tr>';
+                        html += '<tr>';
+                        html += '</tr>';
                     }
                 } else {
                     if (formats.paper_p.length > 0) {
                         html += '<tr>';
-                        formats.paper_p.forEach(d => {
-                            html += '<td>' + d + '</td>';
-                        });
+                        html += '<td>' + paper_p.brawl.join(' / ') + '</td>';
+                        html += '</tr>';
+                        html += '<tr>';
                         html += '</tr>';
                     } else {
                         html += '<tr>';
-                        formats.paper.forEach(d => {
-                            html += '<td>' + d + '</td>';
-                        });
+                        html += '<td>' + formats.paper.join(' / ') + '</td>';
                         html += '</tr>';
                         html += '<tr>';
-                        formats.arena.forEach(d => {
-                            html += '<td>' + d + '</td>';
-                        });
+                        html += '<td>' + formats.arena.join(' / ') + '</td>';
                         html += '</tr>';
                     }
                 }
+
+                html += '<tr>';
+                html += '<td>';
                 if (standard.m18) {
-                    html += '<tr>';
-                    html += '<td colspan="20">(M18 Standard)</td>';
-                    html += '</tr>';
+                    html += '(M18 Standard)';
                 }
                 if (standard.m19) {
-                    html += '<tr>';
-                    html += '<td colspan="20">(M19 Standard)</td>';
-                    html += '</tr>';
+                    html += '(M19 Standard)';
                 }
                 if (standard.m20) {
-                    html += '<tr>';
-                    html += '<td colspan="20">(M20 Standard)</td>';
-                    html += '</tr>';
+                    html += '(M20 Standard)';
                 }
                 if (standard.m21) {
-                    html += '<tr>';
-                    html += '<td colspan="20">(M21 Standard)</td>';
-                    html += '</tr>';
+                    html += '(M21 Standard)';
                 }
-                html += '</table>';
+                html += '</td>';
+                html += '</tr>';
+                html += '<table>';
                 $('#format').html(html);
             }
 
