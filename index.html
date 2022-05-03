@@ -270,7 +270,7 @@
 
                 let index0 = d.indexOf(' ');
                 if (index0 === -1) {
-                    if (d !== 'Commander' && inputs.length !== 0) {
+                    if (inputs.length !== 0) {
                         sideboard = inputs.length;
                     }
 
@@ -312,7 +312,12 @@
             $('#progress').show();
             for (let i = 0; i < inputs.length; i++) {
                 let d = inputs[i];
-                data.push(await send(d.name, d.set, d.number));
+                let ret = await send(d.name, d.set, d.number);
+                if (ret) {
+                    ret.count = d.count;
+                    ret.sideboard = !commander && i >= sideboard;
+                }
+                data.push(ret);
 
                 $('#progress progress').prop('value', i + 1);
             }
@@ -328,16 +333,17 @@
                     val += 'Deck\n';
                 }
                 let first = true;
+                let sideboard = true;
                 data.forEach((d, i) => {
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
-                    if (!commander && sideboard !== 0 && sideboard === i) {
+                    if (sideboard && d.sideboard) {
                         val += '\nSideboard\n';
+                        sideboard = false;
                     }
-                    val += count + ' ' + d.name + ' (' + d.set.toUpperCase() + ') ' + d.collector_number + '\n';
+                    val += d.count + ' ' + d.name + ' (' + d.set.toUpperCase() + ') ' + d.collector_number + '\n';
                     if (commander && first) {
                         val += '\nDeck\n';
                     }
@@ -363,11 +369,10 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
                     keys.forEach(key => {
                         if (d.mana_cost) {
-                            symbols[key] += (d.mana_cost.split(key).length - 1) * count;
+                            symbols[key] += (d.mana_cost.split(key).length - 1) * d.count;
                         }
                     });
                 });
@@ -566,21 +571,20 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
-                    if (commander || i <= sideboard) {
+                    if (!d.sideboard) {
                         if (d.card_faces && d.layout !== 'transform') {
-                            addColorsCount(colors_main, d.card_faces[0], count);
-                            addColorsCount(colors_main, d.card_faces[1], count);
+                            addColorsCount(colors_main, d.card_faces[0], d.count);
+                            addColorsCount(colors_main, d.card_faces[1], d.count);
                         } else {
-                            addColorsCount(colors_main, d, count);
+                            addColorsCount(colors_main, d, d.count);
                         }
                     } else {
                         if (d.card_faces && d.layout !== 'transform') {
-                            addColorsCount(colors_side, d.card_faces[0], count);
-                            addColorsCount(colors_side, d.card_faces[1], count);
+                            addColorsCount(colors_side, d.card_faces[0], d.count);
+                            addColorsCount(colors_side, d.card_faces[1], d.count);
                         } else {
-                            addColorsCount(colors_side, d, count);
+                            addColorsCount(colors_side, d, d.count);
                         }
                     }
                 });
@@ -766,20 +770,19 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
-                    if (commander || i <= sideboard) {
+                    if (!d.sideboard) {
                         keys.forEach(key => {
                             if (d.card_faces && key !== 'Land') {
                                 if (d.card_faces[0].type_line.includes(key)) {
-                                    types_main[key].front += count;
+                                    types_main[key].front += d.count;
                                 }
                                 if (d.card_faces[1].type_line.includes(key)) {
-                                    types_main[key].front += count;
+                                    types_main[key].front += d.count;
                                 }
                             } else {
                                 if (d.type_line.includes(key)) {
-                                    types_main[key].front += count;
+                                    types_main[key].front += d.count;
                                 }
                             }
                         });
@@ -787,14 +790,14 @@
                         keys.forEach(key => {
                             if (d.card_faces && key !== 'Land') {
                                 if (d.card_faces[0].type_line.includes(key)) {
-                                    types_side[key].front += count;
+                                    types_side[key].front += d.count;
                                 }
                                 if (d.card_faces[1].type_line.includes(key)) {
-                                    types_side[key].front += count;
+                                    types_side[key].front += d.count;
                                 }
                             } else {
                                 if (d.type_line.includes(key)) {
-                                    types_side[key].front += count;
+                                    types_side[key].front += d.count;
                                 }
                             }
                         });
@@ -884,21 +887,20 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
                     if (d.type_line.includes('Basic')) {
                         return;
                     }
-                    if (commander || i <= sideboard) {
+                    if (!d.sideboard) {
                         keys.forEach(key => {
                             if (key.toLowerCase() === d.rarity) {
-                                raritys_main[key] += count;
+                                raritys_main[key] += d.count;
                             }
                         });
                     } else {
                         keys.forEach(key => {
                             if (key.toLowerCase() === d.rarity) {
-                                raritys_side[key] += count;
+                                raritys_side[key] += d.count;
                             }
                         });
                     }
@@ -934,13 +936,12 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
                     if (d.type_line.includes('Basic')) {
                         return;
                     }
-                    new Set(d.printings).forEach(d => {
-                        sets[d] = (sets[d] || 0) + count;
+                    new Set(d.printings).forEach(set => {
+                        sets[set] = (sets[set] || 0) + d.count;
                     });
                 });
                 let keys = Object.keys(sets);
@@ -1140,7 +1141,7 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count + (keycount[d.name] || 0);
+                    let count = (keycount[d.name] || 0) + d.count;
                     keycount[d.name] = count;
 
                     if (commander) {
@@ -1492,7 +1493,6 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
                     let type_temp = '';
                     let text_temp = '';
@@ -1533,9 +1533,7 @@
                                 break;
                         }
                         if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
-                            for (let i = 0; i < count; i++) {
-                                creature_types[key].push(d);
-                            }
+                            creature_types[key].push(d);
                         }
                     });
 
@@ -1544,220 +1542,144 @@
 
                     // supertype
                     if (type_temp.includes('snow')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.snow.push(d);
-                        }
+                        archetype_counts.snow.push(d);
                     }
 
                     // subtype land
                     if (text_temp.includes('desert')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.desert.push(d);
-                        }
+                        archetype_counts.desert.push(d);
                     }
                     if (text_temp.includes('gate')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.gate.push(d);
-                        }
+                        archetype_counts.gate.push(d);
                     }
 
                     // subtype spell
                     if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.adventure.push(d);
-                        }
+                        archetype_counts.adventure.push(d);
                     }
 
                     // subtype artifact
                     if (type_temp.includes('blood') || text_temp.includes('blood')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.blood.push(d);
-                        }
+                        archetype_counts.blood.push(d);
                     }
                     if (type_temp.includes('equipment')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.equipment.push(d);
-                        }
+                        archetype_counts.equipment.push(d);
                     }
                     if (type_temp.includes('food') || text_temp.includes('food')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.food.push(d);
-                        }
+                        archetype_counts.food.push(d);
                     }
                     if (type_temp.includes('treasure') || text_temp.includes('treasure')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.treasure.push(d);
-                        }
+                        archetype_counts.treasure.push(d);
                     }
                     if (type_temp.includes('vehicle')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.vehicle.push(d);
-                        }
+                        archetype_counts.vehicle.push(d);
                     }
 
                     // subtype enchantment
                     if (type_temp.includes('aura')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.aura.push(d);
-                        }
+                        archetype_counts.aura.push(d);
                     }
                     if (text_temp.includes('rune')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.rune.push(d);
-                        }
+                        archetype_counts.rune.push(d);
                     }
                     if (type_temp.includes('shrine')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.shrine.push(d);
-                        }
+                        archetype_counts.shrine.push(d);
                     }
 
                     // keyword
                     if (text_temp.includes('dredge')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.dredge.push(d);
-                        }
+                        archetype_counts.dredge.push(d);
                     }
                     if (text_temp.includes('{e}')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.energy.push(d);
-                        }
+                        archetype_counts.energy.push(d);
                     }
                     if (text_temp.includes('explores')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.explore.push(d);
-                        }
+                        archetype_counts.explore.push(d);
                     }
                     if (text_temp.includes('flying')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.flying.push(d);
-                        }
+                        archetype_counts.flying.push(d);
                     }
                     if (text_temp.includes('heroic')
                         || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                         || text_temp.includes('becomes the target of a spell you control')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.heroic.push(d);
-                        }
+                        archetype_counts.heroic.push(d);
                     }
                     if (text_temp.includes('mentor')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.mentor.push(d);
-                        }
+                        archetype_counts.mentor.push(d);
                     }
                     if (text_temp.includes('mill')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.mill.push(d);
-                        }
+                        archetype_counts.mill.push(d);
                     }
                     if (text_temp.includes('modified')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.modified.push(d);
-                        }
+                        archetype_counts.modified.push(d);
                     }
                     if (text_temp.includes('party')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.party.push(d);
-                        }
+                        archetype_counts.party.push(d);
                     }
                     if (text_temp.includes('sacrifice')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.sacrifice.push(d);
-                        }
+                        archetype_counts.sacrifice.push(d);
                     }
                     if (text_temp.includes('whenever you draw your second card each turn')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.second_draw.push(d);
-                        }
+                        archetype_counts.second_draw.push(d);
                     }
                     if (text_temp.includes('surveil')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.surveil.push(d);
-                        }
+                        archetype_counts.surveil.push(d);
                     }
                     if (text_temp.includes('equal to its toughness')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.toughness.push(d);
-                        }
+                        archetype_counts.toughness.push(d);
                     }
 
                     // decktype
                     if (text_temp.includes('put into your graveyard from your library')
                         || text_temp.includes('your library has no cards')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.self_mill.push(d);
-                        }
+                        archetype_counts.self_mill.push(d);
                     }
                     if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.artifact.push(d);
-                        }
+                        archetype_counts.artifact.push(d);
                     }
                     if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
                         || text_temp.includes('your life total can\'t change')
                         || text_temp.includes('your life total to less than 1')
                         || text_temp.includes('your life total would be reduced to 0')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.fog.push(d);
-                        }
+                        archetype_counts.fog.push(d);
                     }
                     if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.planeswalker.push(d);
-                        }
+                        archetype_counts.planeswalker.push(d);
                     }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                         || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                         || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection')))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.permission.push(d);
-                        }
+                        archetype_counts.permission.push(d);
                     }
                     if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.spells.push(d);
-                        }
+                        archetype_counts.spells.push(d);
                     }
                     if (text_temp.includes('add {')
                         || (text_temp.includes('add ') && text_temp.includes('mana'))
                         || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
                         || (text_temp.includes('play') && text_temp.includes('additional land'))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.mana_acceleration.push(d);
-                        }
+                        archetype_counts.mana_acceleration.push(d);
                     }
                     if (type_temp.includes('instant') || text_temp.includes('flash')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.instant.push(d);
-                        }
+                        archetype_counts.instant.push(d);
                     }
                     if (text_temp.includes('creature token')) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.token.push(d);
-                        }
+                        archetype_counts.token.push(d);
                     }
                     if (type_temp.includes('creature') || text_temp.includes('creature token')
                         || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.creature.push(d);
-                        }
+                        archetype_counts.creature.push(d);
                         if (d.cmc < 3) {
-                            for (let i = 0; i < count; i++) {
-                                archetype_counts.weenie.push(d);
-                            }
+                            archetype_counts.weenie.push(d);
                         }
                     }
                     if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
                         || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.direct_damage.push(d);
-                        }
+                        archetype_counts.direct_damage.push(d);
                     }
                     if (text_temp.includes('graveyard to the battlefield')
                         || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.reanimate.push(d);
-                        }
+                        archetype_counts.reanimate.push(d);
                     }
                     if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
                         || text_temp.includes('exile all') || text_temp.includes('exile each')
@@ -1765,9 +1687,7 @@
                         || text_temp.includes('sacrifices the rest')
                         || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
                         || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
-                        for (let i = 0; i < count; i++) {
-                            archetype_counts.wrath.push(d);
-                        }
+                        archetype_counts.wrath.push(d);
                     }
                 });
                 let ratio_key = 0.09;
@@ -1778,7 +1698,7 @@
                 // supertype
                 let html = '';
                 html += '<table>';
-                if (archetype_counts.snow.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.snow.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Snow</td>';
                     html += '</tr>';
@@ -1790,12 +1710,12 @@
                 html = '';
                 html += '<table>';
                 // subtype land
-                if (archetype_counts.desert.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.desert.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Desert</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.gate.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.gate.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Gate</td>';
                     html += '</tr>';
@@ -1803,7 +1723,7 @@
 
                 // subtype creature
                 Object.keys(creature_types).forEach(key => {
-                    if (creature_types[key].length / counts_sum >= ratio_lord) {
+                    if (creature_types[key].reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -1811,51 +1731,51 @@
                 });
 
                 // subtype spell
-                if (archetype_counts.adventure.length / counts_sum >= 0.21) {
+                if (archetype_counts.adventure.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
                     html += '<tr>';
                     html += '<td>Adventure</td>';
                     html += '</tr>';
                 }
 
                 // subtype artifact
-                if (archetype_counts.blood.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.blood.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Blood</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.equipment.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.equipment.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Equipment</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.food.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.food.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Food</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.treasure.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.treasure.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Treasure</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.vehicle.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.vehicle.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Vehicle</td>';
                     html += '</tr>';
                 }
 
                 // subtype enchantment
-                if (archetype_counts.aura.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.aura.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Aura</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.rune.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.rune.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Rune</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.shrine.length / counts_sum >= ratio_lord) {
+                if (archetype_counts.shrine.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
                     html += '<tr>';
                     html += '<td>Shrine</td>';
                     html += '</tr>';
@@ -1867,67 +1787,67 @@
                 // keyword
                 html = '';
                 html += '<table>';
-                if (archetype_counts.dredge.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.dredge.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Dredge</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.energy.length / counts_sum >= 0.21) {
+                if (archetype_counts.energy.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
                     html += '<tr>';
                     html += '<td>Energy</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.explore.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.explore.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Explore</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.flying.length / counts_sum >= ratio_lord) {
+                if (archetype_counts.flying.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_lord) {
                     html += '<tr>';
                     html += '<td>Flyer</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.heroic.length / counts_sum >= ratio_key) {
+                if (archetype_counts.heroic.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Heroic</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mentor.length / counts_sum >= 0.21) {
+                if (archetype_counts.mentor.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.21) {
                     html += '<tr>';
                     html += '<td>Mentor</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mill.length / counts_sum >= ratio_role) {
+                if (archetype_counts.mill.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
                     html += '<tr>';
                     html += '<td>Mill</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.modified.length / counts_sum >= ratio_key) {
+                if (archetype_counts.modified.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Modified</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.party.length / counts_sum >= ratio_key) {
+                if (archetype_counts.party.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Party</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.sacrifice.length / counts_sum >= ratio_role) {
+                if (archetype_counts.sacrifice.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
                     html += '<tr>';
                     html += '<td>Sacrifice</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.second_draw.length / counts_sum >= ratio_key) {
+                if (archetype_counts.second_draw.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Second-Draw</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.surveil.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.surveil.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Surveil</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.toughness.length / counts_sum >= ratio_key) {
+                if (archetype_counts.toughness.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_key) {
                     html += '<tr>';
                     html += '<td>Toughness</td>';
                     html += '</tr>';
@@ -1939,79 +1859,79 @@
                 html = '';
                 html += '<table>';
                 let archetypes = [];
-                if (archetype_counts.self_mill.length / counts_sum >= 0.10) {
+                if (archetype_counts.self_mill.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
                     archetypes.push('self_mill');
                     html += '<tr>';
                     html += '<td>Self-Mill</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.artifact.length / counts_sum >= 0.30) {
+                if (archetype_counts.artifact.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
                     archetypes.push('artifact');
                     html += '<tr>';
                     html += '<td>Artifact</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.fog.length / counts_sum >= 0.10) {
+                if (archetype_counts.fog.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
                     archetypes.push('fog');
                     html += '<tr>';
                     html += '<td>Fog</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.planeswalker.length / counts_sum >= ratio_refer) {
+                if (archetype_counts.planeswalker.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_refer) {
                     archetypes.push('planeswalker');
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.permission.length / counts_sum >= ratio_role) {
+                if (archetype_counts.permission.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
                     archetypes.push('permission');
                     html += '<tr>';
                     html += '<td>Permission</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.spells.length / counts_sum >= 0.30) {
+                if (archetype_counts.spells.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
                     archetypes.push('spells');
                     html += '<tr>';
                     html += '<td>Spells</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.mana_acceleration.length / counts_sum >= ratio_role) {
+                if (archetype_counts.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_sum >= ratio_role) {
                     archetypes.push('mana_acceleration');
                     html += '<tr>';
                     html += '<td>Ramp</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.instant.length / counts_sum >= 0.30) {
+                if (archetype_counts.instant.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
                     archetypes.push('instant');
                     html += '<tr>';
                     html += '<td>Flash</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.token.length / counts_sum >= 0.23) {
+                if (archetype_counts.token.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.23) {
                     archetypes.push('token');
                     html += '<tr>';
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.creature.length / counts_sum >= 0.30) {
+                if (archetype_counts.creature.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
                     archetypes.push('creature');
                     html += '<tr>';
                     html += '<td>Beatdown</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.direct_damage.length / counts_sum >= 0.30) {
+                if (archetype_counts.direct_damage.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.30) {
                     archetypes.push('direct_damage');
                     html += '<tr>';
                     html += '<td>Burn</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.reanimate.length / counts_sum >= 0.10) {
+                if (archetype_counts.reanimate.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.10) {
                     archetypes.push('reanimate');
                     html += '<tr>';
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.wrath.length / counts_sum >= 0.05) {
+                if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.05) {
                     archetypes.push('wrath');
                     html += '<tr>';
                     html += '<td>Control</td>';
@@ -2031,7 +1951,7 @@
                         decktype = 'Stompy';
                     } else if (archetypes.includes('direct_damage')) {
                         decktype = 'Sligh';
-                    } else if (archetype_counts.weenie.length / counts_sum >= 0.26) {
+                    } else if (archetype_counts.weenie.reduce((p, v) => p + v.count, 0) / counts_sum >= 0.26) {
                         decktype = 'Weenie';
                     } else {
                         decktype = 'Aggro';
@@ -2056,7 +1976,6 @@
                     if (!d) {
                         return;
                     }
-                    let count = inputs[i].count;
 
                     let flip = false;
                     if (d.card_faces) {
@@ -2077,7 +1996,7 @@
                         html += '<img alt="" src="' + d.image_uris.normal + '" onerror="this.style.visibility = \'hidden\'">';
                     }
                     html += '</div>';
-                    html += '<span style="position: absolute; margin: 5%; bottom: calc(7px + 5%); border-radius: 4px; width: 20%; height: 14%; text-align: center; font-weight: bold; background: white;">' + count + '</span>';
+                    html += '<span style="position: absolute; margin: 5%; bottom: calc(7px + 5%); border-radius: 4px; width: 20%; height: 14%; text-align: center; font-weight: bold; background: white;">' + d.count + '</span>';
                     html += '</div>';
                 });
                 $('#board').html(html);
