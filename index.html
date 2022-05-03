@@ -1333,6 +1333,8 @@
                 planeswalker: [],
                 permission: [],
                 spells: [],
+                tron: [],
+                post: [],
                 mana_acceleration: [],
                 instant: [],
                 token: [],
@@ -1530,6 +1532,12 @@
                     if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
                         archetype_counts.spells.push(d);
                     }
+                    if (d.type_line.includes('Urza\'s')) {
+                        archetype_counts.tron.push(d);
+                    }
+                    if (d.type_line.includes('Locus')) {
+                        archetype_counts.post.push(d);
+                    }
                     if (text_temp.includes('add {')
                         || (text_temp.includes('add ') && text_temp.includes('mana'))
                         || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
@@ -1722,89 +1730,111 @@
                 $('#keyword').html(html);
 
                 // archetype
+                let aggro = false;
+                let weenie = false;
+                let burn = false;
+                let ramp = false;
+                let permission = false;
+                let control = false;
+
                 html = '';
                 html += '<table>';
-                let archetypes = [];
                 if (archetype_counts.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    archetypes.push('legends');
                     html += '<tr>';
                     html += '<td>Legends</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
-                    archetypes.push('self_mill');
                     html += '<tr>';
                     html += '<td>Self-Mill</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    archetypes.push('artifact');
                     html += '<tr>';
                     html += '<td>Artifact</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
-                    archetypes.push('fog');
+                    control = true;
+
                     html += '<tr>';
                     html += '<td>Fog</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    archetypes.push('planeswalker');
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
-                    archetypes.push('permission');
+                    permission = true;
+                    control = true;
+
                     html += '<tr>';
                     html += '<td>Permission</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    archetypes.push('spells');
                     html += '<tr>';
                     html += '<td>Spells</td>';
                     html += '</tr>';
                 }
+                if (archetype_counts.tron.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    ramp = true;
+
+                    html += '<tr>';
+                    html += '<td>Tron</td>';
+                    html += '</tr>';
+                }
+                if (archetype_counts.post.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    ramp = true;
+
+                    html += '<tr>';
+                    html += '<td>Post</td>';
+                    html += '</tr>';
+                }
                 if (archetype_counts.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
-                    archetypes.push('mana_acceleration');
+                    ramp = true;
+
                     html += '<tr>';
                     html += '<td>Ramp</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    archetypes.push('instant');
                     html += '<tr>';
                     html += '<td>Flash</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.token.reduce((p, v) => p + v.count, 0) / counts_main >= 0.23) {
-                    archetypes.push('token');
                     html += '<tr>';
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    archetypes.push('creature');
+                    aggro = true;
+
                     html += '<tr>';
                     html += '<td>Beatdown</td>';
                     html += '</tr>';
                 }
-                if (archetype_counts.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    archetypes.push('direct_damage');
+                if (archetype_counts.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                    weenie = true;
+                }
+                if (archetype_counts.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    burn = true;
+
                     html += '<tr>';
                     html += '<td>Burn</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
-                    archetypes.push('reanimate');
                     html += '<tr>';
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
                 }
                 if (archetype_counts.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    archetypes.push('wrath');
+                    control = true;
+
                     html += '<tr>';
                     html += '<td>Control</td>';
                     html += '</tr>';
@@ -1814,23 +1844,23 @@
 
                 // decktype
                 let decktype = '???';
-                if (archetypes.includes('creature')) {
-                    if (archetypes.includes('wrath')) {
+                if (aggro) {
+                    if (control) {
                         decktype = 'Midrange';
-                    } else if (archetypes.includes('permission')) {
+                    } else if (permission) {
                         decktype = 'Clock Permission';
-                    } else if (archetypes.includes('mana_acceleration')) {
+                    } else if (ramp) {
                         decktype = 'Stompy';
-                    } else if (archetypes.includes('direct_damage')) {
+                    } else if (burn) {
                         decktype = 'Sligh';
-                    } else if (archetype_counts.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    } else if (weenie) {
                         decktype = 'Weenie';
                     } else {
                         decktype = 'Aggro';
                     }
-                } else if (archetypes.includes('mana_acceleration')) {
+                } else if (ramp) {
                     decktype = 'Ramp';
-                } else if (archetypes.includes('wrath') || archetypes.includes('fog') || archetypes.includes('permission')) {
+                } else if (control) {
                     decktype = 'Control';
                 } else {
                     decktype = 'Combo';
