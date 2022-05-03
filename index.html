@@ -111,6 +111,8 @@
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Rarity</h4>
             <div id="rarity_main"></div>
+            <h4>Price</h4>
+            <div id="price_main"></div>
         </div>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Card Type</h4>
@@ -131,6 +133,8 @@
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Rarity</h4>
             <div id="rarity_side"></div>
+            <h4>Price</h4>
+            <div id="price_side"></div>
         </div>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Card Type</h4>
@@ -315,7 +319,7 @@
             }
             $('#progress').hide();
 
-            // counts;
+            // counts
             let counts_main = 0;
             let counts_side = 0;
             {
@@ -954,6 +958,48 @@
                 });
                 html += '</table>';
                 $('#rarity_side').html(html);
+            }
+
+            // price
+            {
+                let tix_main = 0;
+                let usd_main = 0;
+                let tix_side = 0;
+                let usd_side = 0;
+                data.forEach((d, i) => {
+                    if (!d) {
+                        return;
+                    }
+
+                    if (!d.sideboard) {
+                        if (d.price_tix === null) {
+                            tix_main = NaN;
+                        } else {
+                            tix_main += d.price_tix;
+                        }
+
+                        if (d.price_usd === null) {
+                            usd_main = NaN;
+                        } else {
+                            usd_main += d.price_usd;
+                        }
+                    } else {
+                        if (d.price_tix === null) {
+                            tix_side = NaN;
+                        } else {
+                            tix_side += d.price_tix;
+                        }
+
+                        if (d.price_usd === null) {
+                            usd_side = NaN;
+                        } else {
+                            usd_side += d.price_usd;
+                        }
+                    }
+                });
+
+                $('#price_main').html(tix_main.toFixed(2) + ' Tix<br>' + usd_main.toFixed(2) + ' USD');
+                $('#price_side').html(tix_side.toFixed(2) + ' Tix<br>' + usd_side.toFixed(2) + ' USD');
             }
 
             // set
@@ -2053,8 +2099,23 @@
                     let printings = await sendCardsPrints(ret);
                     if (printings) {
                         ret.printings = printings.data.map(d => d.set);
+
+                        let tix = printings.data.filter(d => d.prices.tix !== null).map(d => Number(d.prices.tix));
+                        let usd = printings.data.filter(d => d.prices.usd !== null).map(d => Number(d.prices.usd));
+                        if (tix.length === 0) {
+                            ret.price_tix = null;
+                        } else {
+                            ret.price_tix = Math.min(...tix);
+                        }
+                        if (usd.length === 0) {
+                            ret.price_usd = null;
+                        } else {
+                            ret.price_usd = Math.min(...usd);
+                        }
                     } else {
                         ret.printings = [ret.set];
+                        ret.price_tix = ret.prices.tix;
+                        ret.price_usd = ret.prices.usd;
                     }
                 }
                 resolve(ret);
