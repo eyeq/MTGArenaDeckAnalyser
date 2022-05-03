@@ -189,6 +189,10 @@
             'Snow',
             'World',
         ];
+        var land_types = [
+            'Desert',
+            'Gate',
+        ];
         var creature_types = [];
 
         (() => {
@@ -1278,12 +1282,10 @@
 
             // decktype / supertype / subtype / keyword / archetype
             let super_types_count = {};
+            let land_types_count = {};
             let creature_types_count = {};
 
             let archetype_counts = {
-                desert: [],
-                gate: [],
-
                 adventure: [],
 
                 blood: [],
@@ -1359,6 +1361,16 @@
                         }
                     });
 
+                    // subtype land
+                    land_types.forEach(key => {
+                        if (text_temp.includes(key)) {
+                            if (!(key in land_types_count)) {
+                                land_types_count[key] = [];
+                            }
+                            land_types_count[key].push(d);
+                        }
+                    });
+
                     // subtype creature
                     let creature_type = false;
                     if (text_temp.includes('changeling') || text_temp.includes('choose a creature type')) {
@@ -1391,14 +1403,6 @@
 
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
-
-                    // subtype land
-                    if (text_temp.includes('desert')) {
-                        archetype_counts.desert.push(d);
-                    }
-                    if (text_temp.includes('gate')) {
-                        archetype_counts.gate.push(d);
-                    }
 
                     // subtype spell
                     if (creature_type || type_temp.includes('adventure') || text_temp.includes('adventure')) {
@@ -1559,17 +1563,16 @@
                 // subtype
                 html = '';
                 html += '<table>';
+
                 // subtype land
-                if (archetype_counts.desert.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Desert</td>';
-                    html += '</tr>';
-                }
-                if (archetype_counts.gate.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Gate</td>';
-                    html += '</tr>';
-                }
+                Object.keys(land_types_count).forEach(key => {
+                    let count = land_types_count[key].reduce((p, v) => p + v.count, 0);
+                    if (count / counts_main >= 0.06) {
+                        html += '<tr>';
+                        html += '<td>' + key + '</td>';
+                        html += '</tr>';
+                    }
+                });
 
                 // subtype creature
                 Object.keys(creature_types_count).forEach(key => {
@@ -1861,6 +1864,7 @@
                 color_symbols: symbols,
                 archetype: {
                     supertype: super_types_count,
+                    subtype_land: land_types_count,
                     subtype_creature: creature_types_count,
                     card: archetype_counts,
                 },
