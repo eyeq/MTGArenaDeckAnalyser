@@ -1547,6 +1547,7 @@
                 self_mill: [],
                 fog: [],
                 discard: [],
+                ponza: [],
                 permission: [],
                 tron: [],
                 post: [],
@@ -1771,6 +1772,9 @@
                         text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
                         card_count.discard.push(d);
                     }
+                    if (text_temp.includes('destroy target land') || text_temp.includes('destroy target nonbasic land')) {
+                        card_count.ponza.push(d);
+                    }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                         || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                         || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection') || text_temp.includes('phase out') || text_temp.includes('phases out')))) {
@@ -1961,6 +1965,11 @@
                 if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Hand Destruction</td>';
+                    html += '</tr>';
+                }
+                if (card_count.ponza.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    html += '<tr>';
+                    html += '<td>Land Destruction</td>';
                     html += '</tr>';
                 }
                 if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
