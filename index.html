@@ -1549,6 +1549,7 @@
                 artifact: [],
                 fog: [],
                 planeswalker: [],
+                discard: [],
                 permission: [],
                 spells: [],
                 tron: [],
@@ -1775,6 +1776,10 @@
                     if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                         archetype_count.planeswalker.push(d);
                     }
+                    if (text_temp.includes('opponent reveal') || text_temp.includes('player reveal') ||
+                        text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
+                        archetype_count.discard.push(d);
+                    }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                         || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                         || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection') || text_temp.includes('phase out') || text_temp.includes('phases out')))) {
@@ -1959,6 +1964,11 @@
                 if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
+                    html += '</tr>';
+                }
+                if (archetype_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    html += '<tr>';
+                    html += '<td>Hand Destruction</td>';
                     html += '</tr>';
                 }
                 if (archetype_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
