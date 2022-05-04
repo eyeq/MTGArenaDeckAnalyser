@@ -203,6 +203,7 @@
         ];
         var artifact_types = [
             'Equipment',
+            'Fortification',
             'Vehicle',
         ];
         var enchantment_types = [
@@ -217,6 +218,160 @@
             'Adventure',
             'Arcane',
         ];
+        var keyword_abilitys = {
+            'Deathtouch': { show: true, type: 'block' },
+            'Defender': { show: true, type: 'block' },
+            'Double Strike': { show: true, type: 'attack' },
+            'Enchant': { show: false, type: 'other' },
+            'Equip': { show: false, type: 'other' },
+            'First Strike': { show: true, type: 'attack' },
+            'Flash': { show: false, type: 'prevent' },
+            'Flying': { show: true, type: 'attack' },
+            'Haste': { show: true, type: 'attack' },
+            'Hexproof': { show: true, type: 'prevent' },
+            'Indestructible': { show: true, type: 'prevent' },
+            'Intimidate': { show: true, type: 'attack' },
+            'Landwalk': { show: true, type: 'attack' },
+            'Lifelink': { show: true, type: 'block' },
+            'Protection': { show: true, type: 'prevent' },
+            'Reach': { show: true, type: 'block' },
+            'Shroud': { show: true, type: 'prevent' },
+            'Trample': { show: true, type: 'attack' },
+            'Vigilance': { show: true, type: 'block' },
+            'Ward': { show: true, type: 'prevent' },
+            'Banding': { show: true, type: 'other' },
+            'Rampage': { show: true, type: 'attack' },
+            'Cumulative Upkeep': { show: true, type: 'other' },
+            'Flanking': { show: true, type: 'attack' },
+            'Phasing': { show: true, type: 'prevent' },
+            'Buyback': { show: true, type: 'cast' },
+            'Shadow': { show: true, type: 'attack' },
+            'Cycling': { show: true, type: 'from_hand' },
+            'Echo': { show: true, type: 'other' },
+            'Horsemanship': { show: true, type: 'attack' },
+            'Fading': { show: true, type: 'other' },
+            'Kicker': { show: true, type: 'cast' },
+            'Flashback': { show: true, type: 'from_graveyard' },
+            'Madness': { show: true, type: 'from_hand' },
+            'Fear': { show: true, type: 'attack' },
+            'Morph': { show: true, type: 'cast' },
+            'Amplify': { show: true, type: 'other' },
+            'Provoke': { show: true, type: 'attack' },
+            'Storm': { show: true, type: 'cast' },
+            'Affinity': { show: true, type: 'cast' },
+            'Entwine': { show: true, type: 'cast' },
+            'Modular': { show: true, type: 'prevent' },
+            'Sunburst': { show: true, type: 'other' },
+            'Bushido': { show: true, type: 'block' },
+            'Soulshift': { show: true, type: 'prevent' },
+            'Splice': { show: true, type: 'cast' },
+            'Offering': { show: true, type: 'cast' },
+            'Ninjutsu': { show: true, type: 'attack' },
+            'Epic': { show: true, type: 'other' },
+            'Convoke': { show: true, type: 'cast' },
+            'Dredge': { show: true, type: 'from_graveyard' },
+            'Transmute': { show: true, type: 'cast' },
+            'Bloodthirst': { show: true, type: 'attack' },
+            'Haunt': { show: true, type: 'prevent' },
+            'Replicate': { show: true, type: 'cast' },
+            'Forecast': { show: true, type: 'cast' },
+            'Graft': { show: true, type: 'other' },
+            'Recover': { show: true, type: 'prevent' },
+            'Ripple': { show: true, type: 'other' },
+            'Split Second': { show: false, type: 'prevent' },
+            'Suspend': { show: true, type: 'cast' },
+            'Vanishing': { show: true, type: 'other' },
+            'Absorb': { show: true, type: 'block' },
+            'Aura Swap': { show: true, type: 'other' },
+            'Delve': { show: true, type: 'cast' },
+            'Fortify': { show: false, type: 'other' },
+            'Frenzy': { show: true, type: 'attack' },
+            'Gravestorm': { show: false, type: 'cast' },
+            'Poisonous': { show: true, type: 'attack' },
+            'Transfigure': { show: true, type: 'other' },
+            'Champion': { show: true, type: 'prevent' },
+            'Changeling': { show: false, type: 'other' },
+            'Evoke': { show: true, type: 'cast' },
+            'Hideaway': { show: true, type: 'other' },
+            'Prowl': { show: true, type: 'attack' },
+            'Reinforce': { show: true, type: 'from_hand' },
+            'Conspire': { show: true, type: 'cast' },
+            'Persist': { show: true, type: 'prevent' },
+            'Wither': { show: true, type: 'block' },
+            'Retrace': { show: true, type: 'from_graveyard' },
+            'Devour': { show: true, type: 'other' },
+            'Exalted': { show: true, type: 'attack' },
+            'Unearth': { show: true, type: 'from_graveyard' },
+            'Cascade': { show: true, type: 'cast' },
+            'Annihilator': { show: true, type: 'attack' },
+            'Level Up': { show: false, type: 'other' },
+            'Rebound': { show: true, type: 'other' },
+            'Totem Armor': { show: false, type: 'prevent' },
+            'Infect': { show: true, type: 'attack' },
+            'Battle Cry': { show: true, type: 'attack' },
+            'Living Weapon': { show: false, type: 'prevent' },
+            'Undying': { show: true, type: 'prevent' },
+            'Miracle': { show: true, type: 'cast' },
+            'Soulbond': { show: true, type: 'other' },
+            'Overload': { show: true, type: 'cast' },
+            'Scavenge': { show: true, type: 'from_graveyard' },
+            'Unleash': { show: true, type: 'attack' },
+            'Cipher': { show: true, type: 'attack' },
+            'Evolve': { show: true, type: 'attack' },
+            'Extort': { show: true, type: 'other' },
+            'Fuse': { show: true, type: 'cast' },
+            'Bestow': { show: true, type: 'cast' },
+            'Tribute': { show: true, type: 'attack' },
+            'Dethrone': { show: true, type: 'attack' },
+            'Hidden Agenda': { show: false, type: 'other' },
+            'Outlast': { show: true, type: 'other' },
+            'Prowess': { show: true, type: 'attack' },
+            'Dash': { show: true, type: 'cast' },
+            'Exploit': { show: true, type: 'other' },
+            'Menace': { show: true, type: 'attack' },
+            'Renown': { show: true, type: 'other' },
+            'Awaken': { show: true, type: 'cast' },
+            'Devoid': { show: false, type: 'other' },
+            'Ingest': { show: true, type: 'attack' },
+            'Myriad': { show: true, type: 'attack' },
+            'Surge': { show: true, type: 'cast' },
+            'Skulk': { show: true, type: 'attack' },
+            'Emerge': { show: true, type: 'cast' },
+            'Escalate': { show: true, type: 'cast' },
+            'Melee': { show: true, type: 'attack' },
+            'Crew': { show: false, type: 'other' },
+            'Fabricate': { show: true, type: 'other' },
+            'Partner': { show: false, type: 'other' },
+            'Undaunted': { show: true, type: 'cast' },
+            'Improvise': { show: true, type: 'cast' },
+            'Aftermath': { show: true, type: 'from_graveyard' },
+            'Embalm': { show: true, type: 'from_graveyard' },
+            'Eternalize': { show: true, type: 'from_graveyard' },
+            'Afflict': { show: true, type: 'attack' },
+            'Ascend': { show: true, type: 'other' },
+            'Assist': { show: false, type: 'cast' },
+            'Jump-Start': { show: true, type: 'from_graveyard' },
+            'Mentor': { show: true, type: 'attack' },
+            'Afterlife': { show: true, type: 'prevent' },
+            'Riot': { show: true, type: 'attack' },
+            'Spectacle': { show: true, type: 'attack' },
+            'Escape': { show: true, type: 'from_graveyard' },
+            'Companion': { show: false, type: 'other' },
+            'Mutate': { show: true, type: 'other' },
+            'Encore': { show: true, type: 'from_graveyard' },
+            'Boast': { show: true, type: 'attack' },
+            'Foretell': { show: true, type: 'cast' },
+            'Demonstrate': { show: true, type: 'cast' },
+            'Daybound': { show: true, type: 'other' },
+            'Disturb': { show: true, type: 'from_graveyard' },
+            'Decayed': { show: true, type: 'attack' },
+            'Cleave': { show: true, type: 'cast' },
+            'Training': { show: true, type: 'attack' },
+            'Compleated': { show: false, type: 'cast' },
+            'Reconfigure': { show: false, type: 'other' },
+            'Blitz': { show: true, type: 'cast' },
+            'Casualty': { show: true, type: 'cast' },
+        };
 
         (() => {
             let url = new URL(location.href);
@@ -1399,6 +1554,11 @@
                                 break;
                             case 'Werewolf':
                                 return;
+                            case 'Zombie':
+                                target.push('Embalm');
+                                target.push('Eternalize');
+                                target.push('decayed');
+                                break;
                         }
                         if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
                             if (!(key in creature_types_count)) {
@@ -1428,7 +1588,8 @@
 
                     // subtype enchantment
                     enchantment_types.forEach(key => {
-                        if (text_temp.includes(key)) {
+                        if (text_temp.includes(key) ||
+                            (key === 'Aura' && d.keywords.includes('Bestow'))) {
                             if (!(key in enchantment_types_count)) {
                                 enchantment_types_count[key] = [];
                             }
@@ -1450,14 +1611,18 @@
                     text_temp = text_temp.toLowerCase();
 
                     // keyword
-                    if (text_temp.includes('dredge')) {
-                        let key = 'Dredge';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
+                    Object.keys(keyword_abilitys).forEach(key => {
+                        if (keyword_abilitys[key].show) {
+                            if (text_temp.includes(key.toLowerCase())) {
+                                if (!(key in keyword_count)) {
+                                    keyword_count[key] = [];
+                                }
+                                keyword_count[key].push(d);
+                            }
                         }
-                        keyword_count[key].push(d);
-                    }
+                    });
 
+                    // keyword
                     if (text_temp.includes('{e}')) {
                         let key = 'Energy';
                         if (!(key in keyword_count)) {
@@ -1474,26 +1639,10 @@
                         keyword_count[key].push(d);
                     }
 
-                    if (text_temp.includes('flying')) {
-                        let key = 'Flying';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
                     if (text_temp.includes('heroic')
                         || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                         || text_temp.includes('becomes the target of a spell you control')) {
                         let key = 'Heroic';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
-                    if (text_temp.includes('mentor')) {
-                        let key = 'Mentor';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
@@ -1524,13 +1673,17 @@
                         keyword_count[key].push(d);
                     }
 
-                    if (text_temp.includes('sacrifice')) {
+                    if (text_temp.includes('sacrifice')
+                        || text_temp.includes('cumulative upkeep') || text_temp.includes('echo') || text_temp.includes('fading') || text_temp.includes('vanishing')
+                        || text_temp.includes('transfigure') || text_temp.includes('evoke') || text_temp.includes('devour') || text_temp.includes('exploit') || text_temp.includes('emerge')
+                        || text_temp.includes('blitz') || text_temp.includes('casualty')) {
                         let key = 'Sacrifice';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
                         keyword_count[key].push(d);
                     }
+                    
                     if (text_temp.includes('whenever you draw your second card each turn')) {
                         let key = 'Second Draw';
                         if (!(key in keyword_count)) {
@@ -1562,10 +1715,12 @@
                         archetype_count.legends.push(d);
                     }
                     if (text_temp.includes('put into your graveyard from your library')
-                        || text_temp.includes('your library has no cards')) {
+                        || text_temp.includes('your library has no cards')
+                        || text_temp.includes('dredge')) {
                         archetype_count.self_mill.push(d);
                     }
-                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
+                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')
+                        || text_temp.includes('fabricate')) {
                         archetype_count.artifact.push(d);
                     }
                     if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
@@ -1600,10 +1755,11 @@
                     if (type_temp.includes('instant') || text_temp.includes('flash')) {
                         archetype_count.instant.push(d);
                     }
-                    if (text_temp.includes('creature token')) {
+                    if (text_temp.includes('creature token')
+                        || text_temp.includes('living weapon') || text_temp.includes('afterlife') || text_temp.includes('decayed')) {
                         archetype_count.token.push(d);
                     }
-                    if (type_temp.includes('creature') || text_temp.includes('creature token')
+                    if (type_temp.includes('creature') || text_temp.includes('creature token') || text_temp.includes('living weapon')
                         || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                         archetype_count.creature.push(d);
                         if (d.cmc < 3) {
@@ -1615,7 +1771,8 @@
                         archetype_count.direct_damage.push(d);
                     }
                     if (text_temp.includes('graveyard to the battlefield')
-                        || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))) {
+                        || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))
+                        || text_temp.includes('soulshift')) {
                         archetype_count.reanimate.push(d);
                     }
                     if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
