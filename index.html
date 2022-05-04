@@ -1543,25 +1543,28 @@
 
             let keyword_count = {};
 
-            let archetype_count = {
-                legends: [],
+            let card_count = {
                 self_mill: [],
-                artifact: [],
                 fog: [],
-                planeswalker: [],
                 discard: [],
                 permission: [],
-                spells: [],
                 tron: [],
                 post: [],
                 mana_acceleration: [],
+                direct_damage: [],
+                reanimate: [],
+                wrath: [],
+            };
+
+            let archetype_count = {
+                legends: [],
+                artifact: [],
+                planeswalker: [],
+                spells: [],
                 instant: [],
                 token: [],
                 creature: [],
                 weenie: [],
-                direct_damage: [],
-                reanimate: [],
-                wrath: [],
             };
             {
                 data.forEach((d, i) => {
@@ -1752,53 +1755,72 @@
                         keyword_count[key].push(d);
                     }
 
-                    // decktype
-                    if (text_temp.includes(' legendary card') || text_temp.includes('legendary permanent card')
-                        || text_temp.includes('a legendary spell') || text_temp.includes('egendary spells')
-                        || text_temp.includes('legendary creature')) {
-                        archetype_count.legends.push(d);
-                    }
+                    // cardeffect
                     if (text_temp.includes('put into your graveyard from your library')
                         || text_temp.includes('your library has no cards')
                         || text_temp.includes('dredge')) {
-                        archetype_count.self_mill.push(d);
-                    }
-                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')
-                        || text_temp.includes('fabricate')) {
-                        archetype_count.artifact.push(d);
+                        card_count.self_mill.push(d);
                     }
                     if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
                         || text_temp.includes('your life total can\'t change')
                         || text_temp.includes('your life total to less than 1')
                         || text_temp.includes('your life total would be reduced to 0')) {
-                        archetype_count.fog.push(d);
-                    }
-                    if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
-                        archetype_count.planeswalker.push(d);
+                        card_count.fog.push(d);
                     }
                     if (text_temp.includes('opponent reveal') || text_temp.includes('player reveal') ||
                         text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
-                        archetype_count.discard.push(d);
+                        card_count.discard.push(d);
                     }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                         || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
                         || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection') || text_temp.includes('phase out') || text_temp.includes('phases out')))) {
-                        archetype_count.permission.push(d);
-                    }
-                    if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
-                        archetype_count.spells.push(d);
+                        card_count.permission.push(d);
                     }
                     if (d.type_line.includes('Urza\'s')) {
-                        archetype_count.tron.push(d);
+                        card_count.tron.push(d);
                     }
                     if (d.type_line.includes('Locus')) {
-                        archetype_count.post.push(d);
+                        card_count.post.push(d);
                     }
                     if (text_temp.includes('add {')
                         || (text_temp.includes('add ') && text_temp.includes('mana'))
                         || ((text_temp.includes(' land') || text_temp.includes('forest')) && text_temp.includes('put'))
                         || (text_temp.includes('play') && text_temp.includes('additional land'))) {
-                        archetype_count.mana_acceleration.push(d);
+                        card_count.mana_acceleration.push(d);
+                    }
+                    if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
+                        || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
+                        card_count.direct_damage.push(d);
+                    }
+                    if (text_temp.includes('graveyard to the battlefield')
+                        || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))
+                        || text_temp.includes('soulshift')) {
+                        card_count.reanimate.push(d);
+                    }
+                    if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
+                        || text_temp.includes('exile all') || text_temp.includes('exile each')
+                        || text_temp.includes('return all')
+                        || text_temp.includes('sacrifices the rest')
+                        || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
+                        || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
+                        card_count.wrath.push(d);
+                    }
+
+                    // cardtype
+                    if (text_temp.includes(' legendary card') || text_temp.includes('legendary permanent card')
+                        || text_temp.includes('a legendary spell') || text_temp.includes('egendary spells')
+                        || text_temp.includes('legendary creature')) {
+                        archetype_count.legends.push(d);
+                    }
+                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')
+                        || text_temp.includes('fabricate')) {
+                        archetype_count.artifact.push(d);
+                    }
+                    if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
+                        archetype_count.planeswalker.push(d);
+                    }
+                    if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
+                        archetype_count.spells.push(d);
                     }
                     if (type_temp.includes('instant') || text_temp.includes('flash')) {
                         archetype_count.instant.push(d);
@@ -1812,23 +1834,6 @@
                         if (d.cmc < 3) {
                             archetype_count.weenie.push(d);
                         }
-                    }
-                    if ((text_temp.includes('deals') && (text_temp.includes('any target') || text_temp.includes('player') || text_temp.includes('opponent')))
-                        || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
-                        archetype_count.direct_damage.push(d);
-                    }
-                    if (text_temp.includes('graveyard to the battlefield')
-                        || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))
-                        || text_temp.includes('soulshift')) {
-                        archetype_count.reanimate.push(d);
-                    }
-                    if (text_temp.includes('destroy all') || text_temp.includes('destroy each')
-                        || text_temp.includes('exile all') || text_temp.includes('exile each')
-                        || text_temp.includes('return all')
-                        || text_temp.includes('sacrifices the rest')
-                        || (text_temp.includes('each creature') || text_temp.includes('creatures') || text_temp.includes('creature tokens')) && (text_temp.includes('get -') || text_temp.includes('gets -'))
-                        || (text_temp.includes('deals') && text_temp.includes('each creature'))) {
-                        archetype_count.wrath.push(d);
                     }
                 });
                 let ratio_key = 0.09;
@@ -1939,39 +1944,26 @@
 
                 html = '';
                 html += '<table>';
-                if (archetype_count.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    html += '<tr>';
-                    html += '<td>Legends</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+
+                // cardeffect
+                if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     html += '<tr>';
                     html += '<td>Self-Mill</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    html += '<tr>';
-                    html += '<td>Artifact</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     control = true;
 
                     html += '<tr>';
                     html += '<td>Fog</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
-                    html += '<tr>';
-                    html += '<td>Superfriends</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Hand Destruction</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
+                if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     permission = true;
                     control = true;
 
@@ -1979,30 +1971,66 @@
                     html += '<td>Permission</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
-                    html += '<tr>';
-                    html += '<td>Spells</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.tron.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                if (card_count.tron.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     ramp = true;
 
                     html += '<tr>';
                     html += '<td>Tron</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.post.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                if (card_count.post.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     ramp = true;
 
                     html += '<tr>';
                     html += '<td>Post</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
+                if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
                     ramp = true;
 
                     html += '<tr>';
                     html += '<td>Ramp</td>';
+                    html += '</tr>';
+                }
+                if (card_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    burn = true;
+
+                    html += '<tr>';
+                    html += '<td>Burn</td>';
+                    html += '</tr>';
+                }
+                if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                    html += '<tr>';
+                    html += '<td>Reanimate</td>';
+                    html += '</tr>';
+                }
+                if (card_count.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                    control = true;
+
+                    html += '<tr>';
+                    html += '<td>Control</td>'; // reset
+                    html += '</tr>';
+                }
+
+                // cardtype
+                if (archetype_count.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                    html += '<tr>';
+                    html += '<td>Legends</td>';
+                    html += '</tr>';
+                }
+                if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                    html += '<tr>';
+                    html += '<td>Artifact</td>';
+                    html += '</tr>';
+                }
+                if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
+                    html += '<tr>';
+                    html += '<td>Superfriends</td>';
+                    html += '</tr>';
+                }
+                if (archetype_count.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                    html += '<tr>';
+                    html += '<td>Spells</td>';
                     html += '</tr>';
                 }
                 if (archetype_count.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
@@ -2025,25 +2053,7 @@
                 if (archetype_count.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     weenie = true;
                 }
-                if (archetype_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
-                    burn = true;
 
-                    html += '<tr>';
-                    html += '<td>Burn</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
-                    html += '<tr>';
-                    html += '<td>Reanimate</td>';
-                    html += '</tr>';
-                }
-                if (archetype_count.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    control = true;
-
-                    html += '<tr>';
-                    html += '<td>Control</td>';
-                    html += '</tr>';
-                }
                 html += '</table>';
                 $('#archetype').html(html);
 
