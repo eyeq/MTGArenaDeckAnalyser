@@ -186,19 +186,37 @@
 
     <script>
         var super_types = [
+            // 'Basic',
+            // 'Legendary',
             'Legendary Sorcery',
+            // 'Ongoing'.
             'Snow',
             'World',
+            // 'Elite',
+            // 'Host',
         ];
         var land_types = [
+            // 'Plains',
+            // 'Island',
+            // 'Swamp',
+            // 'Mountain',
+            // 'Forest',
             'Desert',
             'Gate',
+            // 'Lair',
+            // 'Locus',
+            // 'Urza’s',
+            // 'Mine',
+            // 'Power-Plant',
+            // 'Tower',
         ];
         var creature_types = [];
         var permanent_types = [
             'Blood',
             'Clue',
+            // 'Contraption',
             'Food',
+            // 'Gold',
             'Treasure',
         ];
         var artifact_types = [
@@ -209,14 +227,18 @@
         var enchantment_types = [
             'Aura',
             'Cartouche',
+            // 'Class',
             'Curse',
             'Rune',
             'Saga',
+            // 'Shard',
             'Shrine',
         ];
         var spell_types = [
             'Adventure',
             'Arcane',
+            // 'Lesson'.
+            // 'Trap',
         ];
         var keyword_abilitys = {
             'Deathtouch': { show: true, type: 'block' },
@@ -363,6 +385,7 @@
             'Foretell': { show: true, type: 'cast' },
             'Demonstrate': { show: true, type: 'cast' },
             'Daybound': { show: true, type: 'other' },
+            // 'Nightbound'
             'Disturb': { show: true, type: 'from_graveyard' },
             'Decayed': { show: true, type: 'attack' },
             'Cleave': { show: true, type: 'cast' },
@@ -372,6 +395,55 @@
             'Blitz': { show: true, type: 'cast' },
             'Casualty': { show: true, type: 'cast' },
         };
+        let keyword_actions = [
+            // 'Activate',
+            // 'Attach',
+            // 'Unattach',
+            // 'Cast',
+            // 'Counter',
+            // 'Create',
+            // 'Destroy',
+            'Discard',
+            // 'Double',
+            // 'Exchange',
+            // 'Exile',
+            'Fight',
+            'Mill',
+            // 'Play',
+            'Regenerate',
+            // 'Reveal',
+            'Sacrifice',
+            'Scry',
+            // 'Search',
+            // 'Shuffle',
+            // 'Tap',
+            // 'Untap',
+            'Fateseal',
+            'Clash',
+            // 'Planeswalk',
+            // 'Set in Motion',
+            // 'Abandon',
+            'Proliferate',
+            'Transform',
+            'Detain',
+            'Populate',
+            'Monstrosity',
+            'Vote',
+            'Bolster',
+            'Manifest',
+            'Investigate',
+            'Meld',
+            'Goad',
+            'Exert',
+            'Explore',
+            // 'Assemble',
+            'Surveil',
+            'Adapt',
+            'Amass',
+            'Learn',
+            'Venture into the Dungeon',
+            'Connive',
+        ];
 
         (() => {
             let url = new URL(location.href);
@@ -1379,6 +1451,7 @@
                     'God-Pharaoh\'s Gift': 'Gift',
                     'Goldspan Dragon': 'Dragon',
                     'Golos, Tireless Pilgrim': 'Golos',
+                    'Greasefang, Okiba Boss': 'Greasefang',
                     'Happily Ever After': 'Happily Ever After',
                     'Hazoret the Fervent': 'Hazoret',
                     'Hero of Precinct One': 'Hero',
@@ -1554,11 +1627,6 @@
                                 break;
                             case 'Werewolf':
                                 return;
-                            case 'Zombie':
-                                target.push('Embalm');
-                                target.push('Eternalize');
-                                target.push('decayed');
-                                break;
                         }
                         if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
                             if (!(key in creature_types_count)) {
@@ -1610,7 +1678,7 @@
                     type_temp = type_temp.toLowerCase();
                     text_temp = text_temp.toLowerCase();
 
-                    // keyword
+                    // keyword ability
                     Object.keys(keyword_abilitys).forEach(key => {
                         if (keyword_abilitys[key].show) {
                             if (text_temp.includes(key.toLowerCase())) {
@@ -1619,6 +1687,16 @@
                                 }
                                 keyword_count[key].push(d);
                             }
+                        }
+                    });
+
+                    // keyword action
+                    keyword_actions.forEach(key => {
+                        if (text_temp.includes(key.toLowerCase())) {
+                            if (!(key in keyword_count)) {
+                                keyword_count[key] = [];
+                            }
+                            keyword_count[key].push(d);
                         }
                     });
 
@@ -1631,26 +1709,10 @@
                         keyword_count[key].push(d);
                     }
 
-                    if (text_temp.includes('explores')) {
-                        let key = 'Explores';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
                     if (text_temp.includes('heroic')
                         || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
                         || text_temp.includes('becomes the target of a spell you control')) {
                         let key = 'Heroic';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
-                    if (text_temp.includes('mill')) {
-                        let key = 'Mill';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
@@ -1673,27 +1735,8 @@
                         keyword_count[key].push(d);
                     }
 
-                    if (text_temp.includes('sacrifice')
-                        || text_temp.includes('cumulative upkeep') || text_temp.includes('echo') || text_temp.includes('fading') || text_temp.includes('vanishing')
-                        || text_temp.includes('transfigure') || text_temp.includes('evoke') || text_temp.includes('devour') || text_temp.includes('exploit') || text_temp.includes('emerge')
-                        || text_temp.includes('blitz') || text_temp.includes('casualty')) {
-                        let key = 'Sacrifice';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-                    
                     if (text_temp.includes('whenever you draw your second card each turn')) {
                         let key = 'Second Draw';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
-                    if (text_temp.includes('surveil')) {
-                        let key = 'Surveil';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
@@ -1734,7 +1777,7 @@
                     }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
                         || text_temp.includes('return target spell') || text_temp.includes('put target spell') || text_temp.includes('choose target spell') || text_temp.includes('owner of target spell')
-                        || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection')))) {
+                        || ((type_temp.includes('instant') || text_temp.includes('flash')) && (text_temp.includes('hexproof') || text_temp.includes('protection') || text_temp.includes('phase out') || text_temp.includes('phases out')))) {
                         archetype_count.permission.push(d);
                     }
                     if (type_temp.includes('instant') || type_temp.includes('sorcery')) {
@@ -1755,11 +1798,10 @@
                     if (type_temp.includes('instant') || text_temp.includes('flash')) {
                         archetype_count.instant.push(d);
                     }
-                    if (text_temp.includes('creature token')
-                        || text_temp.includes('living weapon') || text_temp.includes('afterlife') || text_temp.includes('decayed')) {
+                    if (text_temp.includes('creature token')) {
                         archetype_count.token.push(d);
                     }
-                    if (type_temp.includes('creature') || text_temp.includes('creature token') || text_temp.includes('living weapon')
+                    if (type_temp.includes('creature') || text_temp.includes('creature token')
                         || (text_temp.includes('land') && text_temp.includes('become') && text_temp.includes('creature'))) {
                         archetype_count.creature.push(d);
                         if (d.cmc < 3) {
@@ -1953,7 +1995,7 @@
                     html += '<td>Ramp</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                if (archetype_count.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Flash</td>';
                     html += '</tr>';
@@ -1963,14 +2005,14 @@
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
                     aggro = true;
 
                     html += '<tr>';
                     html += '<td>Beatdown</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                if (archetype_count.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     weenie = true;
                 }
                 if (archetype_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
