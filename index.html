@@ -1431,6 +1431,7 @@
                     'Alrund\'s Epiphany': 'Epiphany',
                     'Approach of the Second Sun': 'Second Sun',
                     'Arclight Phoenix': 'Phoenix',
+                    'Battle of Wits': 'Babel',
                     'Bolas\'s Citadel': 'Citadel',
                     'Casualties of War': 'Casualties',
                     'Cavalcade of Calamity': 'Cavalcade',
@@ -1545,6 +1546,7 @@
 
             let card_count = {
                 self_mill: [],
+                library_out: [],
                 fog: [],
                 discard: [],
                 ponza: [],
@@ -1762,6 +1764,9 @@
                         || text_temp.includes('dredge')) {
                         card_count.self_mill.push(d);
                     }
+                    if (text_temp.includes('mill') || text_temp.includes('exiled cards with total mana value')) {
+                        card_count.libra.push(d);
+                    }
                     if ((type_temp.includes('instant') && text_temp.includes('prevent all'))
                         || text_temp.includes('your life total can\'t change')
                         || text_temp.includes('your life total to less than 1')
@@ -1952,7 +1957,11 @@
                 // cardeffect
                 if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     html += '<tr>';
-                    html += '<td>Self-Mill</td>';
+                    html += '<td>Self Mill</td>';
+                    html += '</tr>';
+                } else if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                    html += '<tr>';
+                    html += '<td>Library Out</td>';
                     html += '</tr>';
                 }
                 if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
