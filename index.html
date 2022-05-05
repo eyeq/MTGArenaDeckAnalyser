@@ -1763,6 +1763,11 @@
                             target = true;
                         }
                         switch (key) {
+                            case 'Exalted':
+                                if (text_temp.includes('attacking alone') || text_temp.includes('attacks alone')) {
+                                    target = true;
+                                }
+                                break;
                             case 'Storm':
                                 if (text_temp.includes('copy it for each')) {
                                     target = true;
@@ -1813,7 +1818,7 @@
                         }
                     });
 
-                    // keyword
+                    // keyword other
                     if (text_temp.includes('{e}')) {
                         let key = 'Energy';
                         if (!(key in keyword_count)) {
@@ -1832,6 +1837,15 @@
 
                     if (text_temp.includes('party')) {
                         let key = 'Party';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
+                    if (text_temp.includes('you control an artifact and an enchantment')
+                        || (text_temp.includes('you control an artifact') && text_temp.includes('you control an enchantment'))) {
+                        let key = 'Harmony';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
