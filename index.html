@@ -443,6 +443,61 @@
             'Learn',
             'Venture into the Dungeon',
             'Connive',
+
+            // 'Ante',
+            // 'Ban',
+            // 'Bury',
+        ];
+        let ability_words = [
+            'Adamant',
+            'Addendum',
+            'Alliance',
+            'Battalion',
+            'Bloodrush',
+            'Channel',
+            'Chroma',
+            'Cohort',
+            'Constellation',
+            'Converge',
+            'Council\'s dilemma',
+            'Coven',
+            'Delirium',
+            'Domain',
+            // 'Eminence',
+            'Enrage',
+            'Fateful hour',
+            'Ferocious',
+            'Formidable',
+            'Grandeur',
+            'Hellbent',
+            'Heroic',
+            'Imprint',
+            'Inspired',
+            'Join forces',
+            'Kinship',
+            'Landfall',
+            'Lieutenant',
+            'Magecraft',
+            'Metalcraft',
+            'Morbid',
+            'Pack tactics',
+            'Parley',
+            'Radiance',
+            'Raid',
+            'Rally',
+            'Revolt',
+            'Spell mastery',
+            'Strive',
+            'Sweep',
+            'Tempting offer',
+            'Threshold',
+            'Underdog',
+            'Undergrowth',
+            'Will of the council',
+
+            // 'Gotcha!',
+            // 'Hero's Reward',
+            // 'Spiritcraft',
         ];
 
         (() => {
@@ -1485,6 +1540,7 @@
                     'Shadowborn Apostle': 'Shadowborn',
                     'Teferi, Hero of Dominaria': 'Teferi',
                     'Thassa\'s Oracle': 'Oracle',
+                    'Thousand-Year Storm': 'Thousand-Year Storm',
                     'Thud': 'Thud',
                     'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
                     'Ugin, the Spirit Dragon': 'Ugin',
@@ -1623,23 +1679,33 @@
                         creature_type = true;
                     }
                     creature_types.forEach(key => {
-                        let target = [key];
+                        let target = creature_type;
+                        if (type_temp.includes(key) || text_temp.includes(key)) {
+                            target = true;
+                        }
                         switch (key) {
                             case 'Dwarf':
-                                target.push('Dwarves');
+                                if (type_temp.includes('Dwarves') || text_temp.includes('Dwarves')) {
+                                    target = true;
+                                }
                                 break;
                             case 'Elf':
-                                target.push('Elves');
+                                if (type_temp.includes('Elves') || text_temp.includes('Elves')) {
+                                    target = true;
+                                }
                                 break;
                             case 'Wolf':
-                                target.push('Wolves');
-                                target.push('Werewolf');
-                                target.push('Werewolves');
+                                if (type_temp.includes('Wolves') || text_temp.includes('Wolves')
+                                    || type_temp.includes('Werewolf') || text_temp.includes('Werewolf')
+                                    || type_temp.includes('Werewolves') || text_temp.includes('Werewolves')) {
+                                    target = true;
+                                }
                                 break;
                             case 'Werewolf':
-                                return;
+                                target = false;
+                                break;
                         }
-                        if (creature_type || target.some(d => type_temp.includes(d) || text_temp.includes(d))) {
+                        if (target) {
                             if (!(key in creature_types_count)) {
                                 creature_types_count[key] = [];
                             }
@@ -1691,8 +1757,20 @@
 
                     // keyword ability
                     Object.keys(keyword_abilitys).forEach(key => {
+                        let target = false;
+                        if (text_temp.includes(key.toLowerCase())) {
+                            target = true;
+                        }
+                        switch (key) {
+                            case 'Storm':
+                                if (text_temp.includes('copy it for each')) {
+                                    target = true;
+                                }
+                                break;
+                        }
+
                         if (keyword_abilitys[key].show) {
-                            if (text_temp.includes(key.toLowerCase())) {
+                            if (target) {
                                 if (!(key in keyword_count)) {
                                     keyword_count[key] = [];
                                 }
@@ -1711,19 +1789,32 @@
                         }
                     });
 
+                    // ability word
+                    ability_words.forEach(key => {
+                        let target = false;
+                        if (text_temp.includes(key.toLowerCase())) {
+                            target = true;
+                        }
+                        switch (key) {
+                            case 'Heroic':
+                                if ((text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
+                                    || text_temp.includes('becomes the target of a spell you control')) {
+                                    target = true;
+                                }
+                                break;
+                        }
+
+                        if (text_temp.includes(key.toLowerCase())) {
+                            if (!(key in keyword_count)) {
+                                keyword_count[key] = [];
+                            }
+                            keyword_count[key].push(d);
+                        }
+                    });
+
                     // keyword
                     if (text_temp.includes('{e}')) {
                         let key = 'Energy';
-                        if (!(key in keyword_count)) {
-                            keyword_count[key] = [];
-                        }
-                        keyword_count[key].push(d);
-                    }
-
-                    if (text_temp.includes('heroic')
-                        || (text_temp.includes('whenever you cast') && text_temp.includes('that targets'))
-                        || text_temp.includes('becomes the target of a spell you control')) {
-                        let key = 'Heroic';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
