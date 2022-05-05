@@ -1818,7 +1818,23 @@
                         }
                     });
 
-                    // keyword other
+                    // keyword counter
+                    if (text_temp.includes('+1/+1 counter')) {
+                        let key = '+1/+1 counter';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
+                    if (text_temp.includes('-1/-1 counter')) {
+                        let key = '-1/-1 counter';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
                     if (text_temp.includes('{e}')) {
                         let key = 'Energy';
                         if (!(key in keyword_count)) {
@@ -1827,6 +1843,7 @@
                         keyword_count[key].push(d);
                     }
 
+                    // keyword other
                     if (text_temp.includes('modified')) {
                         let key = 'Modified';
                         if (!(key in keyword_count)) {
