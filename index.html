@@ -1605,6 +1605,7 @@
             let keyword_count = {};
 
             let card_count = {
+                anti_discard: [],
                 self_mill: [],
                 library_out: [],
                 fog: [],
@@ -1854,6 +1855,9 @@
                     }
 
                     // cardeffect
+                    if (text_temp.includes('you to discard')) {
+                        card_count.anti_discard.push(d);
+                    }
                     if (text_temp.includes('put into your graveyard from your library')
                         || text_temp.includes('your library has no cards')
                         || text_temp.includes('dredge')) {
@@ -1872,7 +1876,8 @@
                         text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
                         card_count.discard.push(d);
                     }
-                    if (text_temp.includes('destroy target land') || text_temp.includes('destroy target nonbasic land')) {
+                    if (text_temp.includes('destroy target land') || text_temp.includes('destroy target nonbasic land')
+                        || (text_temp.includes('destroy target ') && text_temp.includes(' or land'))) {
                         card_count.ponza.push(d);
                     }
                     if (text_temp.includes('counter target') || text_temp.includes('counter that') || text_temp.includes('counter it')
@@ -2050,6 +2055,11 @@
                 html += '<table>';
 
                 // cardeffect
+                if (card_count.anti_discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                    html += '<tr>';
+                    html += '<td>Anti Discard</td>';
+                    html += '</tr>';
+                }
                 if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
                     html += '<tr>';
                     html += '<td>Self Mill</td>';
