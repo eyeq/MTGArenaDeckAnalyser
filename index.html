@@ -185,7 +185,7 @@
     </footer>
 
     <script>
-        var super_types = [
+        let super_types = [
             // 'Basic',
             // 'Legendary',
             'Legendary Sorcery',
@@ -195,7 +195,7 @@
             // 'Elite',
             // 'Host',
         ];
-        var land_types = [
+        let land_types = [
             // 'Plains',
             // 'Island',
             // 'Swamp',
@@ -210,8 +210,8 @@
             // 'Power-Plant',
             // 'Tower',
         ];
-        var creature_types = [];
-        var permanent_types = [
+        let creature_types = [];
+        let permanent_types = [
             'Blood',
             'Clue',
             // 'Contraption',
@@ -219,12 +219,12 @@
             // 'Gold',
             'Treasure',
         ];
-        var artifact_types = [
+        let artifact_types = [
             'Equipment',
             'Fortification',
             'Vehicle',
         ];
-        var enchantment_types = [
+        let enchantment_types = [
             'Aura',
             'Cartouche',
             // 'Class',
@@ -234,13 +234,13 @@
             // 'Shard',
             'Shrine',
         ];
-        var spell_types = [
+        let spell_types = [
             'Adventure',
             'Arcane',
             // 'Lesson'.
             // 'Trap',
         ];
-        var keyword_abilitys = {
+        let keyword_abilitys = {
             'Deathtouch': { show: true, type: 'block' },
             'Defender': { show: true, type: 'block' },
             'Double Strike': { show: true, type: 'attack' },
@@ -875,16 +875,20 @@
                     }
 
                     if (!d.sideboard) {
-                        if (d.card_faces && d.layout !== 'transform') {
+                        if (d.card_faces) {
                             addColorsCount(colors_main, d.card_faces[0], d.count);
-                            addColorsCount(colors_main, d.card_faces[1], d.count);
+                            if (d.layout !== 'transform') {
+                                addColorsCount(colors_main, d.card_faces[1], d.count);
+                            }
                         } else {
                             addColorsCount(colors_main, d, d.count);
                         }
                     } else {
-                        if (d.card_faces && d.layout !== 'transform') {
+                        if (d.card_faces) {
                             addColorsCount(colors_side, d.card_faces[0], d.count);
-                            addColorsCount(colors_side, d.card_faces[1], d.count);
+                            if (d.layout !== 'transform') {
+                                addColorsCount(colors_side, d.card_faces[1], d.count);
+                            }
                         } else {
                             addColorsCount(colors_side, d, d.count);
                         }
