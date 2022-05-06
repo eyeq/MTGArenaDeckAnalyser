@@ -25,7 +25,7 @@
     </style>
 </head>
 
-<body>
+<body style="min-width: 420px;">
     <div id="progress" style="position: fixed; z-index: 100; left: 0; top: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.2); display: none;">
         <progress style="position: fixed; left: calc(50% - 160px); top: 50%; width: 320px; height: 40px;"></progress>
     </div>
@@ -112,7 +112,7 @@
     <br>
 
     <h3 id="mainboard" style="margin-bottom: 0;">Main</h3>
-    <div style="display: inline-block; vertical-align: top; width: 480px;">
+    <div style="display: inline-block; vertical-align: top;">
         <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;">
             <h4>Rarity</h4>
             <div id="rarity_main"></div>
@@ -125,7 +125,7 @@
         </div>
     </div>
 
-    <div style="display: inline-block; vertical-align: top; width: 662px;">
+    <div style="display: inline-block; vertical-align: top;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Mana Curve</h4>
             <div id="cmc_main"></div>
@@ -134,7 +134,7 @@
     <br>
 
     <h3 id="sideboard" style="margin-bottom: 0;">Sideboard</h3>
-    <div style="display: inline-block; vertical-align: top; width: 480px;">
+    <div style="display: inline-block; vertical-align: top;">
         <div style="display: inline-block; vertical-align: top; margin: 8px; width: 160px;">
             <h4>Rarity</h4>
             <div id="rarity_side"></div>
@@ -147,7 +147,7 @@
         </div>
     </div>
 
-    <div style="display: inline-block; vertical-align: top; width: 662px;">
+    <div style="display: inline-block; vertical-align: top;">
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <h4>Mana Curve</h4>
             <div id="cmc_side"></div>
@@ -608,9 +608,9 @@
 
                     let name = '';
                     if (index1 === -1) {
-                        name = d.substr(index0 + 1);
+                        name = d.substring(index0 + 1);
                     } else {
-                        name = d.substr(index0 + 1, index1 - 2);
+                        name = d.substring(index0 + 1, index1);
                     }
 
                     let set = '';
@@ -638,6 +638,7 @@
                 if (ret) {
                     ret.count = d.count;
                     ret.sideboard = !commander && i >= sideboard;
+                    ret.empty_row = empty_row.includes(i);
                 }
                 data.push(ret);
 
@@ -649,7 +650,7 @@
             let counts_main = 0;
             let counts_side = 0;
             {
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -673,9 +674,10 @@
                 } else {
                     val += 'Deck\n';
                 }
+
                 let first = true;
                 let sideboard = true;
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -706,7 +708,7 @@
             };
             {
                 let keys = Object.keys(symbols);
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -908,7 +910,7 @@
                         }
                     }
                 };
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1111,7 +1113,7 @@
                     };
                 });
 
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1173,11 +1175,11 @@
                 html += '<tr style="border-bottom: double;">';
                 html += '</tr>';
                 html += '<tr>';
-                html += '<td>' + permanent_spell + '</td>'
+                html += '<td style="text-align: right;">' + permanent_spell + '</td>'
                 html += '<td>Permanent Sepll</td>'
                 html += '</tr>';
                 html += '<tr>';
-                html += '<td>' + nonpermanent_spell + '</td>'
+                html += '<td style="text-align: right;">' + nonpermanent_spell + '</td>'
                 html += '<td>Non-permanent Sepll</td>'
                 html += '</tr>';
                 html += '</table>';
@@ -1207,11 +1209,11 @@
                 html += '<tr style="border-bottom: double;">';
                 html += '</tr>';
                 html += '<tr>';
-                html += '<td>' + permanent_spell + '</td>'
+                html += '<td style="text-align: right;">' + permanent_spell + '</td>'
                 html += '<td>Permanent Sepll</td>'
                 html += '</tr>';
                 html += '<tr>';
-                html += '<td>' + nonpermanent_spell + '</td>'
+                html += '<td style="text-align: right;">' + nonpermanent_spell + '</td>'
                 html += '<td>Non-permanent Sepll</td>'
                 html += '</tr>';
                 html += '</table>';
@@ -1228,7 +1230,7 @@
                     raritys_side[key] = 0;
                 });
 
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1280,7 +1282,7 @@
                 let usd_main = 0;
                 let tix_side = 0;
                 let usd_side = 0;
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1338,7 +1340,7 @@
             // set
             {
                 let sets = {};
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1384,7 +1386,7 @@
                     m20: true,
                     m21: true,
                 };
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1549,7 +1551,7 @@
                 };
                 let keycount = {};
 
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1557,7 +1559,7 @@
                     keycount[d.name] = count;
 
                     if (commander) {
-                        if (i === 0) {
+                        if (keycount.length === 0) {
                             keycards.push({
                                 name: d.name,
                                 image_uris: d.image_uris,
@@ -1632,7 +1634,7 @@
             let subtypes = [];
             let keywords = [];
             {
-                data.forEach((d, i) => {
+                data.forEach(d => {
                     if (!d) {
                         return;
                     }
@@ -1801,7 +1803,7 @@
                                 break;
                         }
 
-                        if (text_temp.includes(key.toLowerCase())) {
+                        if (target) {
                             if (!(key in keyword_count)) {
                                 keyword_count[key] = [];
                             }
@@ -2326,8 +2328,8 @@
             // image
             {
                 let html = '';
-                data.forEach((d, i) => {
-                    if (empty_row.includes(i)) {
+                data.forEach(d => {
+                    if (d.empty_row) {
                         html += '<hr style="height: 2px; background: #000000;">';
                     }
                     if (!d) {
@@ -2364,8 +2366,8 @@
             // link
             {
                 let link = location.protocol + '//' + location.host + location.pathname + '?input=';
-                data.forEach((d, i) => {
-                    if (empty_row.includes(i)) {
+                data.forEach(d => {
+                    if (d.empty_row) {
                         link += '___';
                     }
                     if (!d) {
