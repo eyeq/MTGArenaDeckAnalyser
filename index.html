@@ -1609,6 +1609,8 @@
                 self_mill: [],
                 library_out: [],
                 fog: [],
+                looting: [],
+                draw: [],
                 discard: [],
                 ponza: [],
                 permission: [],
@@ -1869,6 +1871,21 @@
                     }
 
                     // keyword other
+                    if (text_temp.includes('devotion')) {
+                        let key = 'Devotion';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+                    if (text_temp.includes('roll a d20') || text_temp.includes('roll one or more dice')) {
+                        let key = 'Dice rolling';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
                     if (text_temp.includes('you control an artifact and an enchantment')
                         || (text_temp.includes('you control an artifact') && text_temp.includes('you control an enchantment'))) {
                         let key = 'Harmony';
@@ -1919,6 +1936,13 @@
                         || text_temp.includes('your life total to less than 1')
                         || text_temp.includes('your life total would be reduced to 0')) {
                         card_count.fog.push(d);
+                    }
+                    if (text_temp.includes('draw ') || text_temp.includes('draws ')) {
+                        if(text_temp.includes('discard')) {
+                            card_count.looting.push(d);
+                        } else {
+                            card_count.draw.push(d);
+                        }
                     }
                     if (text_temp.includes('opponent reveal') || text_temp.includes('player reveal') ||
                         text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
@@ -2122,6 +2146,16 @@
 
                     html += '<tr>';
                     html += '<td>Fog</td>';
+                    html += '</tr>';
+                }
+                if (card_count.looting.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
+                    html += '<tr>';
+                    html += '<td>Looting</td>';
+                    html += '</tr>';
+                }
+                if (card_count.draw.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
+                    html += '<tr>';
+                    html += '<td>Card Advantage</td>';
                     html += '</tr>';
                 }
                 if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
