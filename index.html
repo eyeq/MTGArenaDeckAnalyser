@@ -665,22 +665,6 @@
                 $('#sideboard').html('Sideboard (' + counts_side + ')');
             }
 
-            // link
-            {
-                let link = location.pathname + '?input=';
-                data.forEach((d, i) => {
-                    if (empty_row.includes(i)) {
-                        link += '___';
-                    }
-                    if (!d) {
-                        return;
-                    }
-
-                    link += d.count + '_' + d.set.toUpperCase() + '_' + d.collector_number + '_';
-                });
-                $('#link').html('<a href="' + link + '">Copy link address</a>');
-            }
-
             // output
             {
                 let val = '';
@@ -1385,6 +1369,7 @@
             }
 
             // format
+            let format = '';
             {
                 let formats = {
                     paper: ['Standard', 'Explorer', 'Pioneer', 'Modern', 'Legacy', 'Vintage'],
@@ -1428,12 +1413,16 @@
                 html += '<table>';
                 if (commander) {
                     if (formats.brawl_p.length > 0) {
+                        format = formats.brawl_p[0];
+
                         html += '<tr>';
                         html += '<td>' + formats.brawl_p.join(' / ') + '</td>';
                         html += '</tr>';
                         html += '<tr>';
                         html += '</tr>';
                     } else {
+                        format = formats.brawl[0];
+
                         html += '<tr>';
                         html += '<td>' + formats.brawl.join(' / ') + '</td>';
                         html += '</tr>';
@@ -1442,12 +1431,20 @@
                     }
                 } else {
                     if (formats.paper_p.length > 0) {
+                        format = formats.paper_p[0];
+
                         html += '<tr>';
                         html += '<td>' + formats.paper_p.join(' / ') + '</td>';
                         html += '</tr>';
                         html += '<tr>';
                         html += '</tr>';
                     } else {
+                        if (formats.paper.length > 0) {
+                            format = formats.paper[0];
+                        } else {
+                            format = formats.arena[0];
+                        }
+
                         html += '<tr>';
                         html += '<td>' + formats.paper.join(' / ') + '</td>';
                         html += '</tr>';
@@ -1460,15 +1457,19 @@
                 html += '<tr>';
                 html += '<td>';
                 if (standard.m18) {
+                    format = 'M18 Standard';
                     html += '(M18 Standard)';
                 }
                 if (standard.m19) {
+                    format = 'M19 Standard';
                     html += '(M19 Standard)';
                 }
                 if (standard.m20) {
+                    format = 'M20 Standard';
                     html += '(M20 Standard)';
                 }
                 if (standard.m21) {
+                    format = 'M21 Standard';
                     html += '(M21 Standard)';
                 }
                 html += '</td>';
@@ -1478,6 +1479,7 @@
             }
 
             // keycard
+            let keycards = [];
             {
                 let keymap = {
                     'Alrund\'s Epiphany': 'Epiphany',
@@ -1547,7 +1549,6 @@
                 };
                 let keycount = {};
 
-                let keycards = [];
                 data.forEach((d, i) => {
                     if (!d) {
                         return;
@@ -1627,6 +1628,9 @@
                 creature: [],
                 weenie: [],
             };
+
+            let subtypes = [];
+            let keywords = [];
             {
                 data.forEach((d, i) => {
                     if (!d) {
@@ -2038,6 +2042,8 @@
                 Object.keys(land_types_count).forEach(key => {
                     let count = land_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.06) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2048,6 +2054,8 @@
                 Object.keys(creature_types_count).forEach(key => {
                     let count = creature_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.20) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2058,6 +2066,8 @@
                 Object.keys(permanent_types_count).forEach(key => {
                     let count = permanent_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.20) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2066,6 +2076,8 @@
                 Object.keys(artifact_types_count).forEach(key => {
                     let count = artifact_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.13) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2076,6 +2088,8 @@
                 Object.keys(enchantment_types_count).forEach(key => {
                     let count = enchantment_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.13) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2086,6 +2100,8 @@
                 Object.keys(spell_types_count).forEach(key => {
                     let count = spell_types_count[key].reduce((p, v) => p + v.count, 0);
                     if (count / counts_main >= 0.06) {
+                        subtypes.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2100,7 +2116,9 @@
                 html += '<table>';
                 Object.keys(keyword_count).forEach(key => {
                     let count = keyword_count[key].reduce((p, v) => p + v.count, 0);
-                    if (count / counts_main >= 0.13) {
+                    if (count / counts_main >= 0.20) {
+                        keywords.push(key);
+
                         html += '<tr>';
                         html += '<td>' + key + '</td>';
                         html += '</tr>';
@@ -2127,22 +2145,29 @@
                     html += '</tr>';
                 }
                 if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Self-Mill');
+
                     html += '<tr>';
                     html += '<td>Self Mill</td>';
                     html += '</tr>';
                 } else if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Library-Out');
+
                     html += '<tr>';
                     html += '<td>Library Out</td>';
                     html += '</tr>';
                 }
                 if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     control = true;
+                    keywords.push('Fog');
 
                     html += '<tr>';
                     html += '<td>Fog</td>';
                     html += '</tr>';
                 }
                 if (card_count.looting.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
+                    keywords.push('Looting');
+
                     html += '<tr>';
                     html += '<td>Looting</td>';
                     html += '</tr>';
@@ -2158,16 +2183,21 @@
                     html += '</tr>';
                 }
                 if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Hand-Destruction');
+
                     html += '<tr>';
                     html += '<td>Hand Destruction</td>';
                     html += '</tr>';
                 }
                 if (card_count.ponza.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Land-Destruction');
+
                     html += '<tr>';
                     html += '<td>Land Destruction</td>';
                     html += '</tr>';
                 }
                 if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
+                    keywords.push('Permission');
                     permission = true;
                     control = true;
 
@@ -2176,6 +2206,7 @@
                     html += '</tr>';
                 }
                 if (card_count.tron.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Tron');
                     ramp = true;
 
                     html += '<tr>';
@@ -2183,6 +2214,7 @@
                     html += '</tr>';
                 }
                 if (card_count.post.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Post');
                     ramp = true;
 
                     html += '<tr>';
@@ -2190,6 +2222,7 @@
                     html += '</tr>';
                 }
                 if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    keywords.push('Ramp');
                     ramp = true;
 
                     html += '<tr>';
@@ -2197,6 +2230,7 @@
                     html += '</tr>';
                 }
                 if (card_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    keywords.push('Burn');
                     burn = true;
 
                     html += '<tr>';
@@ -2204,6 +2238,8 @@
                     html += '</tr>';
                 }
                 if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    keywords.push('Reanimate');
+
                     html += '<tr>';
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
@@ -2323,6 +2359,39 @@
                 $('#board').html(html);
 
                 resizeImage();
+            }
+
+            // link
+            {
+                let link = location.pathname + '?input=';
+                data.forEach((d, i) => {
+                    if (empty_row.includes(i)) {
+                        link += '___';
+                    }
+                    if (!d) {
+                        return;
+                    }
+
+                    link += d.count + '_' + d.set.toUpperCase() + '_' + d.collector_number + '_';
+                });
+
+                let text = [];
+                if (keycards.length !== 0) {
+                    text.push(keycards.map(d => d.name).join(' '));
+                }
+                // if (subtypes.length !== 0) {
+                //     text.push(subtypes.join(' '));
+                // }
+                // if (keywords.length !== 0) {
+                //     text.push(keywords.join(' '));
+                // }
+                let tweet = encodeURIComponent(format + ' ' + text.join(' / ') + '\n#mtgdeck\n\n');
+
+                let html = '';
+                html += '<a href="' + link + '">Copy link address</a>'
+                html += '<br>'
+                html += '<a href="https://twitter.com/intent/tweet?text=' + tweet + link + '" target="_blank">Tweet</a>';
+                $('#link').html(html);
             }
 
             // Debuge
