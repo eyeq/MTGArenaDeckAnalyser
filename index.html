@@ -2363,7 +2363,7 @@
 
             // link
             {
-                let link = location.pathname + '?input=';
+                let link = location.protocol + '//' + location.host + location.pathname + '?input=';
                 data.forEach((d, i) => {
                     if (empty_row.includes(i)) {
                         link += '___';
@@ -2379,12 +2379,12 @@
                 if (keycards.length !== 0) {
                     text.push(keycards.map(d => d.name).join(' '));
                 }
-                // if (subtypes.length !== 0) {
-                //     text.push(subtypes.join(' '));
-                // }
-                // if (keywords.length !== 0) {
-                //     text.push(keywords.join(' '));
-                // }
+                if (subtypes.length !== 0) {
+                    text.push(subtypes.join(' '));
+                }
+                if (keywords.length !== 0) {
+                    text.push(keywords.join(' '));
+                }
                 let tweet = encodeURIComponent(format + ' ' + text.join(' / ') + '\n#mtgdeck\n\n');
 
                 let html = '';
