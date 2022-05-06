@@ -454,12 +454,12 @@
             // 'Counter',
             // 'Create',
             // 'Destroy',
-            'Discard',
+            // 'Discard',
             // 'Double',
             // 'Exchange',
             // 'Exile',
             'Fight',
-            'Mill',
+            // 'Mill',
             // 'Play',
             'Regenerate',
             // 'Reveal',
@@ -1427,13 +1427,6 @@
                 let html = '';
                 html += '<table>';
                 if (commander) {
-                    let format_names = {
-                        Brawl: 'Standard-Brawl',
-                        Historicbrawl: 'Historic-Brawl',
-                        Commander: 'Commander',
-                        Paupercommander: 'Pauper-Commander',
-                    };
-
                     if (formats.brawl_p.length > 0) {
                         html += '<tr>';
                         html += '<td>' + formats.brawl_p.join(' / ') + '</td>';
@@ -1606,11 +1599,13 @@
 
             let card_count = {
                 anti_discard: [],
+
                 self_mill: [],
                 library_out: [],
                 fog: [],
                 looting: [],
                 draw: [],
+                self_discard: [],
                 discard: [],
                 ponza: [],
                 permission: [],
@@ -1938,15 +1933,18 @@
                         card_count.fog.push(d);
                     }
                     if (text_temp.includes('draw ') || text_temp.includes('draws ')) {
-                        if(text_temp.includes('discard')) {
+                        if (text_temp.includes('discard')) {
                             card_count.looting.push(d);
                         } else {
                             card_count.draw.push(d);
                         }
-                    }
-                    if (text_temp.includes('opponent reveal') || text_temp.includes('player reveal') ||
-                        text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
-                        card_count.discard.push(d);
+                    } else if (text_temp.includes('discard')) {
+                        if (text_temp.includes('opponent reveal') || text_temp.includes('player reveal') ||
+                            text_temp.includes('opponent discard') || text_temp.includes('player discard')) {
+                            card_count.discard.push(d);
+                        } else {
+                            card_count.self_discard.push(d);
+                        }
                     }
                     if (text_temp.includes('destroy target land') || text_temp.includes('destroy target nonbasic land')
                         || (text_temp.includes('destroy target ') && text_temp.includes(' or land'))) {
@@ -2017,10 +2015,6 @@
                         }
                     }
                 });
-                let ratio_key = 0.09;
-                let ratio_refer = 0.16;
-                let ratio_role = 0.21;
-                let ratio_lord = 0.26;
 
                 // supertype
                 let html = '';
@@ -2132,16 +2126,16 @@
                     html += '<td>Anti Discard</td>';
                     html += '</tr>';
                 }
-                if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Self Mill</td>';
                     html += '</tr>';
-                } else if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                } else if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Library Out</td>';
                     html += '</tr>';
                 }
-                if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     control = true;
 
                     html += '<tr>';
@@ -2158,6 +2152,11 @@
                     html += '<td>Card Advantage</td>';
                     html += '</tr>';
                 }
+                if (card_count.self_discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    html += '<tr>';
+                    html += '<td>Self Discard</td>';
+                    html += '</tr>';
+                }
                 if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Hand Destruction</td>';
@@ -2168,7 +2167,7 @@
                     html += '<td>Land Destruction</td>';
                     html += '</tr>';
                 }
-                if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
+                if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
                     permission = true;
                     control = true;
 
@@ -2190,7 +2189,7 @@
                     html += '<td>Post</td>';
                     html += '</tr>';
                 }
-                if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_role) {
+                if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
                     ramp = true;
 
                     html += '<tr>';
@@ -2204,7 +2203,7 @@
                     html += '<td>Burn</td>';
                     html += '</tr>';
                 }
-                if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.10) {
+                if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     html += '<tr>';
                     html += '<td>Reanimate</td>';
                     html += '</tr>';
@@ -2223,17 +2222,17 @@
                     html += '<td>Legends</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Artifact</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= ratio_refer) {
+                if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.30) {
+                if (archetype_count.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Spells</td>';
                     html += '</tr>';
@@ -2243,12 +2242,12 @@
                     html += '<td>Flash</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.token.reduce((p, v) => p + v.count, 0) / counts_main >= 0.23) {
+                if (archetype_count.token.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     aggro = true;
 
                     html += '<tr>';
