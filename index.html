@@ -38,12 +38,29 @@
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <textarea id="input" style="width: 400px; height: 240px;" placeholder="Export a Deck from MTG Arena" onchange="read();"></textarea>
         </div>
+        <h3 style="margin-bottom: 0;">Sort by:</h3>
+        <div style="display: inline-block; vertical-align: top; margin: 8px;">
+            <input type="radio" id="sort_none" name="sort" value="none">
+            <label for="sort_none">None</label>
+
+            <input type="radio" id="sort_type" name="sort" value="type">
+            <label for="sort_type">Type</label>
+
+            <input type="radio" id="sort_cmc" name="sort" value="cmc" checked>
+            <label for="sort_cmc">CMC</label>
+
+            <input type="radio" id="sort_color" name="sort" value="color">
+            <label for="sort_color">Color</label>
+        </div>
     </div>
 
     <div style="display: inline-block; vertical-align: top;">
         <h2 style="margin-bottom: 0;">Share this deck</h2>
         <div style="display: inline-block; vertical-align: top; margin: 8px;">
-            <textarea id="output" style="width: 400px; height: 200px; background-color: #F0F0F0;" readonly onclick="this.select();"></textarea>
+            <textarea id="output" style="width: 400px; height: 240px; background-color: #F0F0F0;" readonly onclick="this.select();"></textarea>
+        </div>
+        <h3 style="margin-bottom: 0;">Link:</h3>
+        <div style="display: inline-block; vertical-align: top; margin: 8px;">
             <div id="link"></div>
         </div>
     </div>
@@ -156,20 +173,20 @@
 
     <h3>Image</h3>
     <div style="display: inline-block; vertical-align: top; margin: 8px;">
-        <input type="radio" id="t" name="size" value="t">
-        <label for="t">Tiny</label>
+        <input type="radio" id="size_t" name="size" value="t">
+        <label for="size_t">Tiny</label>
 
-        <input type="radio" id="s" name="size" value="s" checked>
-        <label for="s">Small</label>
+        <input type="radio" id="size_s" name="size" value="s" checked>
+        <label for="size_s">Small</label>
 
-        <input type="radio" id="m" name="size" value="m">
-        <label for="m">Medium</label>
+        <input type="radio" id="size_m" name="size" value="m">
+        <label for="size_m">Medium</label>
 
-        <input type="radio" id="l" name="size" value="l">
-        <label for="l">Large</label>
+        <input type="radio" id="size_l" name="size" value="l">
+        <label for="size_l">Large</label>
 
-        <input type="radio" id="h" name="size" value="h">
-        <label for="h">Huge</label>
+        <input type="radio" id="size_h" name="size" value="h">
+        <label for="size_h">Huge</label>
     </div>
     <br>
 
@@ -518,6 +535,7 @@
                 $('#input').val(val);
             }
 
+            $('input[name="sort"]').on('change', read);
             $('input[name="size"]').on('change', resizeImage);
 
             $('#keycard').on('mouseenter', '.key', e => {
@@ -628,7 +646,7 @@
                             input_set: set,
                             input_number: number,
                             input_group: input_group,
-                        })
+                        });
                     }
                 });
 
@@ -655,6 +673,175 @@
 
                 if (notfind.length !== 0) {
                     alert('Could not find cards: \n' + notfind.join('\n'));
+                }
+            }
+
+            // sort
+            {
+                let sort = (a, b) => {
+                    if (a < b) return -1;
+                    if (a > b) return 1;
+                    return 0;
+                }
+                let getColorOrder = (color_identity) => {
+                    switch(color_identity.length) {
+                        case 1:
+                            if (color_identity.includes('W')) {
+                                return 10;
+                            }
+                            if (color_identity.includes('U')) {
+                                return 12;
+                            }
+                            if (color_identity.includes('B')) {
+                                return 14;
+                            }
+                            if (color_identity.includes('R')) {
+                                return 16;
+                            }
+                            if (color_identity.includes('G')) {
+                                return 18;
+                            }
+                            break;
+                        case 2:
+                            if (color_identity.includes('W') && color_identity.includes('U')) {
+                                return 20;
+                            }
+                            if (color_identity.includes('W') && color_identity.includes('B')) {
+                                return 21;
+                            }
+                            if (color_identity.includes('U') && color_identity.includes('B')) {
+                                return 22;
+                            }
+                            if (color_identity.includes('U') && color_identity.includes('R')) {
+                                return 23;
+                            }
+                            if (color_identity.includes('B') && color_identity.includes('R')) {
+                                return 24;
+                            }
+                            if (color_identity.includes('B') && color_identity.includes('G')) {
+                                return 25;
+                            }
+                            if (color_identity.includes('R') && color_identity.includes('G')) {
+                                return 26;
+                            }
+                            if (color_identity.includes('R') && color_identity.includes('W')) {
+                                return 27;
+                            }
+                            if (color_identity.includes('G') && color_identity.includes('W')) {
+                                return 28;
+                            }
+                            if (color_identity.includes('G') && color_identity.includes('U')) {
+                                return 29;
+                            }
+                            break;
+                        case 3:
+                            if (color_identity.includes('W') && color_identity.includes('U') && color_identity.includes('B')) {
+                                return 30;
+                            }
+                            if (color_identity.includes('W') && color_identity.includes('B') && color_identity.includes('G')) {
+                                return 31;
+                            }
+                            if (color_identity.includes('U') && color_identity.includes('B') && color_identity.includes('R')) {
+                                return 32;
+                            }
+                            if (color_identity.includes('U') && color_identity.includes('R') && color_identity.includes('W')) {
+                                return 33;
+                            }
+                            if (color_identity.includes('B') && color_identity.includes('R') && color_identity.includes('G')) {
+                                return 34;
+                            }
+                            if (color_identity.includes('B') && color_identity.includes('G') && color_identity.includes('U')) {
+                                return 35;
+                            }
+                            if (color_identity.includes('R') && color_identity.includes('G') && color_identity.includes('W')) {
+                                return 36;
+                            }
+                            if (color_identity.includes('R') && color_identity.includes('W') && color_identity.includes('G')) {
+                                return 37;
+                            }
+                            if (color_identity.includes('G') && color_identity.includes('W') && color_identity.includes('U')) {
+                                return 38;
+                            }
+                            if (color_identity.includes('G') && color_identity.includes('U') && color_identity.includes('R')) {
+                                return 39;
+                            }
+                            break;
+                        case 4:
+                            if (color_identity.includes('W') && color_identity.includes('U') && color_identity.includes('B') && color_identity.includes('R')) {
+                                return 40;
+                            }
+                            if (color_identity.includes('U') && color_identity.includes('B') && color_identity.includes('R') && color_identity.includes('G')) {
+                                return 42;
+                            }
+                            if (color_identity.includes('B') && color_identity.includes('R') && color_identity.includes('G') && color_identity.includes('W')) {
+                                return 44;
+                            }
+                            if (color_identity.includes('R') && color_identity.includes('G') && color_identity.includes('W') && color_identity.includes('U')) {
+                                return 46;
+                            }
+                            if (color_identity.includes('G') && color_identity.includes('W') && color_identity.includes('U') && color_identity.includes('B')) {
+                                return 48;
+                            }
+                            break;
+                        case 5:
+                            return 50;
+                        case 0:
+                            return 60;
+                    }
+                    return 100;
+                };
+                let getTypeOrder = (type_line) => {
+                    if (type_line.includes('Land')) {
+                        return 0;
+                    }
+                    if (type_line.includes('Planeswalker')) {
+                        return 1;
+                    }
+                    if (type_line.includes('Creature')) {
+                        return 2;
+                    }
+                    if (type_line.includes('Artifact')) {
+                        return 3;
+                    }
+                    if (type_line.includes('Enchantment')) {
+                        return 4;
+                    }
+                    if (type_line.includes('Instant')) {
+                        return 5;
+                    }
+                    if (type_line.includes('Sorcery')) {
+                        return 6;
+                    }
+                    return 100;
+                }
+
+                let val = $('input:radio[name="sort"]:checked').val();
+                switch (val) {
+                    case 'type':
+                        data = data.sort((a, b) => {
+                            return sort(a.input_group, b.input_group)
+                                || sort(getTypeOrder(a.type_line), getTypeOrder(b.type_line))
+                                || sort(a.cmc, b.cmc)
+                                || sort(getColorOrder(a.color_identity), getColorOrder(b.color_identity))
+                                || sort(a.name, b.name);
+                        });
+                        break;
+                    case 'cmc':
+                        data = data.sort((a, b) => {
+                            return sort(a.input_group, b.input_group)
+                                || sort(a.cmc, b.cmc)
+                                || sort(getColorOrder(a.color_identity), getColorOrder(b.color_identity))
+                                || sort(a.name, b.name);
+                        });
+                        break;
+                    case 'color':
+                        data = data.sort((a, b) => {
+                            return sort(a.input_group, b.input_group)
+                                || sort(getColorOrder(a.color_identity), getColorOrder(b.color_identity))
+                                || sort(a.cmc, b.cmc)
+                                || sort(a.name, b.name);
+                        });
+                        break;
                 }
             }
 
