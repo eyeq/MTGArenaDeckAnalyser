@@ -2101,6 +2101,9 @@
                     if (text_temp.includes('draw ') || text_temp.includes('draws ')) {
                         if (text_temp.includes('discard')) {
                             card_count.looting.push(d);
+                        }
+                        if (text_temp.includes('whenever you draw') || text_temp.includes('whenever an opponent draw')) {
+                            // ignore
                         } else {
                             card_count.draw.push(d);
                         }
@@ -2157,8 +2160,7 @@
                         || text_temp.includes('legendary creature')) {
                         archetype_count.legends.push(d);
                     }
-                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')
-                        || text_temp.includes('fabricate')) {
+                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
                         archetype_count.artifact.push(d);
                     }
                     if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
@@ -2300,12 +2302,122 @@
                 html = '';
                 html += '<table>';
 
+                // keyword
+                if (archetype_count.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                    html += '<tr>';
+                    html += '<td>Legends</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.self_discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    html += '<tr>';
+                    html += '<td>Self Discard</td>';
+                    html += '</tr>';
+                }
+
                 // cardeffect
-                if (card_count.anti_discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
+                let opt = card_count.draw.reduce((p, v) => p + v.count, 0) * 2;
+                if (card_count.anti_discard.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.06) {
                     html += '<tr>';
                     html += '<td>Anti Discard</td>';
                     html += '</tr>';
                 }
+
+                if (card_count.fog.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    control = true;
+                    keywords.push('Fog');
+
+                    html += '<tr>';
+                    html += '<td>Fog</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.looting.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.20) {
+                    keywords.push('Looting');
+
+                    html += '<tr>';
+                    html += '<td>Looting</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.discard.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    keywords.push('Hand-Destruction');
+
+                    html += '<tr>';
+                    html += '<td>Hand Destruction</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.ponza.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    keywords.push('Land-Destruction');
+
+                    html += '<tr>';
+                    html += '<td>Land Destruction</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.permission.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.20) {
+                    keywords.push('Permission');
+                    permission = true;
+
+                    html += '<tr>';
+                    html += '<td>Permission</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.tron.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    keywords.push('Tron');
+                    ramp = true;
+
+                    html += '<tr>';
+                    html += '<td>Tron</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.post.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    keywords.push('Post');
+                    ramp = true;
+
+                    html += '<tr>';
+                    html += '<td>Post</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.26) {
+                    keywords.push('Ramp');
+                    ramp = true;
+
+                    html += '<tr>';
+                    html += '<td>Ramp</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    keywords.push('Reanimate');
+
+                    html += '<tr>';
+                    html += '<td>Reanimate</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.wrath.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.06) {
+                    control = true;
+
+                    html += '<tr>';
+                    html += '<td>Wrath</td>';
+                    html += '</tr>';
+                }
+
+                // how to win
+                if (card_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
+                    keywords.push('Burn');
+                    burn = true;
+
+                    html += '<tr>';
+                    html += '<td>Burn</td>';
+                    html += '</tr>';
+                }
+
                 if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
                     keywords.push('Self-Mill');
 
@@ -2319,141 +2431,50 @@
                     html += '<td>Library Out</td>';
                     html += '</tr>';
                 }
-                if (card_count.fog.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    control = true;
-                    keywords.push('Fog');
 
-                    html += '<tr>';
-                    html += '<td>Fog</td>';
-                    html += '</tr>';
-                }
-                if (card_count.looting.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
-                    keywords.push('Looting');
-
-                    html += '<tr>';
-                    html += '<td>Looting</td>';
-                    html += '</tr>';
-                }
-                if (card_count.draw.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
-                    html += '<tr>';
-                    html += '<td>Card Advantage</td>';
-                    html += '</tr>';
-                }
-                if (card_count.self_discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    html += '<tr>';
-                    html += '<td>Self Discard</td>';
-                    html += '</tr>';
-                }
-                if (card_count.discard.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Hand-Destruction');
-
-                    html += '<tr>';
-                    html += '<td>Hand Destruction</td>';
-                    html += '</tr>';
-                }
-                if (card_count.ponza.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Land-Destruction');
-
-                    html += '<tr>';
-                    html += '<td>Land Destruction</td>';
-                    html += '</tr>';
-                }
-                if (card_count.permission.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
-                    keywords.push('Permission');
-                    permission = true;
-                    control = true;
-
-                    html += '<tr>';
-                    html += '<td>Permission</td>';
-                    html += '</tr>';
-                }
-                if (card_count.tron.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Tron');
-                    ramp = true;
-
-                    html += '<tr>';
-                    html += '<td>Tron</td>';
-                    html += '</tr>';
-                }
-                if (card_count.post.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Post');
-                    ramp = true;
-
-                    html += '<tr>';
-                    html += '<td>Post</td>';
-                    html += '</tr>';
-                }
-                if (card_count.mana_acceleration.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
-                    keywords.push('Ramp');
-                    ramp = true;
-
-                    html += '<tr>';
-                    html += '<td>Ramp</td>';
-                    html += '</tr>';
-                }
-                if (card_count.direct_damage.reduce((p, v) => p + v.count, 0) / counts_main >= 0.26) {
-                    keywords.push('Burn');
-                    burn = true;
-
-                    html += '<tr>';
-                    html += '<td>Burn</td>';
-                    html += '</tr>';
-                }
-                if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Reanimate');
-
-                    html += '<tr>';
-                    html += '<td>Reanimate</td>';
-                    html += '</tr>';
-                }
-                if (card_count.wrath.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    control = true;
-
-                    html += '<tr>';
-                    html += '<td>Control</td>'; // reset
-                    html += '</tr>';
-                }
-
-                // cardtype
-                if (archetype_count.legends.reduce((p, v) => p + v.count, 0) / counts_main >= 0.06) {
-                    html += '<tr>';
-                    html += '<td>Legends</td>';
-                    html += '</tr>';
-                }
                 if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Artifact</td>';
                     html += '</tr>';
                 }
+
                 if (archetype_count.planeswalker.reduce((p, v) => p + v.count, 0) / counts_main >= 0.20) {
                     html += '<tr>';
                     html += '<td>Superfriends</td>';
                     html += '</tr>';
                 }
+
                 if (archetype_count.spells.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Spells</td>';
                     html += '</tr>';
                 }
+
                 if (archetype_count.instant.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Flash</td>';
                     html += '</tr>';
                 }
+
                 if (archetype_count.token.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Token</td>';
                     html += '</tr>';
                 }
-                if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
+
+                if (archetype_count.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
+                    weenie = true;
+                    aggro = true;
+
+                    html += '<tr>';
+                    html += '<td>Weenie</td>';
+                    html += '</tr>';
+                } else if (archetype_count.creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     aggro = true;
 
                     html += '<tr>';
                     html += '<td>Beatdown</td>';
                     html += '</tr>';
-                }
-                if (archetype_count.weenie.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
-                    weenie = true;
                 }
 
                 html += '</table>';
@@ -2475,12 +2496,14 @@
                     } else {
                         decktype = 'Aggro';
                     }
-                } else if (ramp) {
-                    decktype = 'Ramp';
                 } else if (control) {
                     decktype = 'Control';
-                } else {
-                    decktype = 'Combo';
+                } else if (permission) {
+                    decktype = 'Permission';
+                } else if (burn) {
+                    decktype = 'Burn';
+                } else if (ramp) {
+                    decktype = 'Ramp';
                 }
                 $('#decktype').html(decktype);
             }
