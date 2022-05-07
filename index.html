@@ -1845,7 +1845,8 @@
 
             let archetype_count = {
                 legends: [],
-                artifact: [],
+                artifact_creature: [],
+                enchantment_creature: [],
                 planeswalker: [],
                 spells: [],
                 instant: [],
@@ -2149,6 +2150,15 @@
                         keyword_count[key].push(d);
                     }
 
+                    if (text_temp.includes('whenever you cast an enchantment spell')
+                        || text_temp.includes('constellation')) {
+                        let key = 'Enchantress';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
                     // cardeffect
                     if (text_temp.includes('you to discard')) {
                         card_count.anti_discard.push(d);
@@ -2229,8 +2239,13 @@
                         || text_temp.includes('legendary creature')) {
                         archetype_count.legends.push(d);
                     }
-                    if (type_temp.includes('artifact') || text_temp.includes('artifact creature token')) {
-                        archetype_count.artifact.push(d);
+                    if ((type_temp.includes('artifact') && type_temp.includes('creature'))
+                        || text_temp.includes('artifact creature token')) {
+                        archetype_count.artifact_creature.push(d);
+                    }
+                    if ((type_temp.includes('enchantment') && type_temp.includes('creature'))
+                        || text_temp.includes('enchantment creature token')) {
+                        archetype_count.enchantment_creature.push(d);
                     }
                     if (type_temp.includes('planeswalker') || text_temp.includes('planeswalker token')) {
                         archetype_count.planeswalker.push(d);
@@ -2501,9 +2516,15 @@
                     html += '</tr>';
                 }
 
-                if (archetype_count.artifact.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
+                if (archetype_count.artifact_creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
                     html += '<tr>';
                     html += '<td>Artifact</td>';
+                    html += '</tr>';
+                }
+
+                if (archetype_count.enchantment_creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
+                    html += '<tr>';
+                    html += '<td>Enchantment</td>';
                     html += '</tr>';
                 }
 
