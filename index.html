@@ -2099,6 +2099,7 @@
                         }
                         keyword_count[key].push(d);
                     }
+
                     if (text_temp.includes('roll a d20') || text_temp.includes('roll one or more dice')) {
                         let key = 'Dice rolling';
                         if (!(key in keyword_count)) {
@@ -2157,6 +2158,19 @@
                             keyword_count[key] = [];
                         }
                         keyword_count[key].push(d);
+                    }
+
+                    if (text_temp.includes('enters the battlefield')) {
+                        if (text_temp.includes('enters the battlefield with')
+                            || text_temp.includes('enters the battlefield, you get')) {
+                            // ignore
+                        } else {
+                            let key = 'ETB';
+                            if (!(key in keyword_count)) {
+                                keyword_count[key] = [];
+                            }
+                            keyword_count[key].push(d);
+                        }
                     }
 
                     // cardeffect
