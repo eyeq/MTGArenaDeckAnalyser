@@ -589,7 +589,7 @@
                 text = text.replace(/\r\n|\r/g, '\n');
 
                 let sideboard = 10000;
-                let empty_row = [];
+                let input_group = 0;
                 let inputs = [];
                 text.split('\n').forEach(d => {
                     d = d.trim();
@@ -601,7 +601,7 @@
                     if (index0 === -1) {
                         if (inputs.length !== 0) {
                             sideboard = inputs.length;
-                            empty_row.push(inputs.length);
+                            input_group += 1;
                         }
                     } else {
                         let index1 = d.indexOf(' (');
@@ -623,10 +623,11 @@
                             number = s[s.length - 1];
                         }
                         inputs.push({
-                            count: count,
-                            name: name,
-                            set: set,
-                            number: number,
+                            input_count: count,
+                            input_name: name,
+                            input_set: set,
+                            input_number: number,
+                            input_group: input_group,
                         })
                     }
                 });
@@ -637,15 +638,15 @@
                 let notfind = [];
                 for (let i = 0; i < inputs.length; i++) {
                     let d = inputs[i];
-                    let ret = await send(d.name, d.set, d.number);
+
+                    let ret = await send(d.input_name, d.input_set, d.input_number);
                     if (ret) {
-                        ret.count = d.count;
+                        ret.count = d.input_count;
                         ret.sideboard = !commander && i >= sideboard;
-                        ret.empty_row = empty_row.includes(i);
+                        ret.input_group = d.input_group;
                         data.push(ret);
                     } else {
-                        notfind.push([d.name, '(' + d.set + ')',  d.number].join(' '));
-                        empty_row.push(i + 1);
+                        notfind.push([d.input_name, '(' + d.input_set + ')',  d.input_number].join(' '));
                     }
 
                     $('#progress progress').prop('value', i + 1);
@@ -2296,8 +2297,10 @@
             // image
             {
                 let html = '';
+                let prev_group = data.length !== 0 ? data[0].input_group : 0;
                 data.forEach(d => {
-                    if (d.empty_row) {
+                    if (d.input_group !== prev_group) {
+                        prev_group = d.input_group;
                         html += '<hr style="height: 2px; background: #000000;">';
                     }
 
@@ -2331,8 +2334,10 @@
             // link
             {
                 let link = location.protocol + '//' + location.host + location.pathname + '?input=';
+                let prev_group = data.length !== 0 ? data[0].input_group : 0;
                 data.forEach(d => {
-                    if (d.empty_row) {
+                    if (d.input_group !== prev_group) {
+                        prev_group = d.input_group;
                         link += '___';
                     }
 
