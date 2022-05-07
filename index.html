@@ -2672,7 +2672,7 @@
                 if (keywords.length !== 0) {
                     text.push(keywords.join(' '));
                 }
-                let tweet = encodeURIComponent(format + ' ' + text.join(' / ') + '\n#mtgdeck\n\n');
+                let tweet = encodeURIComponent(format + ' #mtgdeck ' + text.join(' / ') + '\n');
 
                 let html = '';
                 html += '<a href="' + link + '">Copy link address</a>'
