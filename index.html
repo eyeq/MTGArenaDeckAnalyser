@@ -887,26 +887,30 @@
             }
 
             // color / symbol
-            let symbols = {
-                C: 0,
-                W: 0,
-                U: 0,
-                B: 0,
-                R: 0,
-                G: 0,
-                P: 0,
-                S: 0,
-            };
             {
+                let symbols = {
+                    C: 0,
+                    W: 0,
+                    U: 0,
+                    B: 0,
+                    R: 0,
+                    G: 0,
+                    P: 0,
+                    S: 0,
+                };
                 let keys = Object.keys(symbols);
                 data.forEach(d => {
                     keys.forEach(key => {
-                        if (d.mana_cost) {
+                        if (d.card_faces) {
+                            symbols[key] += (d.card_faces[0].mana_cost.split(key).length - 1) * d.count;
+                            if (d.layout !== 'transform') {
+                                symbols[key] += (d.card_faces[1].mana_cost.split(key).length - 1) * d.count;
+                            }
+                        } else {
                             symbols[key] += (d.mana_cost.split(key).length - 1) * d.count;
                         }
                     });
                 });
-                symbols.sum = symbols.W + symbols.U + symbols.B + symbols.G + symbols.R;
 
                 if (symbols.C + symbols.W + symbols.U + symbols.B + symbols.R + symbols.G === 0) {
                     symbols.C = 1;
@@ -941,19 +945,19 @@
 
                 // color
                 let colors = [];
-                if (symbols.W / symbols.sum >= 0.12) {
+                if (symbols.W / counts_main >= 0.13) {
                     colors.push('White');
                 }
-                if (symbols.U / symbols.sum >= 0.12) {
+                if (symbols.U / counts_main >= 0.13) {
                     colors.push('Blue');
                 }
-                if (symbols.B / symbols.sum >= 0.12) {
+                if (symbols.B / counts_main >= 0.13) {
                     colors.push('Black');
                 }
-                if (symbols.R / symbols.sum >= 0.12) {
+                if (symbols.R / counts_main >= 0.13) {
                     colors.push('Red');
                 }
-                if (symbols.G / symbols.sum >= 0.12) {
+                if (symbols.G / counts_main >= 0.13) {
                     colors.push('Green');
                 }
                 switch (colors.length) {
@@ -2553,7 +2557,6 @@
             // Debuge
             console.log({
                 data: data,
-                color_symbols: symbols,
                 archetype: {
                     supertype: super_types_count,
                     subtype_land: land_types_count,
@@ -2563,6 +2566,7 @@
                     subtype_artifact: artifact_types_count,
                     subtype_enchantment: enchantment_types_count,
                     keyword: keyword_count,
+                    card_count: card_count,
                     decktype: archetype_count,
                 },
             });
