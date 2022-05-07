@@ -580,81 +580,88 @@
         }
 
         async function read() {
-            let text = $('#input').val().trim();
-            text = text.replace(/\r\n|\r/g, '\n');
-
-            let inputs = [];
-
+            // inputs
             let commander = false;
-            let sideboard = 10000;
-            let empty_row = [];
-            text.split('\n').forEach(d => {
-                d = d.trim();
-                if (d === 'Commander') {
-                    commander = true;
-                }
-
-                let index0 = d.indexOf(' ');
-                if (index0 === -1) {
-                    if (inputs.length !== 0) {
-                        sideboard = inputs.length;
-                        empty_row.push(inputs.length);
-                    }
-                } else {
-                    let index1 = d.indexOf(' (');
-                    let s = d.split(' ');
-
-                    let count = Number(s[0]);
-
-                    let name = '';
-                    if (index1 === -1) {
-                        name = d.substring(index0 + 1);
-                    } else {
-                        name = d.substring(index0 + 1, index1);
-                    }
-
-                    let set = '';
-                    let number = '';
-                    if (s.length >= 3) {
-                        set = s[s.length - 2].replace(/[()]/g, '');
-                        number = s[s.length - 1];
-                    }
-                    inputs.push({
-                        count: count,
-                        name: name,
-                        set: set,
-                        number: number,
-                    })
-                }
-            });
-
             let data = [];
-            $('#progress progress').prop('max', inputs.length)
-            $('#progress progress').prop('value', 0);
-            $('#progress').show();
-            for (let i = 0; i < inputs.length; i++) {
-                let d = inputs[i];
-                let ret = await send(d.name, d.set, d.number);
-                if (ret) {
-                    ret.count = d.count;
-                    ret.sideboard = !commander && i >= sideboard;
-                    ret.empty_row = empty_row.includes(i);
-                }
-                data.push(ret);
+            {
+                let text = $('#input').val();
+                text = text.trim();
+                text = text.replace(/\r\n|\r/g, '\n');
 
-                $('#progress progress').prop('value', i + 1);
+                let sideboard = 10000;
+                let empty_row = [];
+                let inputs = [];
+                text.split('\n').forEach(d => {
+                    d = d.trim();
+                    if (d === 'Commander') {
+                        commander = true;
+                    }
+
+                    let index0 = d.indexOf(' ');
+                    if (index0 === -1) {
+                        if (inputs.length !== 0) {
+                            sideboard = inputs.length;
+                            empty_row.push(inputs.length);
+                        }
+                    } else {
+                        let index1 = d.indexOf(' (');
+                        let s = d.split(' ');
+
+                        let count = Number(s[0]);
+
+                        let name = '';
+                        if (index1 === -1) {
+                            name = d.substring(index0 + 1);
+                        } else {
+                            name = d.substring(index0 + 1, index1);
+                        }
+
+                        let set = '';
+                        let number = '';
+                        if (s.length >= 3) {
+                            set = s[s.length - 2].replace(/[()]/g, '');
+                            number = s[s.length - 1];
+                        }
+                        inputs.push({
+                            count: count,
+                            name: name,
+                            set: set,
+                            number: number,
+                        })
+                    }
+                });
+
+                $('#progress progress').prop('max', inputs.length)
+                $('#progress progress').prop('value', 0);
+                $('#progress').show();
+                let notfind = [];
+                for (let i = 0; i < inputs.length; i++) {
+                    let d = inputs[i];
+                    let ret = await send(d.name, d.set, d.number);
+                    if (ret) {
+                        ret.count = d.count;
+                        ret.sideboard = !commander && i >= sideboard;
+                        ret.empty_row = empty_row.includes(i);
+                        data.push(ret);
+                    } else {
+                        notfind.push([d.name, '(' + d.set + ')',  d.number].join(' '));
+                        empty_row.push(i + 1);
+                    }
+
+                    $('#progress progress').prop('value', i + 1);
+                }
+                $('#progress').hide();
+
+                if (notfind.length !== 0) {
+                    alert('Could not find cards: \n' + notfind.join('\n'));
+                }
             }
-            $('#progress').hide();
 
             // counts
             let counts_main = 0;
             let counts_side = 0;
             {
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (!d.sideboard) {
                         counts_main += d.count;
                     } else {
@@ -678,10 +685,6 @@
                 let first = true;
                 let sideboard = true;
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (sideboard && d.sideboard) {
                         val += '\nSideboard\n';
                         sideboard = false;
@@ -709,10 +712,6 @@
             {
                 let keys = Object.keys(symbols);
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     keys.forEach(key => {
                         if (d.mana_cost) {
                             symbols[key] += (d.mana_cost.split(key).length - 1) * d.count;
@@ -911,10 +910,6 @@
                     }
                 };
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (!d.sideboard) {
                         if (d.card_faces) {
                             addColorsCount(colors_main, d.card_faces[0], d.count);
@@ -1114,10 +1109,6 @@
                 });
 
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (!d.sideboard) {
                         keys.forEach(key => {
                             if (d.card_faces && key !== 'Land') {
@@ -1231,10 +1222,6 @@
                 });
 
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (d.type_line.includes('Basic')) {
                         return;
                     }
@@ -1283,10 +1270,6 @@
                 let tix_side = 0;
                 let usd_side = 0;
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (!d.sideboard) {
                         if (d.price_tix === null) {
                             tix_main = NaN;
@@ -1341,10 +1324,6 @@
             {
                 let sets = {};
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     if (d.type_line.includes('Basic')) {
                         return;
                     }
@@ -1387,10 +1366,6 @@
                     m21: true,
                 };
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     formats.paper = formats.paper.filter(key => d.legalities[key.toLowerCase()] === 'legal');
                     formats.paper_p = formats.paper_p.filter(key => d.legalities[key.toLowerCase()] === 'legal');
                     formats.arena = formats.arena.filter(key => d.legalities[key.toLowerCase()] === 'legal');
@@ -1552,9 +1527,6 @@
                 let keycount = {};
 
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
                     let count = (keycount[d.name] || 0) + d.count;
                     keycount[d.name] = count;
 
@@ -1635,10 +1607,6 @@
             let keywords = [];
             {
                 data.forEach(d => {
-                    if (!d) {
-                        return;
-                    }
-
                     let type_temp = '';
                     let text_temp = '';
                     if (d.card_faces) {
@@ -2332,9 +2300,6 @@
                     if (d.empty_row) {
                         html += '<hr style="height: 2px; background: #000000;">';
                     }
-                    if (!d) {
-                        return;
-                    }
 
                     let flip = false;
                     if (d.card_faces) {
@@ -2369,9 +2334,6 @@
                 data.forEach(d => {
                     if (d.empty_row) {
                         link += '___';
-                    }
-                    if (!d) {
-                        return;
                     }
 
                     link += d.count + '_' + d.set.toUpperCase() + '_' + d.collector_number + '_';
