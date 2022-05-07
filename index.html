@@ -1651,70 +1651,129 @@
             let keycards = [];
             {
                 let keymap = {
+                    // A
                     'Alrund\'s Epiphany': 'Epiphany',
                     'Approach of the Second Sun': 'Second Sun',
                     'Arclight Phoenix': 'Phoenix',
+                    'Atarka\'s Command': 'Atarka',
+                    // B
+                    'Balustrade Spy': 'Spy',
                     'Battle of Wits': 'Babel',
                     'Bolas\'s Citadel': 'Citadel',
+                    'Bring to Light': 'Bring to Light',
+                    // C
                     'Casualties of War': 'Casualties',
                     'Cavalcade of Calamity': 'Cavalcade',
+                    'Channel': 'Channel',
+                    'Chromatic Lantern': 'Chromatic',
+                    'Collected Company': 'Company',
                     'Command the Dreadhorde': 'Dreadhorde',
                     'Crackling Drake': 'Drake',
+                    'Cruel Ultimatum': 'Cruel',
+                    // D
+                    'Delver of Secrets': 'Delver',
                     'Doom Foretold': 'Doom',
-                    'Dragon\'s Approach': '',
+                    'Dragon\'s Approach': 'Approach',
+                    'Dreadhorde Arcanist': 'Arcanist',
+                    'Dynavolt Tower': 'Dynavolt',
+                    // E
                     'Embercleave': 'Embercleave',
+                    'Emergent Ultimatum': 'Ultimatum',
+                    'Enigmatic Incarnation': 'Enigmatic Incarnation',
                     'Experimental Frenzy': 'Frenzy',
+                    // F
                     'Faceless Haven': 'Faceless Haven',
                     'Feather, the Redeemed': 'Feather',
                     'Feasting Troll King': 'Troll King',
                     'Felidar Guardian': 'Felidar',
                     'Field of the Dead': 'Field',
                     'Fires of Invention': 'Fires',
+                    'Fist of Suns': 'Fist',
                     'Flood of Tears': 'Tears',
+                    // G
                     'Ghalta, Primal Hunger': 'Ghalta',
+                    'Gifts Ungiven': 'Ungiven',
                     'God-Pharaoh\'s Gift': 'Gift',
                     'Goldspan Dragon': 'Dragon',
                     'Golos, Tireless Pilgrim': 'Golos',
                     'Greasefang, Okiba Boss': 'Greasefang',
+                    // H
                     'Happily Ever After': 'Happily Ever After',
+                    'Hardened Scales': 'Hardened Scales',
                     'Hazoret the Fervent': 'Hazoret',
                     'Hero of Precinct One': 'Hero',
                     'Hinata, Dawn-Crowned': 'Hinata',
+                    'Hogaak, Arisen Necropolis': 'Hogaak',
+                    // I
                     'Irencrag Pyromancer': 'Irencrag',
+                    'Indomitable Creativity': 'Indomitable Creativity',
+                    'Inverter of Truth': 'Inverter',
+                    // J
+                    'Jace, the Mind Sculptor': 'Jace',
+                    // K
                     'Kenrith, the Returned King': 'Kenrith',
                     'Korvold, Fae-Cursed King': 'Korvold',
                     'Kroxa, Titan of Death\'s Hunger': 'Kroxa',
+                    // L
                     'Lich\'s Mastery': 'Lich',
                     'Lotus Field': 'Lotus',
+                    // M
                     'March of the Multitudes': 'March',
+                    // N
+                    'Neoform': 'Neoform',
                     'Nexus of Fate': 'Nexus',
                     'Nicol Bolas, Dragon-God': 'Bolas',
                     'Nine Lives': 'Nine Lives',
                     'Nissa, Who Shakes the World': 'Nissa',
                     'Niv-Mizzet Reborn': 'Niv-Mizzet',
+                    'Maze\'s End': 'Maze\'s End',
+                    // O
                     'Ob Nixilis, the Adversary': 'Nixilis',
                     'Oko, Thief of Crowns': 'Oko',
                     'Omnath, Locus of Creation': 'Omnath',
+                    // P
+                    'Paradox Engine': 'Paradox',
                     'Persistent Petitioners': 'Petitioners',
+                    'Pyromancer Ascension': 'Ascension',
+                    // Q
+                    // R
                     'Ramunap Ruins': 'Ramunap',
                     'Rat Colony': 'Rats',
                     'Relentless Rats': 'Rats',
+                    // S
                     'Sephara, Sky\'s Blade': 'Sephara',
                     'Scapeshift': 'Scapeshift',
                     'Shadowborn Apostle': 'Shadowborn',
+                    'Show and Tell': 'Show and Tell',
+                    'Soulflayer': 'Soulflayer',
+                    'Soul\'s Attendant': 'Soul Sister',
+                    'Soul Warden': 'Soul Sister',
+                    'Survival of the Fittest': 'Survival',
+                    // T
+                    'Tainted Pact': 'Pact',
                     'Teferi, Hero of Dominaria': 'Teferi',
                     'Thassa\'s Oracle': 'Oracle',
                     'Thousand-Year Storm': 'Thousand-Year Storm',
                     'Thud': 'Thud',
                     'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
+                    // U
                     'Ugin, the Spirit Dragon': 'Ugin',
                     'Ulamog, the Ceaseless Hunger': 'Ulamog',
-                    'Uro, Titan of Nature\'s Wrath': '',
-                    'Yorvo, Lord of Garenbrig': 'Yorvo',
+                    'Underworld Breach': 'Breach',
+                    'Uro, Titan of Nature\'s Wrath': 'Uro',
+                    // V
+                    // W
                     'Walking Ballista': 'Ballista',
                     'Wilderness Reclamation': 'Reclamation',
                     'Winota, Joiner of Forces': 'Winota',
                     'Witch\'s Oven': 'Oven',
+                    'Wrenn and Six': 'Wrenn and Six',
+                    // X
+                    // Y
+                    'Yorvo, Lord of Garenbrig': 'Yorvo',
+                    'Young Pyromancer': 'Pyromancer',
+                    // Z
+                    'Zenith Flare': 'Zenith',
                 };
                 let keycount = {};
 
@@ -2074,6 +2133,16 @@
 
                     if (text_temp.includes('equal to its toughness') || text_temp.includes('backbone')) {
                         let key = 'Backbone';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
+                    if (text_temp.includes('whenever you gain life')
+                        || ((text_temp.includes('you have') || text_temp.includes('you gained')) && (text_temp.includes('more life')))
+                        || text_temp.includes('life more than your starting life total')) {
+                        let key = 'Life gain';
                         if (!(key in keyword_count)) {
                             keyword_count[key] = [];
                         }
