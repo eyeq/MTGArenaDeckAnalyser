@@ -1652,6 +1652,7 @@
             {
                 let keymap = {
                     // A
+                    'Aether Vial': 'Vial',
                     'Alrund\'s Epiphany': 'Epiphany',
                     'Approach of the Second Sun': 'Second Sun',
                     'Arclight Phoenix': 'Phoenix',
@@ -1659,11 +1660,13 @@
                     // B
                     'Balustrade Spy': 'Spy',
                     'Battle of Wits': 'Babel',
+                    'Birthing Pod': 'Birthing Pod',
                     'Bolas\'s Citadel': 'Citadel',
                     'Bring to Light': 'Bring to Light',
                     // C
                     'Casualties of War': 'Casualties',
                     'Cavalcade of Calamity': 'Cavalcade',
+                    'Chandra, Torch of Defiance': 'Chandra',
                     'Channel': 'Channel',
                     'Chromatic Lantern': 'Chromatic',
                     'Collected Company': 'Company',
@@ -1680,6 +1683,7 @@
                     'Embercleave': 'Embercleave',
                     'Emergent Ultimatum': 'Ultimatum',
                     'Enigmatic Incarnation': 'Enigmatic Incarnation',
+                    'Ensoul Artifact': 'Scissors',
                     'Experimental Frenzy': 'Frenzy',
                     // F
                     'Faceless Haven': 'Faceless Haven',
@@ -1693,6 +1697,7 @@
                     // G
                     'Ghalta, Primal Hunger': 'Ghalta',
                     'Gifts Ungiven': 'Ungiven',
+                    'Goblin Charbelcher': 'Charbelcher',
                     'God-Pharaoh\'s Gift': 'Gift',
                     'Goldspan Dragon': 'Dragon',
                     'Golos, Tireless Pilgrim': 'Golos',
@@ -1704,6 +1709,7 @@
                     'Hero of Precinct One': 'Hero',
                     'Hinata, Dawn-Crowned': 'Hinata',
                     'Hogaak, Arisen Necropolis': 'Hogaak',
+                    'Hypnotic Specter': 'Hyppy',
                     // I
                     'Irencrag Pyromancer': 'Irencrag',
                     'Indomitable Creativity': 'Indomitable Creativity',
@@ -1712,14 +1718,17 @@
                     'Jace, the Mind Sculptor': 'Jace',
                     // K
                     'Kenrith, the Returned King': 'Kenrith',
+                    'Koma, Cosmos Serpent': 'Koma',
                     'Korvold, Fae-Cursed King': 'Korvold',
                     'Kroxa, Titan of Death\'s Hunger': 'Kroxa',
                     // L
                     'Lich\'s Mastery': 'Lich',
                     'Lotus Field': 'Lotus',
+                    'Lukka, Coppercoat Outcast': 'Lukka',
                     // M
                     'March of the Multitudes': 'March',
                     // N
+                    'Narset, Parter of Veils': 'Narset',
                     'Neoform': 'Neoform',
                     'Nexus of Fate': 'Nexus',
                     'Nicol Bolas, Dragon-God': 'Bolas',
@@ -1745,6 +1754,7 @@
                     'Scapeshift': 'Scapeshift',
                     'Shadowborn Apostle': 'Shadowborn',
                     'Show and Tell': 'Show and Tell',
+                    'Smuggler\'s Copter': 'Copter',
                     'Soulflayer': 'Soulflayer',
                     'Soul\'s Attendant': 'Soul Sister',
                     'Soul Warden': 'Soul Sister',
@@ -1752,7 +1762,9 @@
                     // T
                     'Tainted Pact': 'Pact',
                     'Teferi, Hero of Dominaria': 'Teferi',
+                    'Teferi, Time Raveler': 'Teferi',
                     'Thassa\'s Oracle': 'Oracle',
+                    'The Rack': 'Rack',
                     'Thousand-Year Storm': 'Thousand-Year Storm',
                     'Thud': 'Thud',
                     'Tibalt\'s Trickery': 'Tibalt\'s Trickery',
@@ -1762,6 +1774,7 @@
                     'Underworld Breach': 'Breach',
                     'Uro, Titan of Nature\'s Wrath': 'Uro',
                     // V
+                    'Velomachus Lorehold': 'Lorehold',
                     // W
                     'Walking Ballista': 'Ballista',
                     'Wilderness Reclamation': 'Reclamation',
@@ -1840,6 +1853,7 @@
                 post: [],
                 mana_acceleration: [],
                 direct_damage: [],
+                regrowth: [],
                 reanimate: [],
                 wrath: [],
             };
@@ -2249,6 +2263,9 @@
                         || ((text_temp.includes('player loses') || text_temp.includes('opponent loses')) && text_temp.includes('life'))) {
                         card_count.direct_damage.push(d);
                     }
+                    if (text_temp.includes('from your graveyard to your hand')) {
+                        card_count.regrowth.push(d);
+                    }
                     if (text_temp.includes('graveyard to the battlefield')
                         || (text_temp.includes('graveyard') && text_temp.includes('onto the battlefield under your control'))
                         || text_temp.includes('soulshift')) {
@@ -2515,6 +2532,12 @@
                     html += '</tr>';
                 }
 
+                if (card_count.regrowth.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
+                    html += '<tr>';
+                    html += '<td>Regrowth</td>';
+                    html += '</tr>';
+                }
+
                 if (card_count.reanimate.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.13) {
                     keywords.push('Reanimate');
 
@@ -2527,7 +2550,7 @@
                     control = true;
 
                     html += '<tr>';
-                    html += '<td>Wrath</td>';
+                    html += '<td>Wrath</td>'; // Reset
                     html += '</tr>';
                 }
 
