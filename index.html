@@ -1829,6 +1829,7 @@
                 self_mill: [],
                 library_out: [],
                 fog: [],
+                wish: [],
                 looting: [],
                 draw: [],
                 self_discard: [],
@@ -2203,6 +2204,9 @@
                         || text_temp.includes('your life total would be reduced to 0')) {
                         card_count.fog.push(d);
                     }
+                    if (text_temp.includes('you own from outside the game')) {
+                        card_count.wish.push(d);
+                    }
                     if (text_temp.includes('draw ') || text_temp.includes('draws ')) {
                         if (text_temp.includes('discard')) {
                             card_count.looting.push(d);
@@ -2439,6 +2443,15 @@
 
                     html += '<tr>';
                     html += '<td>Fog</td>';
+                    html += '</tr>';
+                }
+
+                if (card_count.wish.reduce((p, v) => p + v.count, 0) / (counts_main - opt) >= 0.06) {
+                    control = true;
+                    keywords.push('Wish');
+
+                    html += '<tr>';
+                    html += '<td>Wish</td>';
                     html += '</tr>';
                 }
 
