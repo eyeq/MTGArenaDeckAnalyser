@@ -2125,6 +2125,15 @@
                         keyword_count[key].push(d);
                     }
 
+                    if (text_temp.includes('the number of cards in your hand') ||
+                        text_temp.includes('more cards in your hand')) {
+                        let key = 'Wisdom';
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
                     if (text_temp.includes('equal to its power')) {
                         let key = 'Biting';
                         if (!(key in keyword_count)) {
@@ -2160,6 +2169,7 @@
                         keyword_count[key].push(d);
                     }
 
+                    /*
                     if (text_temp.includes('enters the battlefield')) {
                         if (text_temp.includes('enters the battlefield with')
                             || text_temp.includes('enters the battlefield, you get')) {
@@ -2172,6 +2182,7 @@
                             keyword_count[key].push(d);
                         }
                     }
+                     */
 
                     // cardeffect
                     if (text_temp.includes('you to discard')) {
@@ -2179,6 +2190,7 @@
                     }
                     if (text_temp.includes('put into your graveyard from your library')
                         || text_temp.includes('your library has no cards')
+                        || text_temp.includes('more cards in your graveyard')
                         || text_temp.includes('dredge')) {
                         card_count.self_mill.push(d);
                     }
@@ -2516,18 +2528,20 @@
                     html += '</tr>';
                 }
 
-                if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Self-Mill');
+                if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                    if (card_count.self_mill.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
+                        keywords.push('Self-Mill');
 
-                    html += '<tr>';
-                    html += '<td>Self Mill</td>';
-                    html += '</tr>';
-                } else if (card_count.library_out.reduce((p, v) => p + v.count, 0) / counts_main >= 0.13) {
-                    keywords.push('Library-Out');
+                        html += '<tr>';
+                        html += '<td>Self Mill</td>';
+                        html += '</tr>';
+                    } else {
+                        keywords.push('Library-Out');
 
-                    html += '<tr>';
-                    html += '<td>Library Out</td>';
-                    html += '</tr>';
+                        html += '<tr>';
+                        html += '<td>Library Out</td>';
+                        html += '</tr>';
+                    }
                 }
 
                 if (archetype_count.artifact_creature.reduce((p, v) => p + v.count, 0) / counts_main >= 0.33) {
