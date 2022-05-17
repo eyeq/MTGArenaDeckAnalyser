@@ -1847,6 +1847,8 @@
                 draw: [],
                 self_discard: [],
                 discard: [],
+                copy: [],
+                stealing: [],
                 ponza: [],
                 permission: [],
                 tron: [],
@@ -2184,6 +2186,15 @@
                         keyword_count[key].push(d);
                     }
 
+                    if (text_temp.includes('exile') && text_temp.includes('return') && text_temp.includes('to the battlefield')
+                        || text_temp.includes('return') && (text_temp.includes('owner\'s hand') || text_temp.includes('your hand'))) {
+                        let key = 'flicker'; // bounce & regrowth
+                        if (!(key in keyword_count)) {
+                            keyword_count[key] = [];
+                        }
+                        keyword_count[key].push(d);
+                    }
+
                     /*
                     if (text_temp.includes('enters the battlefield')) {
                         if (text_temp.includes('enters the battlefield with')
@@ -2237,6 +2248,14 @@
                         } else {
                             card_count.self_discard.push(d);
                         }
+                    }
+                    if (text_temp.includes('copy target') || text_temp.includes('copy that') || text_temp.includes('copy it') || text_temp.includes('copy them')
+                        || text_temp.includes('copy of ')) {
+                        card_count.copy.push(d);
+                    }
+                    if (text_temp.includes('gain control')
+                        || (text_temp.includes('you may play') && (text_temp.includes('each player') || text_temp.includes('that player')))) {
+                        card_count.stealing.push(d);
                     }
                     if (text_temp.includes('destroy target land') || text_temp.includes('destroy target nonbasic land')
                         || (text_temp.includes('destroy target ') && text_temp.includes(' or land'))) {
